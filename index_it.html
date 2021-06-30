@@ -1,9 +1,9 @@
 <!-- 
-    Credits to the template I started from:
+    Crediti al template da cui ho preso ispirazione:
     https://github.com/jennifertran/jennifertran.github.io
 -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<title>Daniele Morotti</title>
 		<meta charset="utf-8">
@@ -17,19 +17,19 @@
 			integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" 
 			integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-		
+
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 
 	<body>
-		<noscript>You don't have JS enabled in your browser</noscript>
+		<noscript>Non è abilitato JS nel tuo browser</noscript>
 		<!-- The overlay -->
 		<div id="myNav" class="overlay">
 			<div class="overlay-content">
-				<a href="#about" onclick="closer()">About &nbsp;<i class="fas fa-info-circle"></i></a>
-				<a href="#education" onclick="closer()">Education &nbsp;<i class="fas fa-graduation-cap"></i></a>
-				<a href="#projects" onclick="closer()">Projects &nbsp;<i class="far fa-clipboard"></i></a>
-				<a href="#contact" onclick="closer()">Contact &nbsp;<i class="fas fa-user"></i></a>
+				<a href="#about" onclick="closer()">Chi sono &nbsp;<i class="fas fa-info-circle"></i></a>
+				<a href="#education" onclick="closer()">Formazione &nbsp;<i class="fas fa-graduation-cap"></i></a>
+				<a href="#projects" onclick="closer()">Progetti &nbsp;<i class="far fa-clipboard"></i></a>
+				<a href="#contact" onclick="closer()">Contatti &nbsp;<i class="fas fa-user"></i></a>
 			</div>
 		</div>
 		<!-- Homepage -->
@@ -46,11 +46,11 @@
 								<!-- Language switcher -->
 								<div class="navbar-brand">
 									<div class="dropdown">
-										<div class="dropdown-toggle btn btn-default" id="en-btn" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<img class="img-navbar" src="ref/images/en.png"> English <span class="caret"></span>
+										<div class="dropdown-toggle btn btn-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<img class="img-navbar" id="it-btn" src="ref/images/it.png"> Italiano <span class="caret"></span>
 										</div>
 										<div class="dropdown-menu">
-										  	<div class="btn" id="it-btn" role="button"><img class="img-navbar" src="ref/images/it.png"> Italian</div>
+											<div class="btn" id="en-btn" role="button"><img class="img-navbar" src="ref/images/en.png"> Inglese</div>
 										</div>
 									</div>
 								</div>
@@ -58,10 +58,10 @@
 							<center>
 							<div id="navbar" class="navbar-collapse collapse">
 								<ul class="nav navbar-nav">
-									<li ><a href="#contact">Contact</a></li>
-									<li><a href="#projects">Projects</a></li>
-									<li><a href="#education">Education</a></li>
-									<li><a href="#about">About me</a></li>
+									<li ><a href="#contact">Contatti</a></li>
+									<li><a href="#projects">Progetti</a></li>
+									<li><a href="#education">Formazione</a></li>
+									<li><a href="#about">Chi sono</a></li>
 									<li><a href="#particles-js">Home</a></li>
 								</ul>
 							</div>
@@ -70,11 +70,11 @@
 					</nav>
 					<div id="lead-content">
 						<strong><h1>Daniele Morotti</h1></strong>
-						<h2>Master's degree student in CS</h2>
+						<h2>Studente di laurea magistrale in Informatica</h2>
 						<center>
 							<h4>
-								<a href="ref/docs/resume_en.pdf" download="Daniele-Morotti-resume.pdf" class="btn btn-primary">
-									<i class="fa fa-download" aria-hidden="true"></i> Download my resume
+								<a href="ref/docs/resume_it.pdf" download="Daniele-Morotti-resume.pdf" class="btn btn-primary">
+									<i class="fa fa-download" aria-hidden="true"></i> Download del mio CV
 								</a>
 							</h4>
 						</center>
@@ -102,10 +102,10 @@
 					</div>
 					<div class="col-md-8">
 						<div class="about-description">
-							<b><h3>About Me <i class="fas fa-info-circle"></i></h3></b>
+							<b><h3>Chi sono <i class="fas fa-info-circle"></i></h3></b>
 							<hr>
-							<p>I'm Daniele! I'm currently a Master's degree student in CS. I love learning about new software technologies and apply them to solve problems and create new projects.
-							As a hobby, I like to play video games 🎮, playing sports 🏃‍♂️ and playing the guitar 🎸.
+							<p>Ciao, sono Daniele! Attualmente sto frequentando la laurea magistrale in Informatica. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.
+							Nel tempo libero mi piace fare sport 🏃‍♂️, suonare la chitarra 🎸 e giocare ai videogiochi 🎮.
 						</div>
 					</div>
 				</div>
@@ -115,29 +115,31 @@
 		<!-- Education section -->
 		<div class="education padding" id="education">
 			<div class="container" style="font-family: 'Open Sans'">
-				<b><h3>Education <i class="fas fa-graduation-cap"></i></h3></b>
+				<b><h3>Istruzione e formazione <i class="fas fa-graduation-cap"></i></h3></b>
 				<div class="row">
-					<strong><h4>- Master's Degree in Artificial Intelligence, <i>Oct 2021 - Present</i></h4></strong>
-					<h5>Alma Mater Studiorum - University of Bologna</h5>
+					<strong><h4>- Laurea magistrale in Artificial Intelligence, <i>Ott 2021 - In corso</i></h4></strong>
+					<h5>Alma Mater Studiorum - Università di Bologna</h5>
 					<p>
-					It's a two-year Master in Artificial Intelligence which provides solid competence and expertise in the founding areas and innovative applications 
-					of Artificial Intelligence.
+                        È una laurea magistrale in lingua inglese che ha come tema di studio l'intelligenza artificiale. Fornisce solide competenze e abilità nelle aree fondanti e nelle applicazioni 
+                        innovative dell'intelligenza artificiale.
+
 					</p>
 					<br>
 				</div>
 				<div class="row">
-					<strong><h4>- BSc in Computer Science, <i>Oct 2018 - Jul 2021</i></h4></strong>
-					<h5>Alma Mater Studiorum - University of Bologna</h5>
+					<strong><h4>- Laurea triennale in Informatica, <i>Ott 2018 - Lug 2021</i></h4></strong>
+					<h5>Alma Mater Studiorum - Università di Bologna</h5>
 					<p>
-					I made a lot of projects during the degree coourse and i learnt to work in a team to achieve a common goal and by comparing my ideas with others.
+					Ho creato molti progetti durante il corso di laurea ed ho imparato a lavorare in un team per raggiungere un obiettivo comune confrontando le mie
+                    idee con quelle degli altri.
 					</p>
 					<br>
 				</div>
 				<div class="row">
-					<strong><h4>- High School Diploma, <i>Sept 2013 - Jul 2018</i></h4></strong>
+					<strong><h4>- Diploma di maturità, <i>Set 2013 - Lug 2018</i></h4></strong>
 					<h5>Liceo Scientifico F. Alberghetti</h5>
 					<p>
-					In the last 2 years of High School I became passionate about Computer Science and I decide to go on studying this topic.
+					Negli ultimi anni delle scuole superiori mi sono appassionato all'informatica e per questo ho deciso di continuare gli studi proprio in questo campo.
 					</p>
 					<br>
 				</div>
@@ -147,11 +149,11 @@
 		<!-- Projects section-->
 		<div class="projects" id="projects">
 			<div class="container">
-			<b><h3>Projects <i class="far fa-clipboard"></i></h3></b>
+			<b><h3>Progetti <i class="far fa-clipboard"></i></h3></b>
 			<hr>
 			<!-- University projects-->
 			<details open>
-				<summary id='univ_summ' class="btn btn-primary">University projects &nbsp;<i class="fas fa-caret-up"></i></summary>
+				<summary id='univ_summ' class="btn btn-primary">Progetti universitari &nbsp;<i class="fas fa-caret-up"></i></summary>
 				<!-- Graduation project -->
 				<div class="row">
 					<div>
@@ -159,10 +161,10 @@
 							<center><img src="ref/images/anticount.png" alt="Blockchain-based anti-counterfeiting system" class="img-responsive"></center>
 						</div>
 						<div class="col-md-7">
-							<b><h3>Blockchain-based anti-counterfeiting system</h3></b>
+							<b><h3>Sistema anticontraffazione basato su blockchain</h3></b>
 							<hr>
-							<p>The system has been developed as my graduation project. The aim of the project is to fight and avoid clothing's counterfeit thanks to the use of blockchain technology.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/Blockchain_anticounterfeiting_system" target="_blank">Source</a></p>
+							<p>Il sistema è stato sviluppato come mio progetto di laurea. L'obiettivo del progetto è di combattere ed evitare la contraffazione nel mondo della moda utilizzando la tecnologia blockchain.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/Blockchain_anticounterfeiting_system" target="_blank">Codice</a></p>
 						</div>
 					</div>
 				</div>
@@ -174,10 +176,10 @@
 							<center><img src="ref/images/M-M.png" alt="M&M Mistery at the museum" class="img-responsive"></center>
 						</div>
 						<div class="col-md-7">
-							<b><h3>M&amp;M - Mistery at the museum</h3></b>
+							<b><h3>M&amp;M - Mistero al museo</h3></b>
 							<hr>
-							<p>The aim of the project was to <a href="https://en.wikipedia.org/wiki/Gamification" target="_blank"><u>gamify</u></a> the visit to a museum to entertain children. The project is composed by 3 web applications: Player, Editor and Evaluator.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/M-M" target="_blank">Source</a></p>
+							<p>Lo scopo del progetto era quello di <a href="https://it.wikipedia.org/wiki/Gamification" target="_blank"><u>gamificare</u></a> le visite al museo per intrattenere i ragazzi. Il progetto è composto da 3 applicazioni web: Player, Editor e Valutatore.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/M-M" target="_blank">Codice</a></p>
 						</div>
 					</div>
 				</div>
@@ -191,9 +193,9 @@
 						<div class="col-md-7">
 							<b><h3>Twitter-Tracker</h3></b>
 							<hr>
-							<p>Twitter-tracker is a web app created for collecting published tweets from around the world and viewing them in various representations. The application was developed using 
-								<a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>Agile</u></a> methodologies.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/TwitterTracker" target="_blank">Source</a></p>
+							<p>Twitter-tracker è un'applicazione web creata per collezionare i tweet pubblicati in tutto il mondo e mostrarli in diverse modalità. L'applicazione è stata sviluppata utilizzando 
+								metodologie <a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>agili</u></a>.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/TwitterTracker" target="_blank">Codice</a></p>
 						</div>
 					</div>
 				</div>
@@ -205,18 +207,18 @@
 							<center><img src="ref/images/bikaya.png" alt="BiKaya OS" class="img-responsive"></center>
 						</div>
 						<div class="col-md-7">
-							<b><h3>BiKaya OS</h3></b>
+							<b><h3>Sistema operativo BiKaya</h3></b>
 							<hr>
-							<p>BiKaya is an educational-purpose, cross-architecture operating system compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> 
-								and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/acsor/BiKaya" target="_blank">Source</a></p>
+							<p>BiKaya è un sistema operativo progettato a scopo educativo e compatibile con 2 architetture, <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> e 
+								<a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, due micro ISA derivate rispettivamente da ARM e MIPS.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/acsor/BiKaya" target="_blank">Codice</a></p>
 						</div>
 					</div>
 				</div>
 				<br>
 			</details>
 			<details>
-				<summary id='pers_summ' class="btn btn-primary">Personal projects &nbsp;<i class="fas fa-caret-down"></i></summary>
+				<summary id='pers_summ' class="btn btn-primary">Progetti personali &nbsp;<i class="fas fa-caret-down"></i></summary>
 				<!-- Generic scoreboard -->
 				<div class="row">
 					<div>
@@ -224,11 +226,10 @@
 							<center><img src="ref/images/gen_score.png" alt="Generic scoreboard" class="img-responsive"></center>
 						</div>
 						<div class="col-md-7">
-							<b><h3>Generic scoreboard</h3></b>
+							<b><h3>Segnapunti generico</h3></b>
 							<hr>
-							<p>This is a generic scoreboard that you can use for any game you are playing with your friends. You can choose how many points to reach and 
-								whether who has more or who has less wins</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/projects/SegnapuntiGenerico" target="_blank">Source</a>
+							<p>Ho creato un segnapunti generico utilizzabile per ogni gioco. Si può inserire il titolo del gioco, il numero di giocatori, il punteggio massimo e se vince chi ha più punti oppure chi ne ha meno.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/projects/SegnapuntiGenerico" target="_blank">Codice</a>
 								<a class="btn btn-default btn-lg" href="projects/SegnapuntiGenerico/index.html" target="_blank">Demo</a></p>
 						</div>
 					</div>
@@ -241,10 +242,11 @@
 							<center><img src="ref/images/telegram_checker.png" alt="Telegram messages checker" class="img-responsive"></center>
 						</div>
 						<div class="col-md-7">
-							<b><h3>Telegram messages checker</h3></b>
+							<b><h3>Sveglia per messaggi Telegram</h3></b>
 							<hr>
-							<p>A simple script to check if messages containing certain words arrive on your telegram account. A song is played to alert you or to wake you up in case you are waiting for an important message during the night.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/telegram_messages_checker" target="_blank">Source</a></p>
+							<p>Composto da alcuni semplici script che controllano se i messaggi ricevuti su Telegram contengono le parole scelte dall'utente. 
+								Nel caso in cui siano presenti, verrà riprodotta una canzone per avvisare o svegliare l'utente.</p>
+							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/telegram_messages_checker" target="_blank">Codice</a></p>
 						</div>
 					</div>
 				</div>
@@ -252,10 +254,11 @@
 			</details>
 		</div>
 
+
 		<!-- Contact section-->
 		<div class="contact padding" id="contact">
 			<div class="container">
-				<b><h3>Contact Me</h3></b>
+				<b><h3>Contattami</h3></b>
 				<hr>
 				<div class="row">
 					<center>
