@@ -256,6 +256,7 @@ ul.nav.navbar-nav > li {
 }
 summary{
     width:100%;
+    list-style: none;
 }
 summary.btn{
     background-color: rgb(44, 134, 187);
@@ -281,7 +282,7 @@ summary.btn{
 }
 
 /* Media queries */
-@media only screen and (max-width:800px){
+@media only screen and (max-width:767px){
     .center{margin-left:10%}
     h2{text-align:left}
     #portPic{padding-top:0!important}
@@ -292,12 +293,15 @@ summary.btn{
     summary.btn{
         font-size: 17pt;
         margin-bottom: 0.8em;
-    }    
+    }
+    .img-responsives{
+       max-width: 52%;
+    }
 }
 
 
 /* Tablets used in portrait mode (i need to override bootstrap navbar media queries)*/
-@media (orientation:portrait) and (max-width: 1050px) {
+@media (orientation:portrait) and (min-width:768px) and (max-width: 1050px) {
     .navbar-header {
         float: none !important;
     }
@@ -335,7 +339,26 @@ summary.btn{
         max-width: 50% !important;
     }
     .img-responsives{
-        max-width: 30%;
+        max-width: 35%;
+    }
+    #en-btn{
+        font-size: 1.2em !important;
+        margin-top: 10%;
+    }
+    #arrow{display:block}
+}
+
+/* Tablets used in portrait mode (i need to override bootstrap navbar media queries)*/
+@media (orientation:landscape) and (min-width:768px) and (max-width: 1050px) {
+    .navbar-nav>li>a {
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+    }
+    .navbar-nav{
+        margin-left: 5% !important;
+    }
+    .img-responsive{
+        margin-top: 18%;
     }
     #arrow{display:block}
 }
