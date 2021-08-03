@@ -19,16 +19,18 @@
 
 	<body>
 		<div class="container-fluid" id="app">
-			<div class="container" id="cont-header">
-				<h1 id="titolo" v-bind:style="{color: col}">Titolo</h1>&nbsp;
-				<i id="icon-edit" class="fas fa-edit"  @click="toggleEditor('#t-area1','#titolo','#icon-edit','#editor')"></i>
-				<div class="container" id="editor">
-					<textarea id="t-area1" name="ta1" rows="1" cols="15" maxlength="20" v-bind:style="{color: col}"></textarea><br/>
-					<label for="i-color">Choose your color:</label>
-					<input v-model="col" type="color">
-					<button id="editTitleBtn" @click="doEdit('#t-area1','#titolo','#icon-edit','#editor')">Edit <i class="fas fa-check"></i></button>
+			<center>
+				<div class="container" id="cont-header">
+					<h1 id="titolo" v-bind:style="{color: col}">Titolo</h1>&nbsp;
+					<i id="icon-edit" class="fas fa-edit"  @click="toggleEditor('#t-area1','#titolo','#icon-edit','#editor')"></i>
+					<div class="container" id="editor">
+						<textarea id="t-area1" name="ta1" rows="1" cols="15" maxlength="20" v-bind:style="{color: col}"></textarea><br/>
+						<label for="i-color">Scegli il colore:</label>
+						<input v-model="col" type="color">
+						<button id="editTitleBtn" @click="doEdit('#t-area1','#titolo','#icon-edit','#editor')">Edit <i class="fas fa-check"></i></button>
+					</div>
 				</div>
-			</div>
+			</center>
 			<div class="container" id="menu">
 				<form>
 					<label for="partNum">Inserisci il numero di partecipanti:</label>
@@ -65,7 +67,10 @@
 					</tr>
 				</table>
 			</div>
-			<button id="refreshBtn" @click="refresh()">RINIZIA <i class="fas fa-gamepad"></i></button>
+			<center>
+				<button id="refreshBtn" @click="refresh()">RINIZIA <i class="fas fa-gamepad"></i></button>
+				<button id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
+			</center>
 		</div>
 		<script src="libraries/jquery-3.5.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>	

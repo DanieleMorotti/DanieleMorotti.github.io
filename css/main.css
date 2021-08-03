@@ -354,7 +354,7 @@ summary.btn{
     #arrow{display:block}
 }
 
-/* Tablets used in portrait mode (i need to override bootstrap navbar media queries)*/
+/* Tablets used in landscape mode (i need to override bootstrap navbar media queries)*/
 @media (orientation:landscape) and (min-width:768px) and (max-width: 1050px) {
     .navbar-nav>li>a {
         padding-top: 15px !important;

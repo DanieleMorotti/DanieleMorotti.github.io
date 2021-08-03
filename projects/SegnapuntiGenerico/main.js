@@ -5,6 +5,7 @@ app = new Vue({
         col:'red',
         winnerOption:'greaterPoints',
         partNum:2,
+        numOfGames: 0,
         partList:[],
         maxIndex:0,
         minIndex:0,
@@ -12,7 +13,7 @@ app = new Vue({
      },
      methods:{
         doEdit:function(txtArea,el,icon,edit) {
-            var subject =$(txtArea).val();
+            let subject =$(txtArea).val();
             $(el).html(subject);
             
             $(el).show();
@@ -34,6 +35,7 @@ app = new Vue({
         startGame:function(){
             $('#insertPart').hide();
             $('#partTable').show();
+            $('#saveGameBtn').show();
             for(let i=0; i < this.partList.length;i++){
                 $('.nameSpan').eq(i).text(this.partList[i].name);
                 $('.nameSpan').eq(i).css('color',this.partList[i].color);
@@ -41,11 +43,11 @@ app = new Vue({
             }
         },
         savePart:function(){
-            var n = $("#name").val();
-            var col = $("#color").val();
+            let n = $("#name").val();
+            let col = $("#color").val();
             if(n == "")
                 n = "Undefined";
-            this.partList.push({name:n,color:col,points:0,pLog:[0]});
+            this.partList.push({name:n,color:col,points:0,pLog:[]});
             if($("#partIndex").html() == this.partNum){
                 //initialize all popovers
                 $('[data-toggle="popover"]').popover();
@@ -59,7 +61,7 @@ app = new Vue({
             }
         },
         backInsertPlayer:function(){
-            var playerNum = parseInt($("#partIndex").html());
+            let playerNum = parseInt($("#partIndex").html());
             playerNum--;
             if(playerNum == 1)
                 $("#backInsBtn").css('display','none');
@@ -81,11 +83,9 @@ app = new Vue({
                 $('.popLog').eq(i).attr('data-content',this.partList[i].pLog.join(' '));
             }
             //find the min and max points to color the background
-            var min = Math.min.apply(null, this.partList.map(item => item.points));
-            var max = Math.max.apply(null, this.partList.map(item => item.points));
+            let min = Math.min.apply(null, this.partList.map(item => item.points));
+            let max = Math.max.apply(null, this.partList.map(item => item.points));
            
-            var tdindex;
-
             for(let j=0;j < this.partList.length;j++){
                 if(this.partList[j].points == min) this.minIndex =j;
                 else if(this.partList[j].points == max) this.maxIndex =j;
@@ -100,9 +100,40 @@ app = new Vue({
                 $('td:nth-child(2)').eq(this.minIndex).addClass('table-success');
                 $('td:nth-child(2)').eq(this.maxIndex).addClass('table-danger');
             }
+            this.numOfGames += 1;
         },
         refresh:function(){
             window.location = this.initialHref;
+        },
+        saveGame:function(){
+            let partLogs = [];
+            let names = [];
+            // get the scores for every partecipant
+            this.partList.forEach(part => {
+                names.push(part.name);
+                partLogs.push({[part.name]:part.pLog});
+            });
+
+            let csvData = '';
+            csvData += names.join(";") + "\n";
+
+            // set the format for csv file
+            for(let i=0; i < this.numOfGames; i++){
+                for(let j=0; j < names.length; j++){
+                    csvData += partLogs[j][names[j]][i];
+                    if(j < names.length-1)
+                        csvData += ";";
+                }
+                csvData += "\n";
+            }
+            
+            // download csv file
+            let uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
+            const a = document.createElement('a');
+            a.href = uri; a.download = "scores.csv"; a.target='_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     }
 });
