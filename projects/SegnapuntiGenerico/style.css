@@ -169,6 +169,7 @@ tr,td,th{
     #app{
         overflow:hidden;
         background-position: right;
+        background-size: auto;
     }
     #cont-header{
         margin-top: 2.5rem;
