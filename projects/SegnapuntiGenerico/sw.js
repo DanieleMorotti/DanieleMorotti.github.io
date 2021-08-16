@@ -1,0 +1,50 @@
+// if you change some static files you change also these name and the cache will be updated
+let staticCache = 'segnapunti_cache-v1';
+let dynamicCache = 'segnapunti_cache_d-v1';
+let staticAssets = ['./','./index.html','./img/quad-appunti.png','./img/quadAppunti192.png','./img/quadAppunti512.png',
+                    './img/maskable_icon.png','./img/ios_share.png','./libraries/jquery-3.5.1.min.js','./main.js','./style.css',
+                    'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css','https://use.fontawesome.com/releases/v5.6.1/css/all.css',
+                    'https://cdn.jsdelivr.net/npm/vue@2.6.11', 'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js'];
+
+// On install - caching the application static files
+self.addEventListener('install', e => {
+    // to avoid browser consider sw caching as finished
+    e.waitUntil(
+        caches.open(staticCache).then(cache => {
+            // cache any static files that make the application work
+            return cache.addAll(staticAssets);
+        })
+    );
+});
+
+// Clear old cache if static assets need updates
+self.addEventListener('activate', e =>{
+    e.waitUntil(
+        caches.keys().then(keys => {
+            return Promise.all(keys
+                .filter(key => key !== staticCache && key !== dynamicCache)
+                .map(key => caches.delete(key))
+            )
+        })
+    );
+})
+
+// On network request
+self.addEventListener('fetch', e => {
+    e.respondWith(
+        // Try the cache
+        caches.match(e.request).then(cacheRes => {
+            // If response is found then return it, else fetch again
+            return cacheRes || fetch(e.request).then(fetchRes => {
+                // save in cache the response
+                return caches.open(dynamicCache).then(cache => {
+                    cache.put(e.request, fetchRes.clone());
+                    return fetchRes;
+                });
+            }).catch(err => {
+                console.log(err);
+                return caches.match('./img/quad-appunti.png');
+            });
+        })
+    );
+});

@@ -1,4 +1,4 @@
-
+/* Vue app */
 app = new Vue({
      el:'#app',
      data:{
@@ -49,8 +49,8 @@ app = new Vue({
                 n = "Undefined";
             this.partList.push({name:n,color:col,points:0,pLog:[]});
             if($("#partIndex").html() == this.partNum){
-                //initialize all popovers
-                $('[data-toggle="popover"]').popover();
+                //initialize all log popovers
+                $('.popLog').popover();
                 this.startGame();
             }
             else{
@@ -135,6 +135,41 @@ app = new Vue({
             a.click();
             document.body.removeChild(a);
         }
-    }
-});
+    },
+    mounted(){
+        /* PWA Section */
+        if('serviceWorker' in navigator){
+            navigator.serviceWorker.register("sw.js").then(registration => {
+                // Retrieve information to know if the device use ios and not from the installed app
+                const userAgent = window.navigator.userAgent.toLowerCase();
+                let isIphone = /iphone/.test(userAgent);
+                let isIpad = /ipad/.test(userAgent);
+                const webkit = !!userAgent.match(/webkit/i);
+                const isSafari = (isIpad || isIphone) && webkit && !userAgent.match(/crios/i);
+                const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
 
+                // Decide if the popover must appear
+                let lastNot = parseInt(localStorage.getItem('last_not')) || Date.now();
+                let showAgain = !localStorage.getItem('first_time') || (Date.now() - lastNot) > (1800*1000); // ~30 minutes
+                
+                // Display a pop up to advise users on ios if they are not already inside app
+                if(isSafari && !window.MSStream && !isInStandaloneMode() && showAgain){
+                    $('#iosDown').popover();
+                    if(isIphone){
+                        $('#iosDown').css("bottom","15px");
+                    }else{
+                        $('#iosDown').attr('data-placement','bottom');
+                        $('#iosDown').css("top","15px");
+                    }
+                    $('#iosDown').focus();
+                    localStorage.setItem('last_not',Date.now());
+                    if(!localStorage.getItem('first_time'))
+                        localStorage.setItem('first_time','no');
+                };
+            }).catch(err =>{
+                console.log(err);
+            })
+        }
+    }
+
+});
