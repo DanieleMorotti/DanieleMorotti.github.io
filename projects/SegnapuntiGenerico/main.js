@@ -54,9 +54,9 @@ app = new Vue({
 				this.partList[this.currPartInd - 1].name = n;
 				this.partList[this.currPartInd - 1].color = col;
 			}
-			else
+			else {
 				this.partList.push({name:n,color:col,points:0,pLog:[]});
-			
+			}
 			// check if the partecipant is the last one
 			if(this.currPartInd == this.partNum){
 				//initialize all log popovers
@@ -65,18 +65,20 @@ app = new Vue({
 			}
 			else{
 				// reset the form or compile with the next saved partecipant
-				$("#name").val(this.partList[this.currPartInd]?.name || "");
-				$("#color").val(this.partList[this.currPartInd]?.color || "#000000");
+				$("#name").val(this.partList[this.currPartInd]?this.partList[this.currPartInd].name:"");
+				$("#color").val(this.partList[this.currPartInd]?this.partList[this.currPartInd].color:"#000000");
 
 				this.currPartInd++;
-				if(this.currPartInd == 2)
+				if(this.currPartInd == 2){
 					$("#backInsBtn").css('display','inline');
+				}
 			}
 		},
 		backInsertPlayer:function(){
 			this.currPartInd--;
-			if(this.currPartInd == 1)
+			if(this.currPartInd == 1){
 				$("#backInsBtn").css('display','none');
+			}
 			
 			$("#name").val(this.partList[this.currPartInd-1].name);
 			$("#color").val(this.partList[this.currPartInd-1].color);
