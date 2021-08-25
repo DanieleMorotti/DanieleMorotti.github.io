@@ -15,6 +15,31 @@ body,html{
     height: 100%;
     width:100%;
 }
+.chooseSavedBtn{
+    margin-bottom:0.5rem;
+    width:100%;
+}
+.chooseGroupBtn{
+    background-color: lightskyblue;
+    color:black;
+    width:90%;
+}
+.btn-outline-dark{
+    background-color: #EFEFEF;
+    padding: .25rem .5rem;
+}
+.btn-outline-dark:hover,.btn-outline-dark:focus,.btn-outline-dark:active, 
+.btn-outline-dark:active:focus:not(:disabled):not(.disabled),
+.btn:focus, .btn:active, .btn:hover{
+    background-color: #EFEFEF !important;
+    color: black !important;
+    outline: none;
+    box-shadow: none;
+}
+.modal-body > .container{
+    overflow-y: scroll;
+    max-height:12rem;
+}
 /*Header part*/
 
 #titolo{
@@ -25,7 +50,7 @@ body,html{
     box-shadow: 5px 7px cadetblue;
     padding:1rem;
     margin: 1.5rem 0.5rem 0.5rem 1rem;
-	 overflow-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 #editor {
@@ -96,12 +121,12 @@ tr,td,th{
 #refreshBtn{
     margin-top:3rem;
     border-radius: 20px;
-    padding:.3rem;
+    padding:.5rem;
 }
 #saveGameBtn{
     margin-top:3rem;
     border-radius: 20px;
-    padding:.3rem;
+    padding:.5rem;
     display: none;
 }
 
@@ -133,12 +158,12 @@ tr,td,th{
         width:70%;
     }
     #menu{
-        margin-top:3rem;
+        margin-top:2.6rem;
         margin-left:2rem;
         width:85%;
     }
     #insertPart{
-        margin-top:3rem;
+        margin-top:2.6rem;
         margin-left:2rem;
         width:80%;
     }
@@ -157,11 +182,15 @@ tr,td,th{
     .pointsToAdd{
         width:75%;
     }
+    #savePartBtn{
+        margin-top: .6rem;
+        display: block;
+        max-width: 10rem;
+    }
     #refreshBtn, #saveGameBtn{
-        margin-top:3rem;
+        margin-top:2.6rem;
     }
 }
-
 
 /* Tablets used in portrait mode*/
 @media (orientation:portrait) and (min-width:768px) and (max-width: 1050px){
@@ -197,7 +226,7 @@ tr,td,th{
         margin-top:5rem;
         margin-left:0rem;
         width:55%;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
     }
     #insertPart{
         margin-top:5rem;
@@ -225,10 +254,9 @@ tr,td,th{
     .pointsToAdd{
         width:40%;
     }
-    #refreshBtn, #saveGameBtn{
-        font-size: 1.3rem;
+    .btn-outline-dark{
+        font-size: 1.4rem;
     }
-    
 }
 
 /* Tablets in landscape mode*/
@@ -286,6 +314,8 @@ tr,td,th{
     }
     .pointsToAdd{
         width:30%;
-    }    
-    
+    }
+    .btn-outline-dark{
+        font-size: 1.1rem;
+    }
 }

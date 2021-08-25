@@ -52,12 +52,12 @@
 						<textarea id="t-area1" name="ta1" rows="1" cols="15" maxlength="20" v-bind:style="{color: col}"></textarea><br/>
 						<label for="i-color">Scegli il colore:</label>
 						<input v-model="col" type="color">
-						<button id="editTitleBtn" @click="doEdit('#t-area1','#titolo','#icon-edit','#editor')">Edit <i class="fas fa-check"></i></button>
+						<button id="editTitleBtn" @click="doEdit('#t-area1','#titolo','#icon-edit','#editor')">Modifica <i class="fas fa-check"></i></button>
 					</div>
 				</div>
 			</center>
 			<div class="container" id="menu">
-				<form>
+				<form @submit.prevent="startIns()">
 					<label for="partNum">Inserisci il numero di partecipanti:</label>
 					<input id="partNum" class="inputNumber" v-model.number="partNum" type="number" value="2" min="2" required><br>
 					<span>Vince chi ha il punteggio:<span><br>
@@ -65,17 +65,20 @@
 					<label for="greaterPoints">maggiore </label><br>
 					<input type="radio" v-model="winnerOption" id="smallerPoints" name="pointsOption" value="smallerPoints">
 					<label for="smallerPoints">minore</label><br>
-					<button type="submit" @click.prevent="startIns()">AVANTI</button>
+					<button class="btn btn-outline-dark" type="submit" >AVANTI</button>
+					<button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#loadModal">CARICA GIOCATORI</button>
 				</form>
 			</div>
 			<div class="container" id="insertPart">
 				<form id="insertPartForm">
-					<label for="name">Nome partecipante&nbsp;<span>{{currPartInd}}</span></label><br>
+					<label for="name">Nome partecipante&nbsp;<span>{{currPartInd+1}}</span></label><br>
 					<input type="text" id="name" name="name" value="" style="width:7.5em"><br><br>
 					<label for="color">Scegli il tuo colore</label><br>
 					<input type="color" id="color" name="color"><br><br>
-					<button type="button" id="backInsBtn" @click="backInsertPlayer()" style="display:none"> &lt;</button>
-					<button type="button" @click="savePart()">PRONTO</button>
+					<button class="btn btn-outline-dark" type="button" id="backInsBtn" @click="backInsertPlayer()" style="display:none"> &lt;</button>
+					<button class="btn btn-outline-dark" type="button" id="readyBtn" @click="savePart()">AVANTI</button>
+					<a href="#" class="btn btn-outline-dark" id="savePartBtn" @click.prevent="savePlayers()" style="display:none" tabindex="0" data-toggle="popover" data-placement="auto" 
+						data-title="Salvataggio giocatori" data-html="true" data-content="" data-trigger="focus">SALVA GIOCATORI</a>
 				</form>
 			</div>
 			<div class="table-responsive" id="partTable">
@@ -93,14 +96,41 @@
 				</table>
 			</div>
 			<center>
-				<button id="refreshBtn" @click="refresh()">RINIZIA <i class="fas fa-gamepad"></i></button>
-				<button id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
+				<button class="btn btn-outline-dark" id="refreshBtn" @click="refresh()">RINIZIA <i class="fas fa-gamepad"></i></button>
+				<button class="btn btn-outline-dark" id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
 			</center>
 			<!-- Popover for installation on ios -->
 			<center>
 				<a id="iosDown" href="#" tabindex="0" style="position:fixed;right:0;left:0" data-toggle="popover" data-placement="top" data-html="true"
 					data-content="Se vuoi installa l'app cliccando <img src='img/ios_share.png' /> e in seguito &quot;Aggiungi alla schermata home <i class='far fa-plus-square fa-lg'></i> &quot;" data-trigger="focus"></a> 
 			</center>
+			<!-- Modal for loading pre-saved players -->
+            <div class="modal fade" id="loadModal" aria-hidden="true" role="dialog" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Carica i giocatori</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container" v-if="Object.keys(savedGroup).length != 0">
+								<div class="btn-group chooseSavedBtn" v-for="(names,group) in savedGroup" v-bind:key="group">
+									<button class="btn btn-primary chooseGroupBtn" @click="loadPlayers(group)">
+										<span v-for="pl in names">{{pl.name}}&nbsp;&nbsp;</span>
+									</button>
+									<button class="btn btn-primary"><i class="fas fa-trash-alt" @click="deleteSavedGroup(group)"></i></button>
+								</div>
+							</div>
+							<p v-else>Nessun gruppo salvato</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 		</div>
 		<script src="libraries/jquery-3.5.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>	

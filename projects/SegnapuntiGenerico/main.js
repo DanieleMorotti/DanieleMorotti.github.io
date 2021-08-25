@@ -4,11 +4,14 @@ app = new Vue({
 	data:{
 		col:'red',
 		winnerOption:'greaterPoints',
-		currPartInd:1,
+		currPartInd:0,
 		back:[],
 		partNum:2,
 		numOfGames: 0,
 		partList:[],
+		localSave: 0,
+		savedGroup:{},
+		useLocal: false,
 		maxIndex:0,
 		minIndex:0,
 		initialHref:window.location.href
@@ -23,10 +26,10 @@ app = new Vue({
 			$(edit).hide();
 		},
 		toggleEditor:function(txtArea,el,icon,edit) {
-			if(el)var subject = $(el).text();
+			if(el) var subject = $(el).text();
 			$(txtArea).val(subject);
 			
-			if(el)$(el).hide();
+			if(el) $(el).hide();
 			$(icon).hide();
 			$(edit).css('display', 'inline-block');
 		},
@@ -34,77 +37,89 @@ app = new Vue({
 			$('#menu').hide();
 			$('#insertPart').show();
 		},
-		startGame:function(){
-			$('#insertPart').hide();
-			$('#partTable').show();
-			$('#saveGameBtn').show();
-			for(let i=0; i < this.partList.length;i++){
-				$('.nameSpan').eq(i).text(this.partList[i].name);
-				$('.nameSpan').eq(i).css('color',this.partList[i].color);
-				$('.namePoints').eq(i).text(this.partList.points);
-			}
-		},
 		savePart:function(){
+			/* If i load the data from localstorage i remove the player to push it again 
+			(i need it to have also the last player of group visible if i use back button)*/
+			if(this.useLocal && (this.currPartInd == this.partNum-1)){
+				this.partList.pop();
+			}
 			let n = $("#name").val()?$("#name").val():"Undefined";
 			let col = $("#color").val()?$("#color").val():'#000000';
-			let isBack = this.back.includes(this.currPartInd - 1);
-			// if i'm here from the back button
+			let isBack = this.back.includes(this.currPartInd);
+			// If i'm here from the back button
 			if(isBack){
-				this.back.splice(this.back.indexOf(this.currPartInd - 1),1);
-				this.partList[this.currPartInd - 1].name = n;
-				this.partList[this.currPartInd - 1].color = col;
+				this.back.splice(this.back.indexOf(this.currPartInd),1);
+				this.partList[this.currPartInd].name = n;
+				this.partList[this.currPartInd].color = col;
 			}
 			else {
 				this.partList.push({name:n,color:col,points:0,pLog:[]});
 			}
-			// check if the partecipant is the last one
-			if(this.currPartInd == this.partNum){
-				//initialize all log popovers
+			// Check if the partecipant is the last one
+			if(this.currPartInd == this.partNum-1){
+				// Initialize all log popovers
 				$('.popLog').popover();
 				this.startGame();
 			}
 			else{
-				// reset the form or compile with the next saved partecipant
-				$("#name").val(this.partList[this.currPartInd]?this.partList[this.currPartInd].name:"");
-				$("#color").val(this.partList[this.currPartInd]?this.partList[this.currPartInd].color:"#000000");
+				if(this.currPartInd == (this.partNum-2)){
+					$('#savePartBtn').show();
+					$('#readyBtn').text("INIZIA");
+				}
+				// Reset the form or compile with the next saved partecipant
+				$("#name").val(this.partList[this.currPartInd+1]?this.partList[this.currPartInd+1].name:"");
+				$("#color").val(this.partList[this.currPartInd+1]?this.partList[this.currPartInd+1].color:"#000000");
 
 				this.currPartInd++;
-				if(this.currPartInd == 2){
+				if(this.currPartInd == 1){
 					$("#backInsBtn").css('display','inline');
 				}
 			}
 		},
 		backInsertPlayer:function(){
 			this.currPartInd--;
-			if(this.currPartInd == 1){
+			if(this.currPartInd == 0){
 				$("#backInsBtn").css('display','none');
 			}
-			
-			$("#name").val(this.partList[this.currPartInd-1].name);
-			$("#color").val(this.partList[this.currPartInd-1].color);
-			this.back.push(this.currPartInd-1);
+			if(this.currPartInd+1 != this.partNum && ($('#readyBtn').text() === "INIZIA")){
+				$('#savePartBtn').hide();
+				$('#readyBtn').text("AVANTI");
+			}
+			$("#name").val(this.partList[this.currPartInd].name);
+			$("#color").val(this.partList[this.currPartInd].color);
+			this.back.push(this.currPartInd);
+		},
+		startGame:function(){
+			$('#insertPart').hide();
+			$('#partTable').show();
+			$('#saveGameBtn').show();
+			for(let i=0; i < this.partNum;i++){
+				$('.nameSpan').eq(i).text(this.partList[i].name);
+				$('.nameSpan').eq(i).css('color',this.partList[i].color);
+				$('.namePoints').eq(i).text(this.partList.points);
+			}
 		},
 		addPoints:function(){
-			//update points
+			// Update points
 			let actualPoints;
-			for(let i=0; i< this.partList.length;i++){
+			for(let i=0; i< this.partNum;i++){
 				actualPoints = ($('.pointsToAdd').eq(i).val() != '')?parseInt($('.pointsToAdd').eq(i).val().slice(0,14)):0;
 				this.partList[i].points += actualPoints;
 				$('.namePoints').eq(i).text(this.partList[i].points);
 				$('.pointsToAdd').eq(i).val('');
-				//update the log of every player
+				// Update the log of every player
 				this.partList[i].pLog.push(this.partList[i].points);
 				$('.popLog').eq(i).attr('data-content',this.partList[i].pLog.join(' '));
 			}
-			//find the min and max points to color the background
+			// Find the min and max points to color the background
 			let min = Math.min.apply(null, this.partList.map(item => item.points));
 			let max = Math.max.apply(null, this.partList.map(item => item.points));
 			
-			for(let j=0;j < this.partList.length;j++){
+			for(let j=0;j < this.partNum;j++){
 				if(this.partList[j].points == min) this.minIndex =j;
 				else if(this.partList[j].points == max) this.maxIndex =j;
 			}
-			//removing all the classes(only the background color is activated)to clean the old value
+			// Removing all the classes (only the background color is activated) to clean the old value
 			$('td').removeClass();
 
 			if(this.winnerOption == 'greaterPoints'){
@@ -122,7 +137,7 @@ app = new Vue({
 		saveGame:function(){
 			let partLogs = [];
 			let names = [];
-			// get the scores for every partecipant
+			// Get the scores for every partecipant
 			this.partList.forEach(part => {
 				names.push(part.name);
 				partLogs.push({[part.name]:part.pLog});
@@ -131,7 +146,7 @@ app = new Vue({
 			let csvData = '';
 			csvData += names.join(";") + "\n";
 
-			// set the format for csv file
+			// Set the format for csv file
 			for(let i=0; i < this.numOfGames; i++){
 				for(let j=0; j < names.length; j++){
 					csvData += partLogs[j][names[j]][i];
@@ -141,13 +156,74 @@ app = new Vue({
 				csvData += "\n";
 			}
 			
-			// download csv file
+			// Download csv file
 			let uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
 			const a = document.createElement('a');
 			a.href = uri; a.download = "scores.csv"; a.target='_blank';
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
+		},
+		savePlayers:function(){
+			let usedMem = 0, keyLen, key;
+			for (key in localStorage) {
+				if (!localStorage.hasOwnProperty(key)) {
+					continue;
+				}
+				keyLen = ((localStorage[key].length + key.length) * 2);
+				usedMem += keyLen;
+			}
+			// Calculate the used local storage in MB
+			usedMem = parseFloat((usedMem / 1024).toFixed(2))/1024;
+			if(usedMem < 9){
+				let data = [];
+				let n = $("#name").val()?$("#name").val():"Undefined";
+				let col = $("#color").val()?$("#color").val():'#000000';
+				this.partList.forEach((pl)=>{
+					data.push({name:pl.name,color:pl.color,points:0,pLog:[]});
+				});
+				// Add the last player to the list only if i didn't load from storage
+				if(this.useLocal){
+					data.pop();
+				}
+				data.push({name:n,color:col,points:0,pLog:[]});
+				let toSave = JSON.stringify(data);
+				// Check if the same group of players is not already saved
+				for (const key in localStorage){
+					if(localStorage[key] === toSave){
+						$('#savePartBtn').attr('data-content','Gruppo già salvato <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>');
+						$('#savePartBtn').popover('show');
+						return;
+					}
+				}
+				localStorage.setItem("group"+this.localSave,toSave);
+				this.localSave++;
+				$('#savePartBtn').attr('data-content','Gruppo salvato <i class="far fa-check-square text-success fa-lg"></i>');
+				$('#savePartBtn').popover('show');
+			}
+			else{
+				$('#savePartBtn').attr('data-content','Memoria non sufficiente <i class="fas fa-times text-danger fa-lg"></i>');
+				$('#savePartBtn').popover('show');
+			}
+		},
+		loadPlayers:function(group){
+			// Update all the data from the chosen group
+			this.partList = [...this.savedGroup[group]];
+			this.partNum = this.partList.length;
+			this.currPartInd = this.partList.length - 1;
+			let lastPart = this.partList[this.partNum-1];
+			$('#name').val(lastPart.name);
+			$('#color').val(lastPart.color);
+			$('#readyBtn').text("INIZIA");
+			$('#backInsBtn').show();
+			$('#loadModal').modal('hide');
+			this.startIns();
+			this.useLocal = true;
+		},
+		deleteSavedGroup:function(group){
+			// Remove the group from the localstorage and update the dom
+			localStorage.removeItem(group);
+			this.$delete(this.savedGroup, group);
 		}
 	},
 	mounted(){
@@ -184,5 +260,22 @@ app = new Vue({
 				console.log(err);
 			})
 		}
+
+		// Check how much groups are saved in localstorage
+		let lastGroup = "0";
+		for (const key in localStorage) {
+			if (!localStorage.hasOwnProperty(key) || !key.startsWith("group")) {
+				continue;
+			}
+			// Set the new key with $set to trigger the change event on dictionary
+			this.$set(this.savedGroup, key, JSON.parse(localStorage.getItem(key)));
+			lastGroup = key;
+		}
+		this.localSave = parseInt(lastGroup.slice(-1))+1;
+
+		// Set the correct viewvport height to avoid chrome soft keyboard
+		let viewheight = $(window).height();
+        let viewport = $("meta[name=viewport]");
+        viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
 	}
 });
