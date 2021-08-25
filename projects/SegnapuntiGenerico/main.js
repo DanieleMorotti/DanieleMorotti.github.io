@@ -273,9 +273,11 @@ app = new Vue({
 		}
 		this.localSave = parseInt(lastGroup.slice(-1))+1;
 
-		// Set the correct viewvport height to avoid chrome soft keyboard
-		let viewheight = $(window).height();
-        let viewport = $("meta[name=viewport]");
-        viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
+		if(/android/i.test(navigator.userAgent)){
+			// Set the correct viewvport height to avoid chrome/android soft keyboard
+			let viewheight = $(window).height();
+			let viewport = $("meta[name=viewport]");
+			viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
+		}
 	}
 });
