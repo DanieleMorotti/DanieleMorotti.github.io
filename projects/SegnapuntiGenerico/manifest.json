@@ -2,7 +2,7 @@
   "name": "Segnapunti - Per ogni gioco!",
   "short_name": "Segnapunti",
   "description": "Un'app per contare i punti del gioco che si preferisce",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#baa28a",
   "theme_color": "#baa28a",
