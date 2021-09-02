@@ -1,0 +1,93 @@
+/* 
+    Jumbotron 
+*/
+#app{
+    padding-left: 0;
+    padding-right: 0;
+}
+.logo-jumbo{
+    margin-top:1rem;
+}
+.jumbotron-fluid{
+    padding-bottom: 1rem;
+}
+.jumboInfo{
+    margin-top: 2rem;
+}
+#infoIcon{
+    margin-top:1rem;
+    cursor:pointer;
+}
+.card.card-body{
+    display: block;
+}
+
+/* 
+    Input and preview 
+*/
+#fileReader{
+    margin-bottom: 2rem;
+}
+#summaryMenu{
+    display: none;
+}
+.inputMenu{
+    margin-bottom:2rem;
+}
+#preview{
+    white-space: pre-line;
+}
+#graphsMenu{
+    display: none;
+    margin-top:2rem;
+}
+#graphsArea{
+    padding:0;
+    width: 70%;
+    height: 60vh;
+    margin-top:2rem;
+}
+#graphsBox{
+    overflow: scroll;
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+    padding:0;
+}
+/* Hide scrollbar for Safari,Chrome and Opera */
+#graphsBox::-webkit-scrollbar {
+    display: none;
+}
+.card-title.btn{
+    background-color: rgb(135, 206, 222);
+}
+.card-body{
+    padding: .75rem;
+}
+.charts{
+    margin-top: 2rem;
+}
+
+/*
+    Media queries for charts 
+*/
+
+@media only screen and (max-width:767px){
+    #graphsArea{
+        width: 100%;
+        height: 40vh;
+    }
+}
+
+@media (orientation:portrait) and (min-width:768px) and (max-width: 1050px){
+    #graphsArea{
+        width: 75%;
+        height: 40vh;
+    }
+}
+
+@media (orientation:landscape) and (min-width:768px) and (max-width: 1050px){
+    #graphsArea{
+        width: 60%;
+        height: 50vh;
+    }
+}

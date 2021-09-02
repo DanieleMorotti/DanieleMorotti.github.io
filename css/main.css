@@ -266,6 +266,9 @@ summary.btn{
     font-weight: bold;
     font-style: italic;
 }
+.btnMargin{
+    margin-bottom:1rem !important;
+}
 
 /* Arrow for scrolling page */
 #arrow{
