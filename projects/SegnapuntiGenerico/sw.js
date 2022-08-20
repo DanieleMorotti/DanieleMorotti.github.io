@@ -1,6 +1,6 @@
 // if you change some static files you change also these name and the cache will be updated
-let staticCache = 'segnapunti_cache-v1';
-let dynamicCache = 'segnapunti_cache_d-v1';
+let staticCache = 'segnapunti_cache-v2';
+let dynamicCache = 'segnapunti_cache_d-v2';
 let staticAssets = ['./','./index.html','./img/quad-appunti.png','./img/quadAppunti192.png','./img/quadAppunti512.png',
                     './img/maskable_icon.png','./img/ios_share.png','./libraries/jquery-3.5.1.min.js','./main.js','./style.css',
                     'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css','https://use.fontawesome.com/releases/v5.6.1/css/all.css',
