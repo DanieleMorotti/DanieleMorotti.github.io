@@ -2,8 +2,8 @@
 <html lang="it">
 	<head>
 		<title>Analizzatore di punteggi</title>
-		<meta charset="utf-8">
-		<meta name="description" content="Analizzatore di un tabellone di punti scritti in formato csv">
+		<meta charset="UTF-8">
+		<meta name="description" content="Analizzatore di un file di punteggi scritti in formato json">
 		<meta name="author" content="Daniele Morotti">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="icon.png">
@@ -29,8 +29,8 @@
 					<div class="container-fluid jumboInfo">
 						<div class="collapse" id="jumboText">
 							<div class="card card-body">
-								Questa applicazione analizza dei file .csv nei quali si hanno come header i nomi dei partecipanti e per ogni riga il punteggio aggiornato (usando come separatore ';').
-								Funziona solo con i punteggi tali per cui chi ha più punti sta vincendo la partita (utilizzando l'app <a href="../SegnapuntiGenerico/index.html" target="_blank">Segnapunti</a> si può salvare un csv che rispetta i requisiti).	  
+								Questa applicazione analizza dei file .json nei quali si hanno i nomi dei partecipanti e lo storico dei punteggi.
+								Al momento funziona solo con i punteggi tali per cui chi ha più punti sta vincendo la partita (utilizzando l'app <a href="../SegnapuntiGenerico/index.html" target="_blank">Segnapunti</a> si può salvare un json che rispetta i requisiti).	  
 							</div>
 						</div>
 						<center>
@@ -41,7 +41,7 @@
 			</div>
 			<!-- Input and summary section -->
 			<div class="container-fluid inputMenu">
-				<input type="file" id="fileReader" accept=".csv">
+				<input type="file" id="fileReader" accept=".json">
 				<div class="card w-100" id="summaryMenu">
 					<div class="card-body">
 						<h5 class="card-title btn" data-toggle="collapse" data-target="#preview" onclick="toggleSumm()">Riassunto partita <i id="summaryIcon" class="fas fa-chevron-up fa-lg"></i></h5>

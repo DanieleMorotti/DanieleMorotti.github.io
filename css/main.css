@@ -60,7 +60,7 @@ h4{
 #portPic{
     padding-top:30px;
 }
-.img-responsives{
+.img-circle{
     max-width:70%;
     max-height:70%;
 }
@@ -69,6 +69,8 @@ h4{
 }
 .img-responsive{
     margin-top: 1em;
+    border-radius: 20px;
+    border: 1px solid black;
 }
 
 /* Background */
@@ -298,7 +300,7 @@ summary.btn{
         font-size: 17pt;
         margin-bottom: 0.8em;
     }
-    .img-responsives{
+    .img-circle{
        max-width: 52%;
     }
 }
@@ -342,7 +344,7 @@ summary.btn{
     .img-responsive{
         max-width: 50% !important;
     }
-    .img-responsives{
+    .img-circle{
         max-width: 35%;
     }
     .dropdown{

@@ -6,7 +6,7 @@ function readFile() {
         reader.readAsText(file, "UTF-8");
         reader.onload = function () {
             let data =  reader.result;
-            getAndProcessCsvData(data);
+            getAndProcessData(data);
         };
         reader.onerror = function () {
             $("#preview").html("Errore durante la lettura del file");
@@ -16,40 +16,38 @@ function readFile() {
 
 $("#fileReader").change(readFile);
 
-// Get the data from the csv file and initialize the data structures to analyze the scores
-function getAndProcessCsvData(allText) {
-    let allLines = allText.split(/\r\n|\n/);
-    let players = allLines[0].split(';');
+// Get the data from the json file and initialize the data structures to analyze the scores
+function getAndProcessData(json) {
+    let data = JSON.parse(json);
+    let players = [];
     let scores = {};
     let info = [];
     // Create the array for every player to sore his scores
-    for (let i=0; i < players.length;i++){
-        scores[players[i]] = [];
+    for (let i=0; i < data.length;i++){
+        players.push(data[i]['name'])
+        scores[players[i]] = data[i]['pLog'];
     }
-    
-    for (let i=1; i < allLines.length; i++) {
-        let line = allLines[i].split(';');
-        // Check if there is a value for every player (correct csv)
-        if (line.length == players.length) {
-            for (let j=0; j < line.length; j++) {
-                scores[players[j]].push(parseInt(line[j]));
-            }
-        }
-    }
+
     analyzeGame(players, scores, info);
 }
+
 
 function analyzeGame(players, scores, info){
     for(let i=0; i < players.length; i++){
         let min = Math.min(...scores[players[i]]);
         let max = Math.max(...scores[players[i]]);
         // Get the differences between all the numbers to retrieve information about the game
-        let differences = scores[players[i]].map(function(score, j){
+        let differences = scores[players[i]].map((score, j) => {
             let prev = scores[players[i]][j-1]?scores[players[i]][j-1]:0;
             return score - prev;
         });
-        let maxWin = Math.max(...differences); let maxLose = Math.min(...differences);
-        let win = differences.filter(sc => sc > 0).length; let lose = scores[players[i]].length - win;
+        let maxWin = Math.max(...differences); 
+        let maxLose = Math.min(...differences);
+        if (maxLose > 0){
+            maxLose = 0
+        }
+        let win = differences.filter(sc => sc > 0).length;
+        let lose = scores[players[i]].length - win;
         let counts = {};
         for (const num of differences) {
             counts[num] = counts[num] ? counts[num] + 1 : 1;

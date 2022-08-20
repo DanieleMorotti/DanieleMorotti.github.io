@@ -2,7 +2,7 @@
 <html lang="it">
 	<head>
 		<title>Segnapunti</title>
-		<meta charset="utf-8">
+		<meta charset="UTF-8">
 		<meta name="description" content="Segnapunti personalizzabile utilizzabile per tutti i giochi">
 		<meta name="author" content="Daniele Morotti">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -67,6 +67,7 @@
 					<label for="smallerPoints">minore</label><br>
 					<button class="btn btn-outline-dark" type="submit" >AVANTI</button>
 					<button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#loadModal">CARICA GIOCATORI</button>
+					<button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#loadGameModal">CARICA PARTITA</button>
 				</form>
 			</div>
 			<div class="container" id="insertPart">
@@ -82,21 +83,23 @@
 				</form>
 			</div>
 			<div class="table-responsive" id="partTable">
-				<table class="table">
-					<tr>
-						<th>Nome</th>
-						<th>Punteggio</th>
-						<th>Aggiungi punti &nbsp;<i style="font-size:1.5rem;color:rgb(7, 28, 221)" class="far fa-plus-square" @click="addPoints()"></i></th>
-					</tr>
-					<tr v-for="i in partNum" :key="i">
-						<td><span class="nameSpan"></span></td>
-						<td><span class="namePoints">0</span>&nbsp;&nbsp;&nbsp;<i class="fas fa-history popLog" tabindex="0" data-toggle="popover" data-placement="auto" data-title="Storico" data-content="" data-trigger="focus"></i></td>
-						<td><input type="number" value="" class="pointsToAdd"></td>
-					</tr>
-				</table>
+				<form @submit.prevent="addPoints()">
+					<table class="table">
+						<tr>
+							<th>Nome</th>
+							<th>Punteggio</th>
+							<th class="pad-bottom-1">Aggiungi punti&nbsp;&nbsp;<button class="submitInvBtn" type="submit"><i style="font-size:1.6rem;color:rgb(7, 28, 221)" class="far fa-plus-square"></i></button></th>
+						</tr>
+						<tr v-for="i in partNum" :key="i">
+							<td><span class="nameSpan"></span></td>
+							<td><span class="namePoints">0</span>&nbsp;&nbsp;&nbsp;<i class="fas fa-history popLog" tabindex="0" data-toggle="popover" data-placement="auto" data-title="Storico" data-content="" data-trigger="focus"></i></td>
+							<td><input type="text" value="" class="pointsToAdd" pattern="-?[0-9]+" oninvalid="this.setCustomValidity('Puoi inserire solo numeri e il segno - per sottrarre.')" @input="checkPointsInput"></td>
+						</tr>
+					</table>
+				</form>
 			</div>
 			<center>
-				<button class="btn btn-outline-dark" id="refreshBtn" @click="refresh()">RINIZIA <i class="fas fa-gamepad"></i></button>
+				<button class="btn btn-outline-dark" id="refreshBtn" @click="refresh()">NUOVA PARTITA <i class="fas fa-gamepad"></i></button>
 				<button class="btn btn-outline-dark" id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
 			</center>
 			<!-- Popover for installation on ios -->
@@ -124,6 +127,28 @@
 								</div>
 							</div>
 							<p v-else>Nessun gruppo salvato</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- Modal for choosing a file for resumin an old game -->
+			<div class="modal fade" id="loadGameModal" aria-hidden="true" role="dialog" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Carica una vecchia partita</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Scegli il file di una vecchia partita salvata:
+								<br><br><input id="loadGameBtn" type="file" accept=".json" @change="loadGame()">
+							</p>
+							<p id="loadFileError" style="display:none">Errore durante la lettura del file, riprova.</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
