@@ -44,6 +44,8 @@ app = new Vue({
 			if (val > 10) {
 				e.target.value = val.slice(0,10); 
 			}
+			// To avoid bug on safari
+			e.target.setCustomValidity('');
 		},
 		savePart:function(){
 			/* If i load the data from localstorage i remove the player to push it again 
