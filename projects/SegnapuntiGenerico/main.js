@@ -1,23 +1,27 @@
 /* Vue app */
-app = new Vue({
-	el:'#app',
-	data:{
-		col:'red',
-		winnerOption:'greaterPoints',
-		currPartInd:0,
-		back:[],
-		partNum:2,
-		numOfGames: 0,
-		maxIntValue: 2100000,
-		partList:[],
-		localSave: 0,
-		savedGroup:{},
-		useLocal: false,
-		maxIndex:0,
-		minIndex:0,
-		initialHref:window.location.href
+const app = Vue.createApp({
+	data(){
+		return {
+			col:'red',
+			winnerOption:'greaterPoints',
+			currPartInd:0,
+			back:[],
+			partNum:2,
+			numOfGames: 0,
+			maxIntValue: 2100000,
+			partList:[],
+			localSave: 0,
+			savedGroup:{},
+			useLocal: false,
+			maxIndex:0,
+			minIndex:0,
+			initialHref:window.location.href,
+			tutorial: null,
+			tutorialInd: 0
+		}
 	},
 	methods:{
+		/* Title editing */
 		doEdit:function(txtArea,el,icon,edit) {
 			let subject =$(txtArea).val();
 			$(el).html(subject);
@@ -34,8 +38,10 @@ app = new Vue({
 			$(icon).hide();
 			$(edit).css('display', 'inline-block');
 		},
+
+		/* Insert partecipants and game options */
 		startIns:function(){
-			$('#menu').hide();
+			$('#insMenu').hide();
 			$('#insertPart').show();
 		},
 		checkPointsInput:function(e){
@@ -68,8 +74,10 @@ app = new Vue({
 			// Check if the partecipant is the last one
 			if(this.currPartInd == this.partNum-1){
 				// Initialize all log popovers
-				$('.popLog').popover();
-				this.startGame();
+				this.$nextTick(() => {
+					$('.popLog').popover();
+					this.startGame();
+				});
 			}
 			else{
 				if(this.currPartInd == (this.partNum-2)){
@@ -100,23 +108,27 @@ app = new Vue({
 			this.back.push(this.currPartInd);
 		},
 		startGame:function(oldGame=false){
+			if(oldGame === false){
+				$('#insMenu').hide();
+				$('#partTable').show();
+			} else{
+				$('#contHeader').show();
+				$('#refreshBtn').show();
+			}
 			$('#insertPart').hide();
 			$('#partTable').show();
 			$('#saveGameBtn').show();
-			for(let i=0; i < this.partNum;i++){
-				$('.nameSpan').eq(i).text(this.partList[i].name);
-				$('.nameSpan').eq(i).css('color',this.partList[i].color);
-				$('.namePoints').eq(i).text(this.partList[i].points);
-				if (oldGame === true){
-					$('.popLog').eq(i).attr('data-content', this.partList[i].pLog.join(' '));
-				}
-			}
+			this.checkBoundCSS();
 		},
+
+		/* Game management */
 		colorBestWorse:function(){
 			// Find the min and max points to color the background
 			let min = Math.min.apply(null, this.partList.map(item => item.points));
 			let max = Math.max.apply(null, this.partList.map(item => item.points));
 			
+			// TODO: small bug, if all the players have the same points then the last one
+			// has both the classes
 			for(let j=0; j < this.partNum; j++){
 				if(this.partList[j].points == min) this.minIndex = j;
 				else if(this.partList[j].points == max) this.maxIndex = j;
@@ -135,7 +147,7 @@ app = new Vue({
 		addPoints:function(){
 			// Update points
 			let actualPoints;
-			for(let i=0; i< this.partNum;i++){
+			for(let i=0; i< this.partNum; i++){
 				actualPoints = ($('.pointsToAdd').eq(i).val() != '')?parseInt($('.pointsToAdd').eq(i).val().slice(0,14)):0;
 				this.partList[i].points += actualPoints;
 				if (this.partList[i].points > this.maxIntValue){
@@ -145,7 +157,6 @@ app = new Vue({
 				$('.pointsToAdd').eq(i).val('');
 				// Update the log of every player
 				this.partList[i].pLog.push(this.partList[i].points);
-				$('.popLog').eq(i).attr('data-content',this.partList[i].pLog.join(' '));
 			}
 			this.colorBestWorse();
 			this.numOfGames += 1;
@@ -153,8 +164,10 @@ app = new Vue({
 		refresh:function(){
 			window.location = this.initialHref;
 		},
+
+		/* Save data or reload old games */
 		saveGame:function(){
-			let data = JSON.stringify(this.partList);
+			let data = JSON.stringify({partecipants: this.partList, winCrit: this.winnerOption});
 			let uri = 'data:application/json;charset=utf-8,' + encodeURIComponent(data);
 			const a = document.createElement('a');
 			a.href = uri; a.download = "scores.json"; a.target='_blank';
@@ -164,12 +177,18 @@ app = new Vue({
 		},
 		getAndProcessJSON:function(json){
 			let data = JSON.parse(json);
-			this.partList = data;
+			this.partNum = data.partecipants.length;
+			this.partList = data.partecipants;
+			this.winnerOption = data.winCrit;
 			$('#loadGameModal').modal('hide');
-			$('.popLog').popover();
-			$('#menu').hide();
-			this.startGame(oldGame=true);
-			this.colorBestWorse();
+			// Wait until the DOM is updated
+			this.$nextTick(() => {
+				$('.popLog').popover();
+				$('#homepage').hide();
+				$('footer').hide();
+				this.startGame(oldGame=true);
+				this.colorBestWorse();
+			});
 		},
 		loadGame:function(){
 			$("#loadFileError").css('display','none');
@@ -246,7 +265,150 @@ app = new Vue({
 		deleteSavedGroup:function(group){
 			// Remove the group from the localstorage and update the dom
 			localStorage.removeItem(group);
-			this.$delete(this.savedGroup, group);
+			delete this.savedGroup[group];
+		},
+
+		/* Hide and show different elements of the game */
+		hideTable:function(){
+			$('#insertPart').show();
+			$('#partTable').hide();
+			$('#saveGameBtn').hide();
+		},
+		showInputs:function(){
+			$('#homepage').hide();
+			$('#contHeader').show();
+			$('#insMenu').show();
+			$('#refreshBtn').show();
+			$('footer').hide();
+			this.checkBoundCSS();
+		},
+
+		/* Tutorial section */
+		activateTutorial:function(){
+			this.tutorial = new Shepherd.Tour({
+				useModalOverlay: true,
+				exitOnEsc: false,
+				defaultStepOptions: {
+					cancelIcon: {
+						enabled: true
+					},
+					arrow: true,
+					scrollTo: { behavior: 'smooth', block: 'center' }
+				}
+			});
+			// Show the game screen 
+			this.showInputs();
+			this.addTutorialSteps();
+			this.tutorial.start();
+		},
+		addTutorialSteps:function(){
+			titles = ['Modifica il titolo', 'Carica giocatori salvati', 'Salva giocatori inseriti', 'Inserisci punteggi', 'Somma i punteggi',
+					  'Mostra lo storico', 'Salva partita'];
+			elements = ['#iconEdit', 'button[data-target="#loadModal"]', '#savePartBtn', 'tr:nth-child(2) td:nth-child(3) .pointsToAdd',
+						'.submitInvBtn .fa-plus-square', 'tr:nth-child(2) td:nth-child(2) .fas', '#saveGameBtn'];
+			texts = ["Cliccando sull' icona potrai cambiare il titolo e il colore.", "Se avevi salvato precedentemente delle combinazioni \
+					  di giocatori le potrai selezionare per iniziare la partita più velocemente.", "Salva i giocatori per poterli \
+					  scegliere in una partita futura. (Inserisci prima il nome e il colore dell'ultimo giocatore altrimenti verrà salvato con valori di default).",
+					  "Scrivi il punteggio di ogni giocatore nelle caselle bianche (se non viene inserito nessun numero viene considerato come \
+					  0).", "Premendo sul simbolo del più tutti i nuovi punteggi dei giocatori verranno sommati ai precedenti e aggiunti allo \
+					  storico. Il giocatore che sarà in vantaggio avrà la casella con lo sfondo verde e quello che starà perdendo avrà lo sfondo \
+					  rosso.", "Cliccando sul simbolo che si trova vicino al punteggio di ogni giocatore verrà mostrato lo storico dei punteggi \
+					  avuti da quel giocatore nella partita corrente.", "Premendo, la partita verrà salvata in un file .json che si potrà poi \
+					  inserire nel menù principale per continuare dal punto a cui si era rimasti."];
+			
+			let vueObj = this;
+			let backBtn = {
+				action() {
+					if(vueObj.tutorialInd == 2){
+						vueObj.partList = [];
+						vueObj.currPartInd = 0;
+						$('#name').val('');
+						$('#color').val('#000000');
+						$('#insertPart').hide();
+						$('#insMenu').show();
+					}
+					else if(vueObj.tutorialInd == 3){
+						vueObj.hideTable();
+						vueObj.partList.pop();
+					}
+					vueObj.tutorialInd -= 1;
+					return this.back();
+				},
+				text: 'Indietro'
+			};
+
+			for(let i=0; i < titles.length; i++){
+				this.tutorial.addStep({
+					title: `${titles[i]} - STEP ${i+1}/${titles.length}`,
+					text: `${texts[i]}`,
+					buttons: [
+						// Insert the 'back' button only if the tutorial is not in step 1
+						... i != 0 ? [backBtn] : [],
+						{
+							action() {
+								if(i == 1){
+									// Simulate partecipants insertion
+									vueObj.partNum = 2;
+									vueObj.startIns();
+									$('#name').val('Giocatore 1');
+									$('#color').val('#000000');
+									vueObj.savePart();
+									$('#name').val('Giocatore 2');
+									$('#color').val('#FF0000');
+								}
+								else if(i == 2){
+									vueObj.savePart();
+								}
+								else if(i == titles.length-1){
+									vueObj.refresh();
+								}
+								vueObj.$nextTick(() => {
+									vueObj.tutorialInd += 1;
+									return this.next();
+								});
+							},
+							text: i == titles.length-1 ? 'Fine' : 'Avanti'
+						}
+					],
+					attachTo: {
+						element: `${elements[i]}`,
+						on: 'bottom'
+					},
+					when: {
+						cancel: () => {
+						  	vueObj.refresh();
+						}
+					},
+					id: `step${i}`,
+					canClickTarget: false
+				});
+			}
+		},
+		checkBoundCSS:function(){
+			let elem = document.querySelector('#refreshBtn');
+			// Get element's bounding
+			let bounding = elem.getBoundingClientRect();
+		
+			// Check if it's out of the viewport on each side
+			let out = {};
+			out.top = bounding.top < 0;
+			out.left = bounding.left < 0;
+			out.bottom = bounding.bottom > (window.innerHeight || document.documentElement.clientHeight);
+			out.right = bounding.right > (window.innerWidth || document.documentElement.clientWidth);
+			out.any = out.top || out.left || out.bottom || out.right;
+		
+			if(out.any){
+				if($('#app').css('overflow') !== 'scroll'){
+					// Show all the app screen in small devices
+					$('#app').css('overflow', 'scroll')
+				}
+			}
+			else{
+				if($('#app').css('overflow') !== 'hidden'){
+					// Show the normal screen of the app
+					$('#app').css('overflow', 'hidden')
+				}
+			}
 		}
 	},
 	mounted(){
@@ -290,8 +452,8 @@ app = new Vue({
 			if (!localStorage.hasOwnProperty(key) || !key.startsWith("group")) {
 				continue;
 			}
-			// Set the new key with $set to trigger the change event on dictionary
-			this.$set(this.savedGroup, key, JSON.parse(localStorage.getItem(key)));
+			// Set the new key in the dictionary
+			this.savedGroup[key] = JSON.parse(localStorage.getItem(key));
 			lastGroup = key;
 		}
 		this.localSave = parseInt(lastGroup.slice(-1))+1;
@@ -302,5 +464,8 @@ app = new Vue({
 			let viewport = $("meta[name=viewport]");
 			viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
 		}
+		this.checkBoundCSS();
 	}
 });
+
+app.mount("#app");

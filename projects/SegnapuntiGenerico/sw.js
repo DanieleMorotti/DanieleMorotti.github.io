@@ -1,10 +1,11 @@
 // if you change some static files you change also these name and the cache will be updated
-let staticCache = 'segnapunti_cache-v3';
-let dynamicCache = 'segnapunti_cache_d-v3';
+let staticCache = 'segnapunti_cache-v3.2';
+let dynamicCache = 'segnapunti_cache_d-v3.2';
 let staticAssets = ['./','./index.html','./img/quad-appunti.png','./img/quadAppunti192.png','./img/quadAppunti512.png',
                     './img/maskable_icon.png','./img/ios_share.png','./libraries/jquery-3.5.1.min.js','./main.js','./style.css',
                     'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css','https://use.fontawesome.com/releases/v5.6.1/css/all.css',
-                    'https://cdn.jsdelivr.net/npm/vue@2.6.11', 'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js'];
+                    'https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css','https://unpkg.com/vue@3/dist/vue.global.prod.js', 
+                    'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js','https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js'];
 
 // On install - caching the application static files
 self.addEventListener('install', e => {

@@ -37,29 +37,41 @@
 		<!-- Cdn and stylesheet-->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 		<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css"/>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
 
 	<body>
 		<noscript>Attivare JS per poter utilizzare l'app</noscript>
 		<div class="container-fluid" id="app">
+			<!-- Homepage -->
+			<div class="container" id="homepage">
+				<h1 id="homeTitle">Segna<wbr>punti</h1>
+				<div class="container flexHomeMenu">
+					<button class="btn btn-info flexHomeItem" @click="showInputs()">Inizia partita</button>
+					<button class="btn btn-info flexHomeItem" data-toggle="modal" data-target="#loadGameModal">Carica partita</button>
+					<button class="btn btn-info flexHomeItem" @click="activateTutorial()">Tutorial</button>
+				</div>
+			</div>
+			<!-- Title editor -->
 			<center>
-				<div class="container" id="cont-header">
-					<h1 id="titolo" v-bind:style="{color: col}">Titolo</h1>&nbsp;
-					<i id="icon-edit" class="fas fa-edit"  @click="toggleEditor('#t-area1','#titolo','#icon-edit','#editor')"></i>
+				<div class="container" id="contHeader">
+					<h1 id="gameTitle" v-bind:style="{color: col}">Titolo</h1>&nbsp;
+					<i id="iconEdit" class="fas fa-edit"  @click="toggleEditor('#txtArea1','#gameTitle','#iconEdit','#editor')"></i>
 					<div class="container" id="editor">
-						<textarea id="t-area1" name="ta1" rows="1" cols="15" maxlength="20" v-bind:style="{color: col}"></textarea><br/>
+						<textarea id="txtArea1" name="ta1" rows="1" cols="15" maxlength="15" v-bind:style="{color: col}"></textarea><br/>
 						<label for="i-color">Scegli il colore:</label>
 						<input v-model="col" type="color">
-						<button id="editTitleBtn" @click="doEdit('#t-area1','#titolo','#icon-edit','#editor')">Modifica <i class="fas fa-check"></i></button>
+						<button id="editTitleBtn" @click="doEdit('#txtArea1','#gameTitle','#iconEdit','#editor')">Modifica <i class="fas fa-check"></i></button>
 					</div>
 				</div>
 			</center>
-			<div class="container" id="menu">
+			<!-- Input menu -->
+			<div class="container" id="insMenu">
 				<form @submit.prevent="startIns()">
 					<label for="partNum">Inserisci il numero di partecipanti:</label>
-					<input id="partNum" class="inputNumber" v-model.number="partNum" type="number" value="2" min="2" required><br>
+					<input id="partNum" class="inputNumber" v-model.number="partNum" type="number" min="2" required><br>
 					<span>Vince chi ha il punteggio:<span><br>
 					<input type="radio" v-model="winnerOption" id="greaterPoints" name="pointsOption" value="greaterPoints">
 					<label for="greaterPoints">maggiore </label><br>
@@ -67,21 +79,19 @@
 					<label for="smallerPoints">minore</label><br>
 					<button class="btn btn-outline-dark" type="submit" >AVANTI</button>
 					<button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#loadModal">CARICA GIOCATORI</button>
-					<button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#loadGameModal">CARICA PARTITA</button>
 				</form>
 			</div>
 			<div class="container" id="insertPart">
-				<form id="insertPartForm">
-					<label for="name">Nome partecipante&nbsp;<span>{{currPartInd+1}}</span></label><br>
-					<input type="text" id="name" name="name" value="" style="width:7.5em"><br><br>
-					<label for="color">Scegli il tuo colore</label><br>
-					<input type="color" id="color" name="color"><br><br>
-					<button class="btn btn-outline-dark" type="button" id="backInsBtn" @click="backInsertPlayer()" style="display:none"> &lt;</button>
-					<button class="btn btn-outline-dark" type="button" id="readyBtn" @click="savePart()">AVANTI</button>
-					<a href="#" class="btn btn-outline-dark" id="savePartBtn" @click.prevent="savePlayers()" style="display:none" tabindex="0" data-toggle="popover" data-placement="auto" 
-						data-title="Salvataggio giocatori" data-html="true" data-content="" data-trigger="focus">SALVA GIOCATORI</a>
-				</form>
+				<label for="name">Nome partecipante&nbsp;<span>{{currPartInd+1}}</span></label><br>
+				<input type="text" id="name" name="name" value="" style="width:7.5em"><br><br>
+				<label for="color">Scegli il tuo colore</label><br>
+				<input type="color" id="color" name="color"><br><br>
+				<button class="btn btn-outline-dark" type="button" id="backInsBtn" @click="backInsertPlayer()" style="display:none"> &lt;</button>
+				<button class="btn btn-outline-dark" type="button" id="readyBtn" @click="savePart()">AVANTI</button>
+				<a href="#" class="btn btn-outline-dark" id="savePartBtn" @click.prevent="savePlayers()" style="display:none" tabindex="0" data-toggle="popover" data-placement="auto" 
+					data-title="Salvataggio giocatori" data-html="true" data-content="" data-trigger="focus">SALVA GIOCATORI</a>
 			</div>
+			<!-- Table for partecipants -->
 			<div class="table-responsive" id="partTable">
 				<form @submit.prevent="addPoints()">
 					<table class="table">
@@ -90,18 +100,21 @@
 							<th>Punteggio</th>
 							<th class="pad-bottom-1">Aggiungi punti&nbsp;&nbsp;<button class="submitInvBtn" type="submit"><i style="font-size:1.6rem;color:rgb(7, 28, 221)" class="far fa-plus-square"></i></button></th>
 						</tr>
-						<tr v-for="i in partNum" :key="i">
-							<td><span class="nameSpan"></span></td>
-							<td><span class="namePoints">0</span>&nbsp;&nbsp;&nbsp;<i class="fas fa-history popLog" tabindex="0" data-toggle="popover" data-placement="auto" data-title="Storico" data-content="" data-trigger="focus"></i></td>
+						<tr v-for="(el, i) in partList" :key="i">
+							<td><span class="nameSpan" :style="{color: el.color}">{{ el.name }}</span></td>
+							<td><span class="namePoints">{{el.points}}</span>&nbsp;&nbsp;&nbsp;<i class="fas fa-history popLog" tabindex="0" data-toggle="popover" data-placement="auto" data-title="Storico" :data-content="el.pLog.join(' ')" data-trigger="focus"></i></td>
 							<td><input type="text" value="" class="pointsToAdd" pattern="-?[0-9]+" oninvalid="this.setCustomValidity('Puoi inserire solo numeri e il segno - per sottrarre.')" @input="checkPointsInput"></td>
 						</tr>
 					</table>
 				</form>
 			</div>
 			<center>
-				<button class="btn btn-outline-dark" id="refreshBtn" @click="refresh()">NUOVA PARTITA <i class="fas fa-gamepad"></i></button>
+				<button class="btn btn-outline-dark" id="refreshBtn" @click="refresh()">HOMEPAGE <i class="fas fa-home"></i></button>
 				<button class="btn btn-outline-dark" id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
 			</center>
+			<footer class="infoFooter">
+				by Daniele Morotti, Version 3.2 
+			</footer>
 			<!-- Popover for installation on ios -->
 			<center>
 				<a id="iosDown" href="#" tabindex="0" style="position:fixed;right:0;left:0" data-toggle="popover" data-placement="top" data-html="true"
@@ -129,7 +142,7 @@
 							<p v-else>Nessun gruppo salvato</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
                         </div>
                     </div>
                 </div>
@@ -151,7 +164,7 @@
 							<p id="loadFileError" style="display:none">Errore durante la lettura del file, riprova.</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
                         </div>
                     </div>
                 </div>
@@ -159,6 +172,7 @@
 		</div>
 		<script src="libraries/jquery-3.5.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>	
+		<script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script>
 		<script type="text/javascript" src="main.js"></script>
 	</body>
 </html>
