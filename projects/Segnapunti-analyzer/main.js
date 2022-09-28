@@ -23,9 +23,9 @@ function getAndProcessData(json) {
     let scores = {};
     let info = [];
     // Create the array for every player to sore his scores
-    for (let i=0; i < data.length;i++){
-        players.push(data[i]['name'])
-        scores[players[i]] = data[i]['pLog'];
+    for (let i=0; i < data['partecipants'].length;i++){
+        players.push(data['partecipants'][i]['name'])
+        scores[players[i]] = data['partecipants'][i]['pLog'];
     }
 
     analyzeGame(players, scores, info);
