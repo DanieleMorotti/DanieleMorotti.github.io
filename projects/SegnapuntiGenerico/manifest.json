@@ -15,7 +15,14 @@
     "sizes": "274x274",
     "type": "image/png",
     "purpose": "maskable"
-  }, {
+  }, 
+  {
+    "src" : "img/quadAppunti512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+	 "purpose": "maskable"
+  },
+  {
     "src" : "img/quadAppunti512.png",
     "sizes": "512x512",
     "type": "image/png"
