@@ -63,7 +63,7 @@
 						<textarea id="txtArea1" name="ta1" rows="1" cols="15" maxlength="15" v-bind:style="{color: col}"></textarea><br/>
 						<label for="i-color">Scegli il colore:</label>
 						<input v-model="col" type="color">
-						<button id="editTitleBtn" @click="doEdit('#txtArea1','#gameTitle','#iconEdit','#editor')">Modifica <i class="fas fa-check"></i></button>
+						<button id="editTitleBtn" class="btn btn-outline-dark" @click="doEdit('#txtArea1','#gameTitle','#iconEdit','#editor')">Modifica <i class="fas fa-check"></i></button>
 					</div>
 				</div>
 			</center>
@@ -113,7 +113,7 @@
 				<button class="btn btn-outline-dark" id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
 			</center>
 			<footer class="infoFooter">
-				by Daniele Morotti, Version 3.2 
+				by Daniele Morotti, Version 3.3
 			</footer>
 			<!-- Popover for installation on ios -->
 			<center>

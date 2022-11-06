@@ -29,6 +29,7 @@ const app = Vue.createApp({
 			$(el).show();
 			$(icon).show();
 			$(edit).hide();
+			this.checkBoundCSS();
 		},
 		toggleEditor:function(txtArea,el,icon,edit) {
 			if(el) var subject = $(el).text();
