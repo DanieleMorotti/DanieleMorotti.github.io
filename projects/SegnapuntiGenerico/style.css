@@ -28,7 +28,11 @@ body{
     background-color: lightskyblue;
     color:black;
     width:90%;
+    overflow-x: scroll;
 }
+.chooseGroupBtn::-webkit-scrollbar {
+    display: none;
+  }
 .btn-outline-dark{
     background-color: #EFEFEF;
     padding: .25rem .5rem;
