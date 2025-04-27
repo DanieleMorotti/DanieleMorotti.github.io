@@ -37,7 +37,7 @@
 		<!-- Cdn and stylesheet-->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 		<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css"/>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css">
 		<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
@@ -60,7 +60,7 @@
 					<h1 id="gameTitle" v-bind:style="{color: col}">Titolo</h1>&nbsp;
 					<i id="iconEdit" class="fas fa-edit"  @click="toggleEditor('#txtArea1','#gameTitle','#iconEdit','#editor')"></i>
 					<div class="container" id="editor">
-						<textarea id="txtArea1" name="ta1" rows="1" cols="15" maxlength="15" v-bind:style="{color: col}"></textarea><br/>
+						<textarea id="txtArea1" name="ta1" rows="1" cols="15" maxlength="15" v-bind:style="{color: col}"></textarea><br>
 						<label for="i-color">Scegli il colore:</label>
 						<input v-model="col" type="color">
 						<button id="editTitleBtn" class="btn btn-outline-dark" @click="doEdit('#txtArea1','#gameTitle','#iconEdit','#editor')">Modifica <i class="fas fa-check"></i></button>
@@ -72,7 +72,7 @@
 				<form @submit.prevent="startIns()">
 					<label for="partNum">Inserisci il numero di partecipanti:</label>
 					<input id="partNum" class="inputNumber" v-model.number="partNum" type="number" min="2" required><br>
-					<span>Vince chi ha il punteggio:<span><br>
+					<span>Vince chi ha il punteggio:</span><br>
 					<input type="radio" v-model="winnerOption" id="greaterPoints" name="pointsOption" value="greaterPoints">
 					<label for="greaterPoints">maggiore </label><br>
 					<input type="radio" v-model="winnerOption" id="smallerPoints" name="pointsOption" value="smallerPoints">
@@ -113,7 +113,7 @@
 				<button class="btn btn-outline-dark" id="saveGameBtn" @click="saveGame()">SALVA <i class="fas fa-file-download"></i></button>
 			</center>
 			<footer class="infoFooter">
-				by Daniele Morotti, Version 3.3
+				by Daniele Morotti, Version 3.5
 			</footer>
 			<!-- Popover for installation on ios -->
 			<center>
@@ -147,7 +147,7 @@
                     </div>
                 </div>
             </div>
-			<!-- Modal for choosing a file for resumin an old game -->
+			<!-- Modal to choose a file to resume an old game -->
 			<div class="modal fade" id="loadGameModal" aria-hidden="true" role="dialog" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content">
@@ -169,10 +169,42 @@
                     </div>
                 </div>
             </div>
+			<!-- Modal to restore the previous game -->
+			<div class="modal fade" id="resumeGameModal" aria-hidden="true" role="dialog" tabindex="-1">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+						<h5 class="modal-title">Partita precedente trovata</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						</div>
+						<div class="modal-body">
+						<p>È stata trovata una partita precedente. Vuoi riprendere da dove eri rimasto?</p>
+						<div v-if="savedGameState" class="saved-game-info">
+							<p><strong>Giocatori:</strong></p>
+							<div class="player-list-container">
+							<ul class="list-group player-list">
+								<li class="list-group-item" v-for="player in savedGameState.partecipants" :key="player.name">
+								<span class="player-name">{{ player.name }}</span>:
+								<span class="player-points">{{ player.points }} punti</span>
+								</li>
+							</ul>
+							</div>
+						</div>
+						</div>
+						<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" @click="clearSavedGameState">No, inizia una nuova partita</button>
+						<button type="button" class="btn btn-primary" @click="loadSavedGameState">Sì, riprendi la partita</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		</div>
 		<script src="libraries/jquery-3.5.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>	
 		<script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script>
-		<script type="text/javascript" src="main.js"></script>
+		<script src="main.js"></script>
 	</body>
 </html>

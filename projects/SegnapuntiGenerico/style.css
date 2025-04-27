@@ -32,7 +32,7 @@ body{
 }
 .chooseGroupBtn::-webkit-scrollbar {
     display: none;
-  }
+}
 .btn-outline-dark{
     background-color: #EFEFEF;
     padding: .25rem .5rem;
@@ -121,6 +121,21 @@ input[type='file'] {
     width: 35%;
     font-size: 1.8rem;
     background-color: rgba(70, 69, 234, 0.9);
+}
+
+/* Modal for restored scores */
+.player-list-container {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+.player-list {
+    margin-bottom: 0;
+}
+.player-list-container::-webkit-scrollbar {
+    display: none;
 }
 
 /*Header part*/

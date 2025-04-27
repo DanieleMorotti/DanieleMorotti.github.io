@@ -17,10 +17,129 @@ const app = Vue.createApp({
 			minIndex:0,
 			initialHref:window.location.href,
 			tutorial: null,
-			tutorialInd: 0
+			tutorialInd: 0,
+			savedGameState: null,
+			savedGameKey: 'currentGameState',
+			db: null
 		}
 	},
 	methods:{
+		/* IndexedDB Setup and Helper Functions */
+		initDB: function() {
+			return new Promise((resolve, reject) => {
+				const request = indexedDB.open('scoreTrackerDB', 1);
+				
+				request.onerror = event => {
+					console.error('IndexedDB error:', event.target.error);
+					reject(event.target.error);
+				};
+				
+				request.onupgradeneeded = event => {
+					const db = event.target.result;
+					
+					// Create object stores
+					if (!db.objectStoreNames.contains('savedGroups')) {
+						db.createObjectStore('savedGroups', { keyPath: 'id' });
+					}
+					
+					if (!db.objectStoreNames.contains('gameState')) {
+						db.createObjectStore('gameState', { keyPath: 'id' });
+					}
+					
+					if (!db.objectStoreNames.contains('appSettings')) {
+						db.createObjectStore('appSettings', { keyPath: 'id' });
+					}
+				};
+				
+				request.onsuccess = event => {
+					this.db = event.target.result;
+					resolve(this.db);
+				};
+			});
+		},
+
+		// Helper functions for IndexedDB operations
+		getFromDB: function(storeName, key) {
+			return new Promise((resolve, reject) => {
+				if (!this.db) {
+					reject('Database not initialized');
+					return;
+				}
+				
+				const transaction = this.db.transaction(storeName, 'readonly');
+				const store = transaction.objectStore(storeName);
+				const request = store.get(key);
+				
+				request.onsuccess = () => {
+					resolve(request.result);
+				};
+				
+				request.onerror = event => {
+					reject(event.target.error);
+				};
+			});
+		},
+		saveToDB: function(storeName, data) {
+			return new Promise((resolve, reject) => {
+				if (!this.db) {
+					reject('Database not initialized');
+					return;
+				}
+				
+				const transaction = this.db.transaction(storeName, 'readwrite');
+				const store = transaction.objectStore(storeName);
+				const request = store.put(data);
+				
+				request.onsuccess = () => {
+					resolve(request.result);
+				};
+				
+				request.onerror = event => {
+					reject(event.target.error);
+				};
+			});
+		},
+		removeFromDB: function(storeName, key) {
+			return new Promise((resolve, reject) => {
+				if (!this.db) {
+					reject('Database not initialized');
+					return;
+				}
+				
+				const transaction = this.db.transaction(storeName, 'readwrite');
+				const store = transaction.objectStore(storeName);
+				const request = store.delete(key);
+				
+				request.onsuccess = () => {
+					resolve();
+				};
+				
+				request.onerror = event => {
+					reject(event.target.error);
+				};
+			});
+		},
+		getAllFromDB: function(storeName) {
+			return new Promise((resolve, reject) => {
+				if (!this.db) {
+					reject('Database not initialized');
+					return;
+				}
+				
+				const transaction = this.db.transaction(storeName, 'readonly');
+				const store = transaction.objectStore(storeName);
+				const request = store.getAll();
+				
+				request.onsuccess = () => {
+					resolve(request.result);
+				};
+				
+				request.onerror = event => {
+					reject(event.target.error);
+				};
+			});
+		},
+
 		/* Title editing */
 		doEdit:function(txtArea,el,icon,edit) {
 			let subject =$(txtArea).val();
@@ -55,7 +174,7 @@ const app = Vue.createApp({
 			e.target.setCustomValidity('');
 		},
 		savePart:function(){
-			/* If i load the data from localstorage i remove the player to push it again 
+			/* If i load the data from indexeddb i remove the player to push it again 
 			(i need it to have also the last player of group visible if i use back button)*/
 			if(this.useLocal && (this.currPartInd == this.partNum-1)){
 				this.partList.pop();
@@ -121,6 +240,26 @@ const app = Vue.createApp({
 			$('#saveGameBtn').show();
 			this.checkBoundCSS();
 		},
+		// Save current game state to IndexedDB
+		saveCurrentGameState: function() {
+			// Only save if we have started a game (have participants with points)
+			if (this.partList.length > 0 && this.numOfGames > 0) {
+				// Create a deep clone by stringifying and parsing the data
+				// This ensures no references or non-serializable objects get through
+				const safePartList = JSON.parse(JSON.stringify(this.partList));
+				
+				const gameState = {
+					id: this.savedGameKey,
+					partecipants: safePartList,
+					winCrit: this.winnerOption,
+					numOfGames: this.numOfGames
+				};
+				
+				this.saveToDB('gameState', gameState).catch(error => {
+					console.error('Error saving game state:', error);
+				});
+			}
+		},
 
 		/* Game management */
 		colorBestWorse:function(){
@@ -161,9 +300,54 @@ const app = Vue.createApp({
 			}
 			this.colorBestWorse();
 			this.numOfGames += 1;
+			
+			// Add this line to save the game state after updating points
+  			this.saveCurrentGameState();
 		},
 		refresh:function(){
-			window.location = this.initialHref;
+			this.removeFromDB('gameState', this.savedGameKey).then(() => {
+				window.location = this.initialHref;
+			}).catch(error => {
+				console.error('Error clearing game state:', error);
+				window.location = this.initialHref;
+			});
+		},
+		// Function to load the saved game state
+		loadSavedGameState: function() {
+			this.getFromDB('gameState', this.savedGameKey).then(savedData => {
+				if (savedData) {
+					this.getAndProcessGameState(savedData);
+					// Clear the saved game state since we've now loaded it
+					return this.removeFromDB('gameState', this.savedGameKey);
+				}
+			}).then(() => {
+				$('#resumeGameModal').modal('hide');
+				$('#insMenu').hide();
+			}).catch(error => {
+				console.error('Error loading saved game:', error);
+				$('#resumeGameModal').modal('hide');
+			});
+		},
+		
+		// Function to clear the saved game state without loading it
+		clearSavedGameState: function() {
+			this.removeFromDB('gameState', this.savedGameKey).then(() => {
+				$('#resumeGameModal').modal('hide');
+			}).catch(error => {
+				console.error('Error clearing saved game:', error);
+				$('#resumeGameModal').modal('hide');
+			});
+		},
+		checkForSavedGame: function() {
+			this.getFromDB('gameState', this.savedGameKey).then(savedGame => {
+				if (savedGame) {
+					this.savedGameState = savedGame;
+					// If we have a valid saved game, show the resume modal
+					$('#resumeGameModal').modal('show');
+				}
+			}).catch(error => {
+				console.error('Error checking for saved game:', error);
+			});
 		},
 
 		/* Save data or reload old games */
@@ -191,6 +375,20 @@ const app = Vue.createApp({
 				this.colorBestWorse();
 			});
 		},
+		getAndProcessGameState:function(data){
+			this.partNum = data.partecipants.length;
+			this.partList = data.partecipants;
+			this.winnerOption = data.winCrit;
+			this.numOfGames = data.numOfGames || 0;
+			// Wait until the DOM is updated
+			this.$nextTick(() => {
+				$('.popLog').popover();
+				$('#homepage').hide();
+				$('footer').hide();
+				this.startGame(oldGame=true);
+				this.colorBestWorse();
+			});
+		},
 		loadGame:function(){
 			$("#loadFileError").css('display','none');
 			/* Read the file information */
@@ -207,47 +405,70 @@ const app = Vue.createApp({
 				};
 			}
 		},
-		savePlayers:function(){
-			let usedMem = 0, keyLen, key;
-			for (key in localStorage) {
-				if (!localStorage.hasOwnProperty(key)) {
-					continue;
-				}
-				keyLen = ((localStorage[key].length + key.length) * 2);
-				usedMem += keyLen;
-			}
-			// Calculate the used local storage in MB
-			usedMem = parseFloat((usedMem / 1024).toFixed(2))/1024;
-			if(usedMem < 9){
+		savePlayers: function() {
+			// Get a new group ID
+			this.getFromDB('appSettings', 'groupCounter').then(counter => {
+				let groupCounter = counter ? counter.value : 0;
+				
 				let data = [];
-				let n = $("#name").val()?$("#name").val():"Undefined";
-				let col = $("#color").val()?$("#color").val():'#000000';
-				this.partList.forEach((pl)=>{
-					data.push({name:pl.name,color:pl.color,points:0,pLog:[]});
+				let n = $("#name").val() ? $("#name").val() : "Undefined";
+				let col = $("#color").val() ? $("#color").val() : '#000000';
+				
+				this.partList.forEach((pl) => {
+					// Create a clean copy of each player object
+					data.push({
+						name: pl.name, 
+						color: pl.color, 
+						points: 0, 
+						pLog: JSON.parse(JSON.stringify(pl.pLog || []))
+					});
 				});
+				
 				// Add the last player to the list only if i didn't load from storage
-				if(this.useLocal){
+				if (this.useLocal) {
 					data.pop();
 				}
-				data.push({name:n,color:col,points:0,pLog:[]});
-				let toSave = JSON.stringify(data);
+				data.push({name: n, color: col, points: 0, pLog: []});
+				
 				// Check if the same group of players is not already saved
-				for (const key in localStorage){
-					if(localStorage[key] === toSave){
-						$('#savePartBtn').attr('data-content','Gruppo già salvato <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>');
-						$('#savePartBtn').popover('show');
-						return;
+				this.getAllFromDB('savedGroups').then(groups => {
+					const stringifiedData = JSON.stringify(data);
+					
+					for (const group of groups) {
+						if (JSON.stringify(group.players) === stringifiedData) {
+							$('#savePartBtn').attr('data-content', 'Gruppo già salvato <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>');
+							$('#savePartBtn').popover('show');
+							return;
+						}
 					}
-				}
-				localStorage.setItem("group"+this.localSave,toSave);
-				this.localSave++;
-				$('#savePartBtn').attr('data-content','Gruppo salvato <i class="far fa-check-square text-success fa-lg"></i>');
-				$('#savePartBtn').popover('show');
-			}
-			else{
-				$('#savePartBtn').attr('data-content','Memoria non sufficiente <i class="fas fa-times text-danger fa-lg"></i>');
-				$('#savePartBtn').popover('show');
-			}
+					
+					// Save the new group
+					const groupId = 'group' + groupCounter;
+					return this.saveToDB('savedGroups', {
+						id: groupId,
+						players: data
+					}).then(() => {
+						// Update group counter
+						return this.saveToDB('appSettings', {
+							id: 'groupCounter',
+							value: groupCounter + 1
+						});
+					}).then(() => {
+						this.localSave = groupCounter + 1;
+						$('#savePartBtn').attr('data-content', 'Gruppo salvato <i class="far fa-check-square text-success fa-lg"></i>');
+						$('#savePartBtn').popover('show');
+						
+						// Update savedGroup object for UI
+						this.savedGroup[groupId] = data;
+					});
+				}).catch(error => {
+					console.error('Error saving players group:', error);
+					$('#savePartBtn').attr('data-content', 'Errore nel salvataggio <i class="fas fa-times text-danger fa-lg"></i>');
+					$('#savePartBtn').popover('show');
+				});
+			}).catch(error => {
+				console.error('Error getting group counter:', error);
+			});
 		},
 		loadPlayers:function(group){
 			// Update all the data from the chosen group
@@ -264,9 +485,12 @@ const app = Vue.createApp({
 			this.useLocal = true;
 		},
 		deleteSavedGroup:function(group){
-			// Remove the group from the localstorage and update the dom
-			localStorage.removeItem(group);
-			delete this.savedGroup[group];
+			// Remove the group from the indexedDB and update the DOM
+			this.removeFromDB('savedGroups', group).then(() => {
+				delete this.savedGroup[group];
+			}).catch(error => {
+				console.error('Error deleting group:', error);
+			});
 		},
 
 		/* Hide and show different elements of the game */
@@ -276,6 +500,7 @@ const app = Vue.createApp({
 			$('#saveGameBtn').hide();
 		},
 		showInputs:function(){
+			this.checkForSavedGame();
 			$('#homepage').hide();
 			$('#contHeader').show();
 			$('#insMenu').show();
@@ -410,23 +635,30 @@ const app = Vue.createApp({
 					$('#app').css('overflow', 'hidden')
 				}
 			}
-		}
-	},
-	mounted(){
-		/* PWA Section */
-		if('serviceWorker' in navigator){
-			navigator.serviceWorker.register("sw.js").then(registration => {
-				// Retrieve information to know if the device use ios and not from the installed app
+		},
+		// Load saved iOS notification preferences from IndexedDB
+		loadNotificationPreferences: function() {
+			this.getFromDB('appSettings', 'iosNotification').then(settings => {
+				if (settings) {
+					return settings;
+				} else {
+					// Default values if not found
+					return {
+						id: 'iosNotification',
+						lastNotification: Date.now(),
+						firstTime: true
+					};
+				}
+			}).then(settings => {
+				// Check if we should show the iOS installation notification
 				const userAgent = window.navigator.userAgent.toLowerCase();
 				let isIphone = /iphone/.test(userAgent);
 				let isIpad = /ipad/.test(userAgent);
 				const webkit = !!userAgent.match(/webkit/i);
 				const isSafari = (isIpad || isIphone) && webkit && !userAgent.match(/crios/i);
 				const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-				// Decide if the popover must appear
-				let lastNot = parseInt(localStorage.getItem('last_not')) || Date.now();
-				let showAgain = !localStorage.getItem('first_time') || (Date.now() - lastNot) > (1800*1000); // ~30 minutes
+				
+				let showAgain = settings.firstTime || (Date.now() - settings.lastNotification) > (1800*1000); // ~30 minutes
 				
 				// Display a pop up to advise users on ios if they are not already inside app
 				if(isSafari && !window.MSStream && !isInStandaloneMode() && showAgain){
@@ -438,34 +670,56 @@ const app = Vue.createApp({
 						$('#iosDown').css("top","15px");
 					}
 					$('#iosDown').focus();
-					localStorage.setItem('last_not',Date.now());
-					if(!localStorage.getItem('first_time'))
-						localStorage.setItem('first_time','no');
-				};
-			}).catch(err =>{
-				console.log(err);
-			})
+					
+					// Update the notification settings
+					this.saveToDB('appSettings', {
+						id: 'iosNotification',
+						lastNotification: Date.now(),
+						firstTime: false
+					});
+				}
+			}).catch(error => {
+				console.error('Error loading notification preferences:', error);
+			});
 		}
-
-		// Check how much groups are saved in localstorage
-		let lastGroup = "0";
-		for (const key in localStorage) {
-			if (!localStorage.hasOwnProperty(key) || !key.startsWith("group")) {
-				continue;
+	},
+	async mounted(){
+		/* Initialize IndexedDB */
+		try {
+			await this.initDB();
+			
+			/* PWA Section */
+			if('serviceWorker' in navigator){
+				navigator.serviceWorker.register("sw.js").then(registration => {
+					// Load notification preferences after service worker registration
+					this.loadNotificationPreferences();
+				}).catch(err =>{
+					console.log(err);
+				})
 			}
-			// Set the new key in the dictionary
-			this.savedGroup[key] = JSON.parse(localStorage.getItem(key));
-			lastGroup = key;
+			
+			// Load all saved groups from IndexedDB
+			const savedGroups = await this.getAllFromDB('savedGroups');
+			
+			// Populate the savedGroup object for UI
+			savedGroups.forEach(group => {
+				this.savedGroup[group.id] = group.players;
+			});
+			
+			// Get the highest group index for new saves
+			const groupCounter = await this.getFromDB('appSettings', 'groupCounter');
+			this.localSave = groupCounter ? groupCounter.value : 0;
+			
+			if(/android/i.test(navigator.userAgent)){
+				// Set the correct viewvport height to avoid chrome/android soft keyboard
+				let viewheight = $(window).height();
+				let viewport = $("meta[name=viewport]");
+				viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
+			}
+			this.checkBoundCSS();
+		} catch (error) {
+			console.error('Error initializing app:', error);
 		}
-		this.localSave = parseInt(lastGroup.slice(-1))+1;
-
-		if(/android/i.test(navigator.userAgent)){
-			// Set the correct viewvport height to avoid chrome/android soft keyboard
-			let viewheight = $(window).height();
-			let viewport = $("meta[name=viewport]");
-			viewport.attr("content", "height=" + viewheight + "px, width=device-width, initial-scale=1.0");
-		}
-		this.checkBoundCSS();
 	}
 });
 
