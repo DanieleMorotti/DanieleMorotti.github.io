@@ -6,29 +6,37 @@
   "display": "standalone",
   "background_color": "#baa28a",
   "theme_color": "#baa28a",
-  "icons": [{
-    "src": "img/quadAppunti192.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }, {
-    "src" : "img/maskable_icon.png",
-    "sizes": "274x274",
-    "type": "image/png",
-    "purpose": "maskable"
-  }, 
-  {
-    "src" : "img/quadAppunti512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-	 "purpose": "maskable"
-  },
-  {
-    "src" : "img/quadAppunti512.png",
-    "sizes": "512x512",
-    "type": "image/png"
-  }, {
-    "src": "img/quad-appunti.png",
-    "sizes": "1196x1376",
-    "type": "image/png"
-  }]
+  "icons": [
+    {
+      "src": "img/quadAppunti192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/maskable_icon.png",
+      "sizes": "274x274",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/quadAppunti512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/quadAppunti512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "img/quad-appunti.png",
+      "sizes": "1196x1376",
+      "type": "image/png"
+    }
+  ],
+  "dir": "ltr",
+  "lang": "it",
+  "orientation": "portrait"
 }
