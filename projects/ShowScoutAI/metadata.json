@@ -1,0 +1,5 @@
+{
+  "name": "ShowScout AI",
+  "description": "A progressive web app that tracks production updates, casting news, and release dates for your favorite films and TV series using Gemini AI.",
+  "requestFramePermissions": []
+}

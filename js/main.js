@@ -126,6 +126,10 @@ const translations = {
 				description: 'BiKaya is an educational-purpose, cross-architecture operating system compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.'
 			},
 			personal: 'Personal projects',
+			showscoutai: {
+				title: 'ShowScout AI',
+				description: 'A webapp to be always updated on the latest news from the movies and tv shows you are waiting for. Create a list of titles and the AI will find news for you.'
+			},
 			scoreboard: {
 				title: 'Generic scoreboard',
 				description: 'This is a generic scoreboard that you can use for any game you are playing with your friends. You can choose how many points to reach and whether who has more or who has less wins',
@@ -242,6 +246,10 @@ const translations = {
 				description: 'BiKaya è un sistema operativo progettato a scopo educativo e compatibile con 2 architetture, <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> e <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, due micro ISA derivate rispettivamente da ARM e MIPS.'
 			},
 			personal: 'Progetti personali',
+			showscoutai: {
+				title: 'ShowScout AI',
+				description: "La webapp per essere sempre aggiornati sulle ultime novità dei film e serie tv che stai aspettando. Crea una lista di titoli e l'IA cercherà le ultime novità per te."
+			},
 			scoreboard: {
 				title: 'Segnapunti generico',
 				description: 'Ho creato un segnapunti generico utilizzabile per ogni gioco. Si può inserire il titolo del gioco, il numero di giocatori, il punteggio massimo e se vince chi ha più punti oppure chi ne ha meno.',
