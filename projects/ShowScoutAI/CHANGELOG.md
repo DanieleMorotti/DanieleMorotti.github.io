@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.0] - 2026-01-23
+
+## Fixed
+
+- Notifications on mobile, added an explicit consent request in Settings.
+- Automate run if entering the app after the scheduled time.
+- Icon for PWA saving on mobile.
+- Correct card creation on mobile even if PWA minimized.
+
+
 ## [1.0.0] - 2026-01-23
 
 ### Added

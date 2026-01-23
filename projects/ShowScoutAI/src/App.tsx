@@ -30,27 +30,28 @@ const App: React.FC = () => {
   // Use refs to access latest state in async callbacks without creating stale closures
   const settingsRef = useRef(settings);
   const watchlistRef = useRef(watchlist);
-  const newsRef = useRef(news);
   const isCheckingRef = useRef(isChecking);
 
   useEffect(() => { settingsRef.current = settings; }, [settings]);
   useEffect(() => { watchlistRef.current = watchlist; }, [watchlist]);
-  useEffect(() => { newsRef.current = news; }, [news]);
   useEffect(() => { isCheckingRef.current = isChecking; }, [isChecking]);
 
   // Localization
   const t = translations[settings.language] || translations.EN;
   const locale = settings.language === 'IT' ? 'it-IT' : 'en-US';
 
-  // Persistence Effects (Debounced for non-critical changes)
-  useEffect(() => Storage.saveSettings(settings), [settings]);
-  useEffect(() => Storage.saveWatchlist(watchlist), [watchlist]);
-  // News is now saved immediately in checkForUpdates for safety
-  // Request Notification Permission on mount
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
+  // Function to re-sync all state from LocalStorage
+  // Mandatory for PWAs on mobile when returning from background
+  const syncFromStorage = useCallback(() => {
+    const freshNews = Storage.getNews();
+    const freshWatchlist = Storage.getWatchlist();
+    const freshSettings = Storage.getSettings();
+    
+    setNews(freshNews);
+    setWatchlist(freshWatchlist);
+    setSettings(freshSettings);
+    
+    console.log("State re-hydrated from storage");
   }, []);
 
   // Actions
@@ -60,28 +61,37 @@ const App: React.FC = () => {
       title,
       lastChecked: null
     };
-    setWatchlist([newEntry, ...watchlist]);
+    const updated = [newEntry, ...watchlist];
+    setWatchlist(updated);
+    Storage.saveWatchlist(updated);
     showToast(t.addedToWatchlist(title), 'success');
   };
 
   const handleRemoveWatchlist = (id: string) => {
-    setWatchlist(watchlist.filter(w => w.id !== id));
+    const updated = watchlist.filter(w => w.id !== id);
+    setWatchlist(updated);
+    Storage.saveWatchlist(updated);
   };
 
   const handleArchiveNews = (id: string) => {
-    const updated = news.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n);
-    setNews(updated);
-    Storage.saveNews(updated);
+    setNews(prev => {
+      const updated = prev.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n);
+      Storage.saveNews(updated);
+      return updated;
+    });
   };
 
   const handleDeleteNews = (id: string) => {
-    const updated = news.filter(n => n.id !== id);
-    setNews(updated);
-    Storage.saveNews(updated);
+    setNews(prev => {
+      const updated = prev.filter(n => n.id !== id);
+      Storage.saveNews(updated);
+      return updated;
+    });
   };
 
   const updateSettings = (newSettings: AppSettings) => {
     setSettings(newSettings);
+    Storage.saveSettings(newSettings);
     showToast(translations[newSettings.language].settingsSaved, 'success');
   };
   
@@ -106,9 +116,10 @@ const App: React.FC = () => {
 
   // The AI Core Logic
   const checkForUpdates = useCallback(async (isAuto = false) => {
+    // 1. Refresh context immediately
     const currentT = translations[settingsRef.current.language] || translations.EN;
-    const currentWatchlist = watchlistRef.current;
-    const currentSettings = settingsRef.current;
+    const currentWatchlist = Storage.getWatchlist();
+    const currentSettings = Storage.getSettings();
 
     if (currentWatchlist.length === 0 || !currentSettings.apiKey || isCheckingRef.current) {
       return;
@@ -130,23 +141,22 @@ const App: React.FC = () => {
     setIsChecking(true);
     setCheckProgress({ current: 0, total: showsToCheck.length });
 
-    let updatedWatchlist = [...currentWatchlist];
     let newItemsCount = 0;
-    let localNews = [...newsRef.current];
 
     for (let i = 0; i < showsToCheck.length; i++) {
       const show = showsToCheck[i];
       setCheckProgress({ current: i + 1, total: showsToCheck.length });
       
-      const existingHeadlines = localNews
+      // Always get FRESH news from storage to avoid stale branch overwrites
+      const latestNewsInStorage = Storage.getNews();
+      const existingHeadlines = latestNewsInStorage
         .filter(n => n.showTitle === show.title)
         .map(n => n.headline);
 
       let success = false;
       let retryCount = 0;
       
-      // Retry loop for rate limits
-      while (!success && retryCount < 3) {
+      while (!success && retryCount < 2) {
         const result = await GeminiService.fetchUpdatesForShow(
           show.title, 
           show.lastChecked, 
@@ -163,19 +173,21 @@ const App: React.FC = () => {
         
         if (result.success) {
           if (result.newsItem) {
-            localNews = [result.newsItem, ...localNews];
-            setNews(localNews);
-            // IMMEDIATE STORAGE PERSISTENCE for found news
-            Storage.saveNews(localNews);
+            // ATOMIC UPDATE: Read latest, append, save, then update React state
+            const currentNewsAtThisMoment = Storage.getNews();
+            const updatedNewsList = [result.newsItem, ...currentNewsAtThisMoment];
+            Storage.saveNews(updatedNewsList);
+            setNews(updatedNewsList);
             newItemsCount++;
           }
           
-          const idx = updatedWatchlist.findIndex(w => w.id === show.id);
+          // Update watchlist timestamp immediately in storage
+          const latestWatchlist = Storage.getWatchlist();
+          const idx = latestWatchlist.findIndex(w => w.id === show.id);
           if (idx !== -1) {
-            updatedWatchlist[idx] = { ...updatedWatchlist[idx], lastChecked: new Date().toISOString() };
-            // IMMEDIATE STORAGE PERSISTENCE for watchlist timestamp
-            setWatchlist([...updatedWatchlist]);
-            Storage.saveWatchlist(updatedWatchlist);
+            latestWatchlist[idx] = { ...latestWatchlist[idx], lastChecked: new Date().toISOString() };
+            Storage.saveWatchlist(latestWatchlist);
+            setWatchlist(latestWatchlist);
           }
           success = true;
         } else {
@@ -196,23 +208,24 @@ const App: React.FC = () => {
     }
     
     if (isAuto) {
-      const newSettings = {...currentSettings, lastAutoCheckDate: new Date().toISOString().split('T')[0]};
-      setSettings(newSettings);
+      const latestSettings = Storage.getSettings();
+      const newSettings = {...latestSettings, lastAutoCheckDate: new Date().toISOString().split('T')[0]};
       Storage.saveSettings(newSettings);
+      setSettings(newSettings);
     }
     
     setIsChecking(false);
   }, []);
 
-  // Catch-up and Scheduled Logic
+  // Scheduled Logic
   const handleTimeCheck = useCallback(() => {
-    const s = settingsRef.current;
-    if (!s.autoCheckTime || !s.apiKey || watchlistRef.current.length === 0 || isCheckingRef.current) return;
+    const s = Storage.getSettings();
+    const w = Storage.getWatchlist();
+    if (!s.autoCheckTime || !s.apiKey || w.length === 0 || isCheckingRef.current) return;
 
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
     
-    // Check if we already did it today
     if (s.lastAutoCheckDate === todayStr) return;
 
     const [h, m] = s.autoCheckTime.split(':').map(Number);
@@ -220,28 +233,28 @@ const App: React.FC = () => {
     scheduledTime.setHours(h, m, 0, 0);
 
     if (now >= scheduledTime) {
-      console.log("Time triggered: Starting auto-update.");
       checkForUpdates(true);
     }
   }, [checkForUpdates]);
 
-  // Listen for visibility changes to catch up on backgrounded periods
+  // Sync and Catch-up Logic on Visibility Change
   useEffect(() => {
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log("App foregrounded: checking schedule catch-up.");
+        syncFromStorage();
         handleTimeCheck();
       }
     };
 
     document.addEventListener('visibilitychange', onVisibilityChange);
-    // Initial mount check
+    // Initial mount sync
+    syncFromStorage();
     handleTimeCheck();
 
     return () => document.removeEventListener('visibilitychange', onVisibilityChange);
-  }, [handleTimeCheck]);
+  }, [handleTimeCheck, syncFromStorage]);
 
-  // Periodic check while app IS open
+  // Interval check
   useEffect(() => {
     const interval = setInterval(handleTimeCheck, 60000);
     return () => clearInterval(interval);
