@@ -12,6 +12,7 @@ import NewsDetailModal from './components/NewsDetailModal';
 import WatchlistManager from './components/WatchlistManager';
 import SettingsModal from './components/SettingsModal';
 import Toast from './components/Toast';
+import { translations } from './translations';
 
 const App: React.FC = () => {
   // State
@@ -26,6 +27,10 @@ const App: React.FC = () => {
   const [selectedNewsItem, setSelectedNewsItem] = useState<NewsCardType | null>(null);
   
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'info' | 'error' } | null>(null);
+
+  // Localization
+  const t = translations[settings.language] || translations.EN;
+  const locale = settings.language === 'IT' ? 'it-IT' : 'en-US';
 
   // Persistence Effects
   useEffect(() => Storage.saveSettings(settings), [settings]);
@@ -47,7 +52,7 @@ const App: React.FC = () => {
       lastChecked: null
     };
     setWatchlist([newEntry, ...watchlist]);
-    showToast(`Added "${title}" to watchlist`, 'success');
+    showToast(t.addedToWatchlist(title), 'success');
   };
 
   const handleRemoveWatchlist = (id: string) => {
@@ -64,7 +69,7 @@ const App: React.FC = () => {
 
   const updateSettings = (newSettings: AppSettings) => {
     setSettings(newSettings);
-    showToast('Settings saved', 'success');
+    showToast(translations[newSettings.language].settingsSaved, 'success');
   };
   
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
@@ -88,9 +93,12 @@ const App: React.FC = () => {
 
   // The AI Core Logic
   const checkForUpdates = useCallback(async (isAuto = false) => {
+    // Re-access translation inside callback
+    const currentT = translations[settings.language] || translations.EN;
+
     if (watchlist.length === 0) {
       if (!isAuto) {
-        showToast("Add shows to your watchlist first!", "error");
+        showToast(currentT.addShowsFirst, "error");
         setView('watchlist');
       }
       return;
@@ -100,68 +108,104 @@ const App: React.FC = () => {
       return;
     }
 
+    // Optimization: Skip shows checked within the last hour
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const now = Date.now();
+    
+    const showsToCheck = watchlist.filter(show => {
+      // Always check if never checked
+      if (!show.lastChecked) return true;
+      // Check if time elapsed > 1 hour
+      return (now - new Date(show.lastChecked).getTime()) > ONE_HOUR_MS;
+    });
+
+    if (showsToCheck.length === 0) {
+      if (!isAuto) showToast(currentT.updatedRecently, "info");
+      return;
+    }
+
     setIsChecking(true);
-    setCheckProgress({ current: 0, total: watchlist.length });
+    setCheckProgress({ current: 0, total: showsToCheck.length });
 
-    const newNewsItems: NewsCardType[] = [];
-    const updatedWatchlist = [...watchlist];
+    // Use a local copy to track updates to avoid dependency issues during the async loop
+    let updatedWatchlist = [...watchlist];
+    let newItemsCount = 0;
 
-    for (let i = 0; i < watchlist.length; i++) {
-      const show = watchlist[i];
-      setCheckProgress({ current: i + 1, total: watchlist.length });
+    for (let i = 0; i < showsToCheck.length; i++) {
+      const show = showsToCheck[i];
+      setCheckProgress({ current: i + 1, total: showsToCheck.length });
       
       const existingHeadlines = news
         .filter(n => n.showTitle === show.title)
         .map(n => n.headline);
 
-      const result = await GeminiService.fetchUpdatesForShow(
-        show.title, 
-        show.lastChecked, 
-        existingHeadlines, 
-        settings
-      );
+      let success = false;
+      let retryCount = 0;
       
-      if (result.success && result.newsItem) {
-        newNewsItems.push(result.newsItem);
+      // Retry loop for rate limits
+      while (!success && retryCount < 3) {
+        const result = await GeminiService.fetchUpdatesForShow(
+          show.title, 
+          show.lastChecked, 
+          existingHeadlines, 
+          settings
+        );
+
+        // Check for 429 / Rate Limit
+        if (!result.success && result.error && (
+            result.error.includes('429') || 
+            result.error.toLowerCase().includes('too many requests') || 
+            result.error.toLowerCase().includes('resource has been exhausted')
+           )) {
+             showToast(currentT.rateLimit, "error");
+             await new Promise(resolve => setTimeout(resolve, 60000));
+             retryCount++;
+             continue; // Retry logic
+        }
+        
+        if (result.success) {
+          if (result.newsItem) {
+            // Immediate UI Update
+            setNews(prev => [result.newsItem!, ...prev]);
+            newItemsCount++;
+          }
+          
+          // Update timestamp in local copy
+          const idx = updatedWatchlist.findIndex(w => w.id === show.id);
+          if (idx !== -1) {
+            updatedWatchlist[idx] = { ...updatedWatchlist[idx], lastChecked: new Date().toISOString() };
+          }
+          success = true;
+        } else {
+          // Other error, log and move on
+          console.error(`Failed to check ${show.title}:`, result.error);
+          success = true; // Treat as handled to break loop
+        }
       }
-      
-      updatedWatchlist[i] = { ...show, lastChecked: new Date().toISOString() };
     }
 
     setWatchlist(updatedWatchlist);
 
-    // Notifications and Toasts logic
-    if (newNewsItems.length > 0) {
-      setNews(prev => [...newNewsItems, ...prev]);
-
-      const msg = `Found ${newNewsItems.length} new updates!`;
-      const finalMsg = isAuto ? `Daily Check: ${msg}` : msg;
-
-      // Determine delivery method
+    // Final Notifications
+    if (newItemsCount > 0) {
+      const msg = currentT.foundUpdates(newItemsCount);
       const isHidden = document.hidden;
       const hasPermission = 'Notification' in window && Notification.permission === 'granted';
 
       if (isHidden && hasPermission) {
-        // User is in another app AND allowed notifications -> Send System Notification
-        sendSystemNotification('ShowScout AI', finalMsg);
+        sendSystemNotification('ShowScout AI', msg);
       } else {
-        // User is looking at the app OR didn't allow notifications -> Show In-App Toast
-        showToast(finalMsg, 'success');
+        showToast(msg, 'success');
       }
     } else {
-      const msg = `No new updates found!`;
-      const finalMsg = isAuto ? `Daily Check: ${msg}` : msg;
-
-      // Determine delivery method
+      const msg = currentT.noNewUpdates;
       const isHidden = document.hidden;
       const hasPermission = 'Notification' in window && Notification.permission === 'granted';
 
       if (isHidden && hasPermission) {
-        // User is in another app AND allowed notifications -> Send System Notification
-        sendSystemNotification('ShowScout AI', finalMsg);
+        sendSystemNotification('ShowScout AI', msg);
       } else {
-        // User is looking at the app OR didn't allow notifications -> Show In-App Toast
-        showToast(finalMsg, 'info');
+        showToast(msg, 'info');
       }
     }
     
@@ -218,7 +262,7 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-dark-900/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">
-          ShowScout AI
+          {t.appTitle}
         </h1>
         <button 
           onClick={() => setShowSettings(true)}
@@ -235,7 +279,7 @@ const App: React.FC = () => {
         {isChecking && (
           <div className="mb-8 bg-dark-800 rounded-xl p-4 border border-gray-700 shadow-xl animate-pulse">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-brand-400 font-medium">Digging for news ...</span>
+              <span className="text-brand-400 font-medium">{t.digging}</span>
               <span className="text-gray-400">{checkProgress.current} / {checkProgress.total}</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2">
@@ -250,7 +294,7 @@ const App: React.FC = () => {
         {view === 'inbox' && (
           <div className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Latest News</h2>
+              <h2 className="text-2xl font-bold text-white">{t.latestNews}</h2>
               <button 
                 onClick={() => checkForUpdates(false)}
                 disabled={isChecking}
@@ -262,14 +306,14 @@ const App: React.FC = () => {
                   }
                 `}
               >
-                {isChecking ? 'Checking...' : 'Check Now'}
+                {isChecking ? t.checking : t.checkNow}
               </button>
             </div>
 
             {activeNews.length === 0 ? (
               <div className="text-center py-20 bg-dark-800/30 rounded-2xl border border-gray-800/50 border-dashed">
-                <p className="text-gray-400 text-lg">No new updates found.</p>
-                <p className="text-gray-600 text-sm mt-2">Check your watchlist or try refreshing.</p>
+                <p className="text-gray-400 text-lg">{t.noNews}</p>
+                <p className="text-gray-600 text-sm mt-2">{t.checkWatchlist}</p>
               </div>
             ) : (
               <div className="space-y-8">
@@ -286,6 +330,8 @@ const App: React.FC = () => {
                           onClick={setSelectedNewsItem}
                           onArchive={handleArchiveNews}
                           onDelete={handleDeleteNews}
+                          t={t}
+                          locale={locale}
                         />
                       ))}
                     </div>
@@ -298,20 +344,22 @@ const App: React.FC = () => {
 
         {view === 'watchlist' && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Your Watchlist</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">{t.yourWatchlist}</h2>
             <WatchlistManager 
               watchlist={watchlist}
               onAdd={handleAddWatchlist}
               onRemove={handleRemoveWatchlist}
+              t={t}
+              locale={locale}
             />
           </div>
         )}
 
         {view === 'archive' && (
           <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-white">Archive</h2>
+            <h2 className="text-2xl font-bold text-white">{t.archive}</h2>
             {archivedNews.length === 0 ? (
-              <p className="text-gray-500">No archived news.</p>
+              <p className="text-gray-500">{t.noArchived}</p>
             ) : (
               <div className="space-y-8 opacity-80">
                 {groupedArchivedNews.map(([showTitle, items]) => (
@@ -324,9 +372,11 @@ const App: React.FC = () => {
                         <NewsCard 
                           key={item.id} 
                           item={item} 
-                          onClick={setSelectedNewsItem} // Can still view archived news
-                          onArchive={() => {}} // Already archived
+                          onClick={setSelectedNewsItem} 
+                          onArchive={() => {}} 
                           onDelete={handleDeleteNews}
+                          t={t}
+                          locale={locale}
                         />
                       ))}
                     </div>
@@ -346,7 +396,7 @@ const App: React.FC = () => {
             className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'inbox' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            <span className="text-[10px] font-medium mt-1">Inbox</span>
+            <span className="text-[10px] font-medium mt-1">{t.inbox}</span>
           </button>
           
           <button 
@@ -354,7 +404,7 @@ const App: React.FC = () => {
             className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'watchlist' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span className="text-[10px] font-medium mt-1">Watchlist</span>
+            <span className="text-[10px] font-medium mt-1">{t.watchlist}</span>
           </button>
 
           <button 
@@ -362,7 +412,7 @@ const App: React.FC = () => {
             className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'archive' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/></svg>
-            <span className="text-[10px] font-medium mt-1">Archive</span>
+            <span className="text-[10px] font-medium mt-1">{t.archive}</span>
           </button>
         </div>
       </nav>
@@ -373,12 +423,15 @@ const App: React.FC = () => {
         onClose={() => setShowSettings(false)}
         settings={settings}
         onSave={updateSettings}
+        t={t}
       />
       
       <NewsDetailModal 
         item={selectedNewsItem}
         onClose={() => setSelectedNewsItem(null)}
         onArchive={handleArchiveNews}
+        t={t}
+        locale={locale}
       />
       
       {toast && (

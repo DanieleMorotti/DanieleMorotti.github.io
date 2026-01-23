@@ -1,5 +1,5 @@
 import { AppSettings, NewsCard, WatchlistEntry } from '../types';
-import { APP_STORAGE_KEYS, DEFAULT_MODEL } from '../constants';
+import { APP_STORAGE_KEYS, DEFAULT_MODEL, DEFAULT_LANGUAGE } from '../constants';
 
 export const getSettings = (): AppSettings => {
   const stored = localStorage.getItem(APP_STORAGE_KEYS.SETTINGS);
@@ -9,6 +9,7 @@ export const getSettings = (): AppSettings => {
     return {
       apiKey: parsed.apiKey || '',
       model: parsed.model || DEFAULT_MODEL,
+      language: parsed.language || DEFAULT_LANGUAGE,
       temperature: parsed.temperature ?? 0.4,
       autoCheckTime: parsed.autoCheckTime || '',
       lastAutoCheckDate: parsed.lastAutoCheckDate || null,
@@ -17,6 +18,7 @@ export const getSettings = (): AppSettings => {
   return {
     apiKey: '',
     model: DEFAULT_MODEL,
+    language: DEFAULT_LANGUAGE,
     temperature: 0.4,
     autoCheckTime: '',
     lastAutoCheckDate: null,

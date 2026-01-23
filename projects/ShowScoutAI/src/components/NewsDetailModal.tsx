@@ -5,9 +5,11 @@ interface NewsDetailModalProps {
   item: NewsCardType | null;
   onClose: () => void;
   onArchive: (id: string) => void;
+  t: any; // Translation object
+  locale: string;
 }
 
-const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ item, onClose, onArchive }) => {
+const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ item, onClose, onArchive, t, locale }) => {
   if (!item) return null;
 
   // Use robust seed image logic (Picsum)
@@ -62,14 +64,14 @@ const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ item, onClose, onArch
         {/* Content */}
         <div className="p-6">
            <div className="text-xs text-gray-500 mb-6 flex justify-between items-center">
-              <span>Detected: {new Date(item.dateFound).toLocaleString()}</span>
+              <span>{t.detected}: {new Date(item.dateFound).toLocaleString(locale)}</span>
            </div>
            
            {renderText(item.summary)}
 
            {/* Fallback Sources List if links aren't enough */}
            <div className="mt-8 pt-6 border-t border-gray-800">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">All Sources</h4>
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{t.sources}</h4>
               <div className="flex flex-wrap gap-2">
                  {item.sources.map((s, i) => (
                     <a 
@@ -91,14 +93,14 @@ const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ item, onClose, onArch
                onClick={onClose}
                className="flex-1 px-4 py-3 bg-dark-800 hover:bg-dark-700 text-white rounded-lg font-medium transition"
              >
-               Close
+               {t.close}
              </button>
              {!item.isRead && (
                <button 
                  onClick={() => { onArchive(item.id); onClose(); }}
                  className="flex-1 px-4 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-lg font-medium transition"
                >
-                 Mark as Read
+                 {t.markRead}
                </button>
              )}
            </div>

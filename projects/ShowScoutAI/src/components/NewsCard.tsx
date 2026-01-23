@@ -6,9 +6,11 @@ interface NewsCardProps {
   onClick: (item: NewsCardType) => void;
   onArchive: (id: string) => void;
   onDelete: (id: string) => void;
+  t: any; // Translation object
+  locale: string;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ item, onClick, onArchive, onDelete }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ item, onClick, onArchive, onDelete, t, locale }) => {
   // Use robust seed image logic (Picsum)
   const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(item.showTitle)}/400/250`;
 
@@ -45,14 +47,14 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, onClick, onArchive, onDelete 
         
         <div className="flex items-center justify-between mt-3">
           <span className="text-xs text-gray-600">
-             {new Date(item.dateFound).toLocaleDateString()}
+             {new Date(item.dateFound).toLocaleDateString(locale)}
           </span>
           
           <div className="flex gap-2">
             <button 
               onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
               className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-900/10 rounded transition"
-              title="Delete"
+              title={t.delete}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </button>
@@ -60,7 +62,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ item, onClick, onArchive, onDelete 
               <button 
                 onClick={(e) => { e.stopPropagation(); onArchive(item.id); }}
                 className="p-1.5 text-gray-600 hover:text-brand-400 hover:bg-brand-900/10 rounded transition"
-                title="Mark as Read"
+                title={t.markRead}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
               </button>

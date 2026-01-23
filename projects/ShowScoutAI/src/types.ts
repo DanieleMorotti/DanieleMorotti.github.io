@@ -18,6 +18,7 @@ export interface NewsCard {
 export interface AppSettings {
   apiKey: string;
   model: string;
+  language: 'EN' | 'IT'; // Added Language
   temperature: number;
   autoCheckTime: string; // Format "HH:mm" e.g. "09:00"
   lastAutoCheckDate: string | null; // "YYYY-MM-DD"
