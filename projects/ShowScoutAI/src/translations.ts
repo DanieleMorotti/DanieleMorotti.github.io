@@ -44,6 +44,11 @@ export const translations = {
     noNewUpdates: "Check complete. No new updates.",
     addShowsFirst: "Add shows to your watchlist first!",
     updatedRecently: "All shows updated within 1 hour.",
+    enableNotifications: "Enable Notifications",
+    notificationsActive: "Notifications Active",
+    notificationsBlocked: "Notifications Blocked (Check system settings)",
+    notificationRequestTitle: "Permission Required",
+    notificationRequestDesc: "To receive news in background, we need your permission.",
   },
   IT: {
     appTitle: "ShowScout AI",
@@ -90,5 +95,10 @@ export const translations = {
     noNewUpdates: "Controllo completato. Nessuna novità.",
     addShowsFirst: "Aggiungi prima dei titoli alla lista!",
     updatedRecently: "Tutti i titoli aggiornati meno di 1 ora fa.",
+    enableNotifications: "Attiva Notifiche",
+    notificationsActive: "Notifiche Attive",
+    notificationsBlocked: "Notifiche Bloccate (Controlla impostazioni sistema)",
+    notificationRequestTitle: "Permesso Richiesto",
+    notificationRequestDesc: "Per ricevere news in background, serve il tuo permesso.",
   }
 };

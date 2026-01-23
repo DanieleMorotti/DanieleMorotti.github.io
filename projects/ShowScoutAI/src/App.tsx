@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   NewsCard as NewsCardType, 
   ViewState, 
@@ -25,18 +25,27 @@ const App: React.FC = () => {
   const [checkProgress, setCheckProgress] = useState({ current: 0, total: 0 });
   const [showSettings, setShowSettings] = useState(false);
   const [selectedNewsItem, setSelectedNewsItem] = useState<NewsCardType | null>(null);
-  
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'info' | 'error' } | null>(null);
+
+  // Use refs to access latest state in async callbacks without creating stale closures
+  const settingsRef = useRef(settings);
+  const watchlistRef = useRef(watchlist);
+  const newsRef = useRef(news);
+  const isCheckingRef = useRef(isChecking);
+
+  useEffect(() => { settingsRef.current = settings; }, [settings]);
+  useEffect(() => { watchlistRef.current = watchlist; }, [watchlist]);
+  useEffect(() => { newsRef.current = news; }, [news]);
+  useEffect(() => { isCheckingRef.current = isChecking; }, [isChecking]);
 
   // Localization
   const t = translations[settings.language] || translations.EN;
   const locale = settings.language === 'IT' ? 'it-IT' : 'en-US';
 
-  // Persistence Effects
+  // Persistence Effects (Debounced for non-critical changes)
   useEffect(() => Storage.saveSettings(settings), [settings]);
   useEffect(() => Storage.saveWatchlist(watchlist), [watchlist]);
-  useEffect(() => Storage.saveNews(news), [news]);
-
+  // News is now saved immediately in checkForUpdates for safety
   // Request Notification Permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -60,11 +69,15 @@ const App: React.FC = () => {
   };
 
   const handleArchiveNews = (id: string) => {
-    setNews(news.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n));
+    const updated = news.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n);
+    setNews(updated);
+    Storage.saveNews(updated);
   };
 
   const handleDeleteNews = (id: string) => {
-    setNews(news.filter(n => n.id !== id));
+    const updated = news.filter(n => n.id !== id);
+    setNews(updated);
+    Storage.saveNews(updated);
   };
 
   const updateSettings = (newSettings: AppSettings) => {
@@ -76,14 +89,14 @@ const App: React.FC = () => {
     setToast({ message, type });
   };
 
-  // Helper to trigger system notification
   const sendSystemNotification = (title: string, body: string) => {
     if ('Notification' in window && Notification.permission === 'granted') {
       try {
         new Notification(title, {
           body,
           icon: './showscout_icon_192.png',
-          tag: 'showscout-updates'
+          tag: 'showscout-updates',
+          badge: './showscout_icon_192.png'
         });
       } catch (e) {
         console.error("Notification failed", e);
@@ -93,29 +106,19 @@ const App: React.FC = () => {
 
   // The AI Core Logic
   const checkForUpdates = useCallback(async (isAuto = false) => {
-    // Re-access translation inside callback
-    const currentT = translations[settings.language] || translations.EN;
+    const currentT = translations[settingsRef.current.language] || translations.EN;
+    const currentWatchlist = watchlistRef.current;
+    const currentSettings = settingsRef.current;
 
-    if (watchlist.length === 0) {
-      if (!isAuto) {
-        showToast(currentT.addShowsFirst, "error");
-        setView('watchlist');
-      }
-      return;
-    }
-    if (!settings.apiKey) {
-      if (!isAuto) setShowSettings(true);
+    if (currentWatchlist.length === 0 || !currentSettings.apiKey || isCheckingRef.current) {
       return;
     }
 
-    // Optimization: Skip shows checked within the last hour
     const ONE_HOUR_MS = 60 * 60 * 1000;
     const now = Date.now();
     
-    const showsToCheck = watchlist.filter(show => {
-      // Always check if never checked
+    const showsToCheck = currentWatchlist.filter(show => {
       if (!show.lastChecked) return true;
-      // Check if time elapsed > 1 hour
       return (now - new Date(show.lastChecked).getTime()) > ONE_HOUR_MS;
     });
 
@@ -127,15 +130,15 @@ const App: React.FC = () => {
     setIsChecking(true);
     setCheckProgress({ current: 0, total: showsToCheck.length });
 
-    // Use a local copy to track updates to avoid dependency issues during the async loop
-    let updatedWatchlist = [...watchlist];
+    let updatedWatchlist = [...currentWatchlist];
     let newItemsCount = 0;
+    let localNews = [...newsRef.current];
 
     for (let i = 0; i < showsToCheck.length; i++) {
       const show = showsToCheck[i];
       setCheckProgress({ current: i + 1, total: showsToCheck.length });
       
-      const existingHeadlines = news
+      const existingHeadlines = localNews
         .filter(n => n.showTitle === show.title)
         .map(n => n.headline);
 
@@ -148,102 +151,106 @@ const App: React.FC = () => {
           show.title, 
           show.lastChecked, 
           existingHeadlines, 
-          settings
+          currentSettings
         );
 
-        // Check for 429 / Rate Limit
-        if (!result.success && result.error && (
-            result.error.includes('429') || 
-            result.error.toLowerCase().includes('too many requests') || 
-            result.error.toLowerCase().includes('resource has been exhausted')
-           )) {
+        if (!result.success && result.error && (result.error.includes('429') || result.error.includes('exhausted'))) {
              showToast(currentT.rateLimit, "error");
              await new Promise(resolve => setTimeout(resolve, 60000));
              retryCount++;
-             continue; // Retry logic
+             continue;
         }
         
         if (result.success) {
           if (result.newsItem) {
-            // Immediate UI Update
-            setNews(prev => [result.newsItem!, ...prev]);
+            localNews = [result.newsItem, ...localNews];
+            setNews(localNews);
+            // IMMEDIATE STORAGE PERSISTENCE for found news
+            Storage.saveNews(localNews);
             newItemsCount++;
           }
           
-          // Update timestamp in local copy
           const idx = updatedWatchlist.findIndex(w => w.id === show.id);
           if (idx !== -1) {
             updatedWatchlist[idx] = { ...updatedWatchlist[idx], lastChecked: new Date().toISOString() };
+            // IMMEDIATE STORAGE PERSISTENCE for watchlist timestamp
+            setWatchlist([...updatedWatchlist]);
+            Storage.saveWatchlist(updatedWatchlist);
           }
           success = true;
         } else {
-          // Other error, log and move on
-          console.error(`Failed to check ${show.title}:`, result.error);
-          success = true; // Treat as handled to break loop
+          success = true; 
         }
       }
     }
 
-    setWatchlist(updatedWatchlist);
-
-    // Final Notifications
     if (newItemsCount > 0) {
       const msg = currentT.foundUpdates(newItemsCount);
-      const isHidden = document.hidden;
-      const hasPermission = 'Notification' in window && Notification.permission === 'granted';
-
-      if (isHidden && hasPermission) {
+      if (document.hidden) {
         sendSystemNotification('ShowScout AI', msg);
       } else {
         showToast(msg, 'success');
       }
-    } else {
-      const msg = currentT.noNewUpdates;
-      const isHidden = document.hidden;
-      const hasPermission = 'Notification' in window && Notification.permission === 'granted';
-
-      if (isHidden && hasPermission) {
-        sendSystemNotification('ShowScout AI', msg);
-      } else {
-        showToast(msg, 'info');
-      }
+    } else if (!isAuto) {
+      showToast(currentT.noNewUpdates, 'info');
     }
     
-    // Update last auto check date if this was an auto run
     if (isAuto) {
-      setSettings(prev => ({...prev, lastAutoCheckDate: new Date().toISOString().split('T')[0]}));
+      const newSettings = {...currentSettings, lastAutoCheckDate: new Date().toISOString().split('T')[0]};
+      setSettings(newSettings);
+      Storage.saveSettings(newSettings);
     }
     
     setIsChecking(false);
-  }, [watchlist, settings, news]);
+  }, []);
 
-  // Auto-Check Logic
+  // Catch-up and Scheduled Logic
+  const handleTimeCheck = useCallback(() => {
+    const s = settingsRef.current;
+    if (!s.autoCheckTime || !s.apiKey || watchlistRef.current.length === 0 || isCheckingRef.current) return;
+
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    
+    // Check if we already did it today
+    if (s.lastAutoCheckDate === todayStr) return;
+
+    const [h, m] = s.autoCheckTime.split(':').map(Number);
+    const scheduledTime = new Date();
+    scheduledTime.setHours(h, m, 0, 0);
+
+    if (now >= scheduledTime) {
+      console.log("Time triggered: Starting auto-update.");
+      checkForUpdates(true);
+    }
+  }, [checkForUpdates]);
+
+  // Listen for visibility changes to catch up on backgrounded periods
   useEffect(() => {
-    if (!settings.autoCheckTime || !settings.apiKey || watchlist.length === 0) return;
-
-    const interval = setInterval(() => {
-      const now = new Date();
-      const todayDateString = now.toISOString().split('T')[0];
-
-      const [schedHour, schedMin] = settings.autoCheckTime.split(':').map(Number);
-      const schedTimeInMinutes = schedHour * 60 + schedMin;
-      const curTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-
-      if (curTimeInMinutes >= schedTimeInMinutes && settings.lastAutoCheckDate !== todayDateString && !isChecking) {
-        console.log("Auto-checking for updates...");
-        checkForUpdates(true);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log("App foregrounded: checking schedule catch-up.");
+        handleTimeCheck();
       }
-    }, 60000); // Check every minute
+    };
 
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    // Initial mount check
+    handleTimeCheck();
+
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [handleTimeCheck]);
+
+  // Periodic check while app IS open
+  useEffect(() => {
+    const interval = setInterval(handleTimeCheck, 60000);
     return () => clearInterval(interval);
-  }, [settings.autoCheckTime, settings.lastAutoCheckDate, settings.apiKey, watchlist.length, isChecking, checkForUpdates]);
-
+  }, [handleTimeCheck]);
 
   // Group News Logic
   const activeNews = news.filter(n => !n.isArchived);
   const archivedNews = news.filter(n => n.isArchived);
 
-  // Helper to group items by showTitle
   const groupNews = (items: NewsCardType[]) => {
     const groups: { [key: string]: NewsCardType[] } = {};
     items.forEach(item => {
@@ -258,8 +265,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-24 text-gray-200 font-sans selection:bg-brand-500/30">
-      
-      {/* Header */}
       <header className="sticky top-0 z-40 bg-dark-900/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">
           {t.appTitle}
@@ -272,10 +277,7 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* Main Content Area */}
       <main className="max-w-2xl mx-auto p-6">
-        
-        {/* Progress Bar for Update Check */}
         {isChecking && (
           <div className="mb-8 bg-dark-800 rounded-xl p-4 border border-gray-700 shadow-xl animate-pulse">
             <div className="flex justify-between text-sm mb-2">
@@ -285,7 +287,7 @@ const App: React.FC = () => {
             <div className="w-full bg-gray-700 rounded-full h-2">
               <div 
                 className="bg-brand-500 h-2 rounded-full transition-all duration-500" 
-                style={{ width: `${(checkProgress.current / checkProgress.total) * 100}%` }}
+                style={{ width: `${(checkProgress.current / Math.max(1, checkProgress.total)) * 100}%` }}
               ></div>
             </div>
           </div>
@@ -388,36 +390,14 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 w-full bg-dark-950/90 backdrop-blur-lg border-t border-gray-800 z-40 pb-safe">
         <div className="max-w-md mx-auto flex justify-around p-2">
-          <button 
-            onClick={() => setView('inbox')}
-            className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'inbox' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            <span className="text-[10px] font-medium mt-1">{t.inbox}</span>
-          </button>
-          
-          <button 
-            onClick={() => setView('watchlist')}
-            className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'watchlist' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span className="text-[10px] font-medium mt-1">{t.watchlist}</span>
-          </button>
-
-          <button 
-            onClick={() => setView('archive')}
-            className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'archive' ? 'text-brand-500' : 'text-gray-500 hover:text-gray-300'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/></svg>
-            <span className="text-[10px] font-medium mt-1">{t.archive}</span>
-          </button>
+          <button onClick={() => setView('inbox')} className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'inbox' ? 'text-brand-500' : 'text-gray-500'}`}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span className="text-[10px] mt-1">{t.inbox}</span></button>
+          <button onClick={() => setView('watchlist')} className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'watchlist' ? 'text-brand-500' : 'text-gray-500'}`}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span className="text-[10px] mt-1">{t.watchlist}</span></button>
+          <button onClick={() => setView('archive')} className={`flex flex-col items-center p-2 rounded-lg w-full transition ${view === 'archive' ? 'text-brand-500' : 'text-gray-500'}`}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/></svg><span className="text-[10px] mt-1">{t.archive}</span></button>
         </div>
       </nav>
 
-      {/* Modals */}
       <SettingsModal 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)}
@@ -435,13 +415,8 @@ const App: React.FC = () => {
       />
       
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
-        />
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
-
     </div>
   );
 };
