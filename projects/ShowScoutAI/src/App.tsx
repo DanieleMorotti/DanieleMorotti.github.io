@@ -37,6 +37,9 @@ const App: React.FC = () => {
   const watchlistRef = useRef(watchlist);
   const isCheckingRef = useRef(isChecking);
 
+  // AbortController ref for cancelling ongoing checks
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => { settingsRef.current = settings; }, [settings]);
   useEffect(() => { watchlistRef.current = watchlist; }, [watchlist]);
   useEffect(() => { isCheckingRef.current = isChecking; }, [isChecking]);
@@ -90,13 +93,28 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Warning when returning to app if a search was interrupted
+  // Abort check and reset state when user leaves the app
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && isCheckingRef.current) {
-        showToast(t.stayInAppWarning, 'error');
+      if (document.visibilityState === 'hidden') {
+        // User left the app - if a check is running, abort it immediately
+        if (isCheckingRef.current && abortControllerRef.current) {
+          console.log('[PWA] User left app during check - aborting...');
+          abortControllerRef.current.abort();
+        }
+      } else if (document.visibilityState === 'visible') {
+        // User returned - check if we aborted a check
+        if (abortControllerRef.current?.signal.aborted) {
+          showToast(t.stayInAppWarning, 'error');
+          // Reset state - the check loop will have exited due to abort
+          setIsChecking(false);
+          setCheckProgress({ current: 0, total: 0 });
+          // Clear the aborted controller
+          abortControllerRef.current = null;
+        }
       }
     };
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [t.stayInAppWarning]);
@@ -179,14 +197,26 @@ const App: React.FC = () => {
       return;
     }
 
+    // Create a new AbortController for this check session
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     setIsChecking(true);
     setCheckProgress({ current: 0, total: showsToCheck.length });
 
     let updatedWatchlist = [...watchlistRef.current];
     let newItemsCount = 0;
     let localNews = [...news]; // Work with current state
+    let wasAborted = false;
 
     for (let i = 0; i < showsToCheck.length; i++) {
+      // Was the operation aborted (user left app)?
+      if (signal.aborted) {
+        console.log('[PWA] Check aborted - stopping loop');
+        wasAborted = true;
+        break;
+      }
+
       const show = showsToCheck[i];
       setCheckProgress({ current: i + 1, total: showsToCheck.length });
       
@@ -201,35 +231,64 @@ const App: React.FC = () => {
       let result = null;
 
       while(attempts < 3 && !success) {
+        // Was aborted during retry?
+        if (signal.aborted) {
+          wasAborted = true;
+          break;
+        }
+
         try {
           if (attempts > 0) {
              // Wait 2 seconds before retry
              await new Promise(r => setTimeout(r, 2000));
+          }
+          // Aborted during wait?
+          if (signal.aborted) {
+            wasAborted = true;
+            break;
           }
 
           result = await GeminiService.fetchUpdatesForShow(
             show.title, 
             show.lastChecked, 
             existingHeadlines, 
-            settingsRef.current
+            settingsRef.current,
+            signal
           );
+          // Aborted during API call?
+          if (signal.aborted) {
+            wasAborted = true;
+            break;
+          }
 
           if (result.success) {
             success = true;
+          } else if (result.error === 'Aborted') {
+            // Explicitly aborted
+            wasAborted = true;
+            break;
           } else if (result.error && (result.error.includes('429') || result.error.includes('quota'))) {
-            // If rate limit, break retry loop immediately and stop entire process
             showToast(t.rateLimit, "error");
             setIsChecking(false);
+            abortControllerRef.current = null;
             return;
           } else {
-            // Other error, retry
             attempts++;
             console.warn(`Attempt ${attempts} failed for ${show.title}:`, result.error);
           }
-        } catch (e) {
+        } catch (e: any) {
+          if (e.name === 'AbortError' || signal.aborted) {
+            wasAborted = true;
+            break;
+          }
           attempts++;
           console.error(`Attempt ${attempts} exception:`, e);
         }
+      }
+
+      // Exit outer loop if aborted
+      if (wasAborted) {
+        break;
       }
 
       if (success && result) {
@@ -249,21 +308,30 @@ const App: React.FC = () => {
       } 
     }
 
-    if (newItemsCount > 0) {
-      showToast(t.foundUpdates(newItemsCount), 'success');
-    } else {
-      // ALWAYS show "No updates" for manual checks
-      if (!isAuto) showToast(t.noNewUpdates, 'info');
+    // Only show result messages if NOT aborted
+    // (The visibility change handler will show the abort message)
+    if (!wasAborted && !signal.aborted) {
+      if (newItemsCount > 0) {
+        showToast(t.foundUpdates(newItemsCount), 'success');
+      } else {
+        if (!isAuto) showToast(t.noNewUpdates, 'info');
+      }
+
+      if (isAuto) {
+        setSettings(prev => ({...prev, lastAutoCheckDate: new Date().toISOString().split('T')[0]}));
+      }
     }
-    
-    if (isAuto) {
-      setSettings(prev => ({...prev, lastAutoCheckDate: new Date().toISOString().split('T')[0]}));
-    }
-    
+
     setIsChecking(false);
+    setCheckProgress({ current: 0, total: 0 });
+    
+    // Clear the controller if completed normally (not aborted)
+    if (!wasAborted && !signal.aborted) {
+      abortControllerRef.current = null;
+    }
   }, [news, t]);
 
-  // Simple Foreground Auto-Check Logic (Runs when app is open and time hits)
+  // Simple Foreground Auto-Check Logic
   useEffect(() => {
     const checkSchedule = () => {
       if (!settings.autoCheckTime || isCheckingRef.current) return;

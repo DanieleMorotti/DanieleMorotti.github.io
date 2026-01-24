@@ -81,7 +81,7 @@ npm run build
 
 ## Limitations
 
-⚠️ **Background Execution** - If you leave the app while a search is running, it will likely be stopped by the OS due to PWA restrictions on background processes.
+⚠️ **Background Execution** - If you leave the app while a search is running, it will be stopped by the OS due to PWA restrictions on background processes. Therefore I abort explicitly the search.
 
 🖥️ **Client-Side Architecture** - Currently, all search logic runs on the client. Moving this to a server would improve reliability and allow true background updates. This is left for future improvements.
 

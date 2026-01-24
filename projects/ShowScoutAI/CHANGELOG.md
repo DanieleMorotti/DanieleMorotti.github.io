@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [2.1.0] - 2026-01-24
+
+### Fixed
+
+- Added explicit abort mechanism if the user leaves the app, to avoid pending and bugged research.
+
+
 ## [2.0.0] - 2026-01-24
 
 ### Added

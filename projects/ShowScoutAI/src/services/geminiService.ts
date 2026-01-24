@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { AppSettings, NewsCard, Source } from "../types";
 
-// Helper to generate a unique ID
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 interface FetchResult {
@@ -14,28 +13,31 @@ export const fetchUpdatesForShow = async (
   showTitle: string,
   lastCheckedDate: string | null,
   existingHeadlines: string[],
-  settings: AppSettings
+  settings: AppSettings,
+  signal?: AbortSignal  // Accept AbortSignal
 ): Promise<FetchResult> => {
+  // Check if already aborted before starting
+  if (signal?.aborted) {
+    return { success: false, error: "Aborted" };
+  }
+
   if (!settings.apiKey) {
     return { success: false, error: "API Key missing" };
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey: settings.apiKey });
-    
+
     const today = new Date().toISOString().split('T')[0];
     const lastChecked = lastCheckedDate ? new Date(lastCheckedDate).toLocaleDateString() : "Never checked before";
-    
-    // Language Logic
+
     const isItalian = settings.language === 'IT';
     const langContext = isItalian 
       ? "IMPORTANT: You MUST write the headline and summary in ITALIAN (Italiano)." 
       : "IMPORTANT: You MUST write the headline and summary in ENGLISH.";
-    
+
     const outputLang = isItalian ? "Italian" : "English";
 
-    // Detect model compatibility: 
-    // Gemini 3 series supports Structured Outputs (JSON) with Search Grounding well.
     const supportsJsonWithTools = settings.model.includes("gemini-3");
 
     let prompt = `
@@ -65,8 +67,12 @@ export const fetchUpdatesForShow = async (
     let parsedData: { hasNewSignificantUpdate: boolean; headline?: string; summary?: string } = { hasNewSignificantUpdate: false };
     let response: GenerateContentResponse;
 
+    // Check abort before API call
+    if (signal?.aborted) {
+      return { success: false, error: "Aborted" };
+    }
+
     if (supportsJsonWithTools) {
-      // Logic for Gemini 3: Use JSON Schema
       prompt += `
         OUTPUT:
         Return a JSON object. 
@@ -106,7 +112,11 @@ export const fetchUpdatesForShow = async (
         },
       });
 
-      // Parse JSON Response
+      // Check abort after API call
+      if (signal?.aborted) {
+        return { success: false, error: "Aborted" };
+      }
+
       const jsonText = response.text || "{}";
       try {
         parsedData = JSON.parse(jsonText);
@@ -116,7 +126,6 @@ export const fetchUpdatesForShow = async (
       }
 
     } else {
-      // Logic for Gemini 2.5: Use Simple Text Parsing
       prompt += `
         OUTPUT FORMAT INSTRUCTIONS:
         - If NO new significant update is found that meets the criteria, output exactly: NO_UPDATE
@@ -135,6 +144,11 @@ export const fetchUpdatesForShow = async (
         },
       });
 
+      // Check abort after API call
+      if (signal?.aborted) {
+        return { success: false, error: "Aborted" };
+      }
+
       const text = response.text || "";
       
       if (text.includes("NO_UPDATE")) {
@@ -151,6 +165,11 @@ export const fetchUpdatesForShow = async (
           };
         }
       }
+    }
+
+    // Final abort check before processing results
+    if (signal?.aborted) {
+      return { success: false, error: "Aborted" };
     }
 
     if (!parsedData.hasNewSignificantUpdate) {
@@ -184,8 +203,11 @@ export const fetchUpdatesForShow = async (
     };
 
     return { success: true, newsItem };
-
   } catch (error: any) {
+    // Handle AbortError specifically
+    if (error.name === 'AbortError' || signal?.aborted) {
+      return { success: false, error: "Aborted" };
+    }
     console.error("Gemini API Error", error);
     return { success: false, error: error.message || "Unknown error" };
   }
