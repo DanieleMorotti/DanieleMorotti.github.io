@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [2.1.1] - 2026-01-24
+
+### Fixed
+
+- The page reload on ios due to the service worker update logic, now it should be fixed.
+
+
 ## [2.1.0] - 2026-01-24
 
 ### Fixed

@@ -79,17 +79,27 @@ const App: React.FC = () => {
 
   // PWA Update Listener
   useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    // Capture if there's already a controller when the page loads.
+    // If there isn't one, the next 'controllerchange' is the FIRST install, not an update.
+    let refreshing = false;
+    const hadControllerOnLoad = !!navigator.serviceWorker.controller;
+
     const handleControllerChange = () => {
+      // Prevent multiple reloads
+      if (refreshing) return;
+      
+      // Only reload if there WAS a previous controller (genuine update)
+      if (!hadControllerOnLoad) return;
+
+      refreshing = true;
       showToast("App updated! Refreshing...", "success");
       setTimeout(() => window.location.reload(), 1500);
     };
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
-    }
+    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+    
     return () => {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
-      }
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
     };
   }, []);
 
