@@ -33,9 +33,6 @@ const FlagIT = () => (
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings, onSave, t }) => {
   const [localSettings, setLocalSettings] = useState<AppSettings>(settings);
-  const [notifPermission, setNotifPermission] = useState<NotificationPermission>(
-    typeof Notification !== 'undefined' ? Notification.permission : 'denied'
-  );
 
   useEffect(() => {
     setLocalSettings(settings);
@@ -50,15 +47,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
   const handleSave = () => {
     onSave(localSettings);
     onClose();
-  };
-
-  const requestNotifPermission = async () => {
-    if (!('Notification' in window)) return;
-    const permission = await Notification.requestPermission();
-    setNotifPermission(permission);
-    if (permission === 'granted') {
-       new Notification("ShowScout AI", { body: "Notifications enabled successfully!" });
-    }
   };
 
   return (
@@ -117,24 +105,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
               </div>
             </div>
 
-            {/* Notifications Button */}
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Push Notifications</label>
-              <button
-                onClick={requestNotifPermission}
-                className={`w-full p-3 rounded-lg border flex items-center justify-center gap-2 transition ${
-                  notifPermission === 'granted'
-                    ? 'bg-green-900/20 border-green-500/50 text-green-400 cursor-default'
-                    : 'bg-dark-950 border-gray-700 text-gray-300 hover:border-brand-500'
-                }`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                <span className="font-medium">
-                  {notifPermission === 'granted' ? t.notificationsActive : (notifPermission === 'denied' ? t.notificationsBlocked : t.enableNotifications)}
-                </span>
-              </button>
-            </div>
-
             {/* Auto Check */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">{t.autoCheckLabel}</label>
@@ -159,6 +129,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
               >
                 <option value={DEFAULT_MODEL}>{DEFAULT_MODEL}</option>
                 <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
               </select>
             </div>
           </div>

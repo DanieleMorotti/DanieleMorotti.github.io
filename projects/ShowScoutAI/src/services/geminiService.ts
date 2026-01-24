@@ -51,12 +51,12 @@ export const fetchUpdatesForShow = async (
       TASK:
       1. Use Google Search to find the *latest* production news, casting, or release dates for "${showTitle}".
       2. Filter strictly for news published AFTER "${lastChecked}". 
-      3. If the news is just a rumor, fan theory, or recap of an old episode, ignore it.
+      3. If the news is just a fan theory, or recap of an old episode, ignore it.
       4. Compare found news against "ALREADY KNOWN UPDATES". If semantically similar, ignore it.
       
       CONTENT REQUIREMENTS:
       - Headline: Catchy and professional.
-      - Summary: Write a DETAILED journalistic summary (approx. 2-3 paragraphs).
+      - Summary: Write a DETAILED summary of the news, but not a wall of text (approx. 2-3 paragraphs).
       - FORMATTING: **PLAIN TEXT ONLY**. Do NOT use Markdown (no bold, no italics, no [links]()).
       - CITATIONS: Cite sources naturally within the flow of the sentences (e.g., "According to Deadline, production begins...").
       - ${langContext}

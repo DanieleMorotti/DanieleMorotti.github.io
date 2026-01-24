@@ -40,7 +40,12 @@ export const saveWatchlist = (list: WatchlistEntry[]): void => {
 
 export const getNews = (): NewsCard[] => {
   const stored = localStorage.getItem(APP_STORAGE_KEYS.NEWS);
-  return stored ? JSON.parse(stored) : [];
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    // Ensure isDeleted exists for backward compatibility
+    return parsed.map((n: any) => ({ ...n, isDeleted: n.isDeleted || false }));
+  }
+  return [];
 };
 
 export const saveNews = (news: NewsCard[]): void => {

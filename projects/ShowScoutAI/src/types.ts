@@ -1,3 +1,4 @@
+
 export interface Source {
   title: string;
   uri: string;
@@ -13,6 +14,7 @@ export interface NewsCard {
   sources: Source[];
   isRead: boolean;
   isArchived: boolean;
+  isDeleted?: boolean; // Soft delete flag
 }
 
 export interface AppSettings {

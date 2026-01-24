@@ -11,6 +11,7 @@ import NewsCard from './components/NewsCard';
 import NewsDetailModal from './components/NewsDetailModal';
 import WatchlistManager from './components/WatchlistManager';
 import SettingsModal from './components/SettingsModal';
+import IOSInstallHint from './components/IOSInstallHint';
 import Toast from './components/Toast';
 import { translations } from './translations';
 
@@ -27,7 +28,11 @@ const App: React.FC = () => {
   const [selectedNewsItem, setSelectedNewsItem] = useState<NewsCardType | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'info' | 'error' } | null>(null);
 
-  // Use refs to access latest state in async callbacks without creating stale closures
+  // iOS Installation State
+  const [showIOSHint, setShowIOSHint] = useState(false);
+  const [isIphone, setIsIphone] = useState(true);
+  
+  // Use refs to access latest state in async callbacks
   const settingsRef = useRef(settings);
   const watchlistRef = useRef(watchlist);
   const isCheckingRef = useRef(isChecking);
@@ -40,19 +45,61 @@ const App: React.FC = () => {
   const t = translations[settings.language] || translations.EN;
   const locale = settings.language === 'IT' ? 'it-IT' : 'en-US';
 
-  // Function to re-sync all state from LocalStorage
-  // Mandatory for PWAs on mobile when returning from background
-  const syncFromStorage = useCallback(() => {
-    const freshNews = Storage.getNews();
-    const freshWatchlist = Storage.getWatchlist();
-    const freshSettings = Storage.getSettings();
+  // Persistence Effects
+  useEffect(() => { Storage.saveSettings(settings); }, [settings]);
+  useEffect(() => { Storage.saveWatchlist(watchlist); }, [watchlist]);
+  useEffect(() => { Storage.saveNews(news); }, [news]);
+
+  // iOS Installation Logic (Advice Pop-up)
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
+    const isSafari = isIOSDevice && /webkit/i.test(userAgent) && !/crios/i.test(userAgent);
+    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     
-    setNews(freshNews);
-    setWatchlist(freshWatchlist);
-    setSettings(freshSettings);
-    
-    console.log("State re-hydrated from storage");
+    setIsIphone(/iphone/.test(userAgent));
+
+    if (isSafari && !isInStandaloneMode) {
+      const lastShown = localStorage.getItem('ios_hint_last_shown');
+      const now = Date.now();
+      const thirtyMinutes = 1800 * 1000;
+
+      if (!lastShown || (now - parseInt(lastShown)) > thirtyMinutes) {
+        setShowIOSHint(true);
+        localStorage.setItem('ios_hint_last_shown', now.toString());
+        
+        // Auto-hide after 20 seconds
+        setTimeout(() => setShowIOSHint(false), 20000);
+      }
+    }
   }, []);
+
+  // PWA Update Listener
+  useEffect(() => {
+    const handleControllerChange = () => {
+      showToast("App updated! Refreshing...", "success");
+      setTimeout(() => window.location.reload(), 1500);
+    };
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+    }
+    return () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      }
+    };
+  }, []);
+
+  // Warning when returning to app if a search was interrupted
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isCheckingRef.current) {
+        showToast(t.stayInAppWarning, 'error');
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [t.stayInAppWarning]);
 
   // Actions
   const handleAddWatchlist = (title: string) => {
@@ -61,208 +108,183 @@ const App: React.FC = () => {
       title,
       lastChecked: null
     };
-    const updated = [newEntry, ...watchlist];
-    setWatchlist(updated);
-    Storage.saveWatchlist(updated);
+    setWatchlist([newEntry, ...watchlist]);
     showToast(t.addedToWatchlist(title), 'success');
   };
 
   const handleRemoveWatchlist = (id: string) => {
-    const updated = watchlist.filter(w => w.id !== id);
-    setWatchlist(updated);
-    Storage.saveWatchlist(updated);
+    // 1. Find the show being removed
+    const showToRemove = watchlist.find(w => w.id === id);
+    // 2. Remove from watchlist
+    setWatchlist(watchlist.filter(w => w.id !== id));
+    // 3. Clean up SOFT DELETED news for this show (permanently delete them)
+    // but KEEP visible (active/archived) news for the user to read.
+    if (showToRemove) {
+      setNews(prev => prev.filter(n => {
+        const isForThisShow = n.showTitle === showToRemove.title;
+        const isSoftDeleted = n.isDeleted;
+        // If it's for this show AND it's soft deleted, remove it (return false).
+        // Otherwise keep it.
+        return !(isForThisShow && isSoftDeleted);
+      }));
+    }
   };
 
   const handleArchiveNews = (id: string) => {
-    setNews(prev => {
-      const updated = prev.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n);
-      Storage.saveNews(updated);
-      return updated;
-    });
+    setNews(prev => prev.map(n => n.id === id ? { ...n, isRead: true, isArchived: true } : n));
   };
 
   const handleDeleteNews = (id: string) => {
-    setNews(prev => {
-      const updated = prev.filter(n => n.id !== id);
-      Storage.saveNews(updated);
-      return updated;
-    });
+    // Soft Delete: Hide from UI, but keep in storage for Context History
+    setNews(prev => prev.map(n => n.id === id ? { ...n, isDeleted: true } : n));
   };
 
   const updateSettings = (newSettings: AppSettings) => {
     setSettings(newSettings);
-    Storage.saveSettings(newSettings);
     showToast(translations[newSettings.language].settingsSaved, 'success');
   };
   
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
-    setToast({ message, type });
-  };
-
-  const sendSystemNotification = (title: string, body: string) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification(title, {
-          body,
-          icon: './showscout_icon_192.png',
-          tag: 'showscout-updates',
-          badge: './showscout_icon_192.png'
-        });
-      } catch (e) {
-        console.error("Notification failed", e);
-      }
-    }
+    setToast(null); // Force reset
+    setTimeout(() => setToast({ message, type }), 10);
   };
 
   // The AI Core Logic
   const checkForUpdates = useCallback(async (isAuto = false) => {
-    // 1. Refresh context immediately
-    const currentT = translations[settingsRef.current.language] || translations.EN;
-    const currentWatchlist = Storage.getWatchlist();
-    const currentSettings = Storage.getSettings();
-
-    if (currentWatchlist.length === 0 || !currentSettings.apiKey || isCheckingRef.current) {
+    // 1. Validations
+    if (watchlistRef.current.length === 0) {
+      showToast(t.addShowsFirst, 'info');
+      setView('watchlist');
       return;
     }
+
+    if (!settingsRef.current.apiKey) {
+      showToast(t.missingApiKey, 'error');
+      setShowSettings(true);
+      return;
+    }
+
+    if (isCheckingRef.current) return;
 
     const ONE_HOUR_MS = 60 * 60 * 1000;
     const now = Date.now();
     
-    const showsToCheck = currentWatchlist.filter(show => {
+    const showsToCheck = watchlistRef.current.filter(show => {
       if (!show.lastChecked) return true;
       return (now - new Date(show.lastChecked).getTime()) > ONE_HOUR_MS;
     });
 
     if (showsToCheck.length === 0) {
-      if (!isAuto) showToast(currentT.updatedRecently, "info");
+      if (!isAuto) showToast(t.updatedRecently, "info");
       return;
     }
 
     setIsChecking(true);
     setCheckProgress({ current: 0, total: showsToCheck.length });
 
+    let updatedWatchlist = [...watchlistRef.current];
     let newItemsCount = 0;
+    let localNews = [...news]; // Work with current state
 
     for (let i = 0; i < showsToCheck.length; i++) {
       const show = showsToCheck[i];
       setCheckProgress({ current: i + 1, total: showsToCheck.length });
       
-      // Always get FRESH news from storage to avoid stale branch overwrites
-      const latestNewsInStorage = Storage.getNews();
-      const existingHeadlines = latestNewsInStorage
+      // Pass ALL headlines (including deleted ones) to the AI for context
+      const existingHeadlines = localNews
         .filter(n => n.showTitle === show.title)
         .map(n => n.headline);
 
+      // RETRY MECHANISM
       let success = false;
-      let retryCount = 0;
-      
-      while (!success && retryCount < 2) {
-        const result = await GeminiService.fetchUpdatesForShow(
-          show.title, 
-          show.lastChecked, 
-          existingHeadlines, 
-          currentSettings
-        );
+      let attempts = 0;
+      let result = null;
 
-        if (!result.success && result.error && (result.error.includes('429') || result.error.includes('exhausted'))) {
-             showToast(currentT.rateLimit, "error");
-             await new Promise(resolve => setTimeout(resolve, 60000));
-             retryCount++;
-             continue;
-        }
-        
-        if (result.success) {
-          if (result.newsItem) {
-            // ATOMIC UPDATE: Read latest, append, save, then update React state
-            const currentNewsAtThisMoment = Storage.getNews();
-            const updatedNewsList = [result.newsItem, ...currentNewsAtThisMoment];
-            Storage.saveNews(updatedNewsList);
-            setNews(updatedNewsList);
-            newItemsCount++;
+      while(attempts < 3 && !success) {
+        try {
+          if (attempts > 0) {
+             // Wait 2 seconds before retry
+             await new Promise(r => setTimeout(r, 2000));
           }
-          
-          // Update watchlist timestamp immediately in storage
-          const latestWatchlist = Storage.getWatchlist();
-          const idx = latestWatchlist.findIndex(w => w.id === show.id);
-          if (idx !== -1) {
-            latestWatchlist[idx] = { ...latestWatchlist[idx], lastChecked: new Date().toISOString() };
-            Storage.saveWatchlist(latestWatchlist);
-            setWatchlist(latestWatchlist);
+
+          result = await GeminiService.fetchUpdatesForShow(
+            show.title, 
+            show.lastChecked, 
+            existingHeadlines, 
+            settingsRef.current
+          );
+
+          if (result.success) {
+            success = true;
+          } else if (result.error && (result.error.includes('429') || result.error.includes('quota'))) {
+            // If rate limit, break retry loop immediately and stop entire process
+            showToast(t.rateLimit, "error");
+            setIsChecking(false);
+            return;
+          } else {
+            // Other error, retry
+            attempts++;
+            console.warn(`Attempt ${attempts} failed for ${show.title}:`, result.error);
           }
-          success = true;
-        } else {
-          success = true; 
+        } catch (e) {
+          attempts++;
+          console.error(`Attempt ${attempts} exception:`, e);
         }
       }
+
+      if (success && result) {
+        if (result.newsItem) {
+          localNews = [result.newsItem, ...localNews];
+          setNews(localNews);
+          Storage.saveNews(localNews); // Atomic save
+          newItemsCount++;
+        }
+        
+        const idx = updatedWatchlist.findIndex(w => w.id === show.id);
+        if (idx !== -1) {
+          updatedWatchlist[idx] = { ...updatedWatchlist[idx], lastChecked: new Date().toISOString() };
+          setWatchlist([...updatedWatchlist]);
+          Storage.saveWatchlist(updatedWatchlist); // Atomic save
+        }
+      } 
     }
 
     if (newItemsCount > 0) {
-      const msg = currentT.foundUpdates(newItemsCount);
-      if (document.hidden) {
-        sendSystemNotification('ShowScout AI', msg);
-      } else {
-        showToast(msg, 'success');
-      }
-    } else if (!isAuto) {
-      showToast(currentT.noNewUpdates, 'info');
+      showToast(t.foundUpdates(newItemsCount), 'success');
+    } else {
+      // ALWAYS show "No updates" for manual checks
+      if (!isAuto) showToast(t.noNewUpdates, 'info');
     }
     
     if (isAuto) {
-      const latestSettings = Storage.getSettings();
-      const newSettings = {...latestSettings, lastAutoCheckDate: new Date().toISOString().split('T')[0]};
-      Storage.saveSettings(newSettings);
-      setSettings(newSettings);
+      setSettings(prev => ({...prev, lastAutoCheckDate: new Date().toISOString().split('T')[0]}));
     }
     
     setIsChecking(false);
-  }, []);
+  }, [news, t]);
 
-  // Scheduled Logic
-  const handleTimeCheck = useCallback(() => {
-    const s = Storage.getSettings();
-    const w = Storage.getWatchlist();
-    if (!s.autoCheckTime || !s.apiKey || w.length === 0 || isCheckingRef.current) return;
-
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
-    
-    if (s.lastAutoCheckDate === todayStr) return;
-
-    const [h, m] = s.autoCheckTime.split(':').map(Number);
-    const scheduledTime = new Date();
-    scheduledTime.setHours(h, m, 0, 0);
-
-    if (now >= scheduledTime) {
-      checkForUpdates(true);
-    }
-  }, [checkForUpdates]);
-
-  // Sync and Catch-up Logic on Visibility Change
+  // Simple Foreground Auto-Check Logic (Runs when app is open and time hits)
   useEffect(() => {
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        syncFromStorage();
-        handleTimeCheck();
+    const checkSchedule = () => {
+      if (!settings.autoCheckTime || isCheckingRef.current) return;
+      
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      if (settings.lastAutoCheckDate === todayStr) return;
+
+      const [h, m] = settings.autoCheckTime.split(':').map(Number);
+      if (now.getHours() === h && now.getMinutes() === m) {
+        checkForUpdates(true);
       }
     };
 
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    // Initial mount sync
-    syncFromStorage();
-    handleTimeCheck();
-
-    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
-  }, [handleTimeCheck, syncFromStorage]);
-
-  // Interval check
-  useEffect(() => {
-    const interval = setInterval(handleTimeCheck, 60000);
+    const interval = setInterval(checkSchedule, 30000); // Check every 30s
     return () => clearInterval(interval);
-  }, [handleTimeCheck]);
+  }, [settings.autoCheckTime, settings.lastAutoCheckDate, checkForUpdates]);
 
-  // Group News Logic
-  const activeNews = news.filter(n => !n.isArchived);
-  const archivedNews = news.filter(n => n.isArchived);
+  // Group News Logic - FILTER OUT DELETED ITEMS HERE
+  const activeNews = news.filter(n => !n.isArchived && !n.isDeleted);
+  const archivedNews = news.filter(n => n.isArchived && !n.isDeleted);
 
   const groupNews = (items: NewsCardType[]) => {
     const groups: { [key: string]: NewsCardType[] } = {};
@@ -278,13 +300,20 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-24 text-gray-200 font-sans selection:bg-brand-500/30">
-      <header className="sticky top-0 z-40 bg-dark-900/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">
-          {t.appTitle}
-        </h1>
+      <header className="sticky top-0 z-40 bg-dark-900/80 backdrop-blur-md border-b border-gray-800 px-4 py-4 flex items-center justify-between">
+        {/* Left spacer, matches settings button width for true centering */}
+        <div className="w-10 shrink-0"></div>
+        {/* Center: Logo + Title */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <img src={`${import.meta.env.BASE_URL}/showscout_icon_192.png`} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg shadow-md shadow-brand-500/20 shrink-0" />
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-wide truncate">
+            {t.appTitle}
+          </h1>
+        </div>
+        {/* Settings button */}
         <button 
           onClick={() => setShowSettings(true)}
-          className="p-2 text-gray-400 hover:text-white transition"
+          className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition shrink-0"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
@@ -416,6 +445,13 @@ const App: React.FC = () => {
         onClose={() => setShowSettings(false)}
         settings={settings}
         onSave={updateSettings}
+        t={t}
+      />
+
+      <IOSInstallHint
+        isVisible={showIOSHint}
+        onClose={() => setShowIOSHint(false)}
+        isIphone={isIphone}
         t={t}
       />
       

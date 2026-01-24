@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [2.0.0] - 2026-01-24
+
+### Added
+
+- Icon and title at the top of the app.
+- Now the app remember the cards even if the user deleted them, until the user will remove from watchlist. Such that the LLM is informed about what the user already read.
+- Tooltip for PWA installation on Apple devices.
+- Added a warning when the user leaves the app while running a search.
+
+### Changed
+
+- The default language is now taken from the locale of the device.
+- Small prompt update.
+
+### Removed
+
+- Support for notifications, since for PWA they are bugged.
+- Background execution code, because it can't work for PWA.
+
+
 ## [1.1.0] - 2026-01-23
 
 ## Fixed
