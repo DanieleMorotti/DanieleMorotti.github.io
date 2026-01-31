@@ -12,6 +12,7 @@ export const getSettings = (): AppSettings => {
       language: parsed.language || DEFAULT_LANGUAGE,
       temperature: parsed.temperature ?? 0.4,
       autoCheckTime: parsed.autoCheckTime || '',
+      autoCheckDays: parsed.autoCheckDays || 1,
       lastAutoCheckDate: parsed.lastAutoCheckDate || null,
     };
   }
@@ -21,6 +22,7 @@ export const getSettings = (): AppSettings => {
     language: DEFAULT_LANGUAGE,
     temperature: 0.4,
     autoCheckTime: '',
+    autoCheckDays: 1,
     lastAutoCheckDate: null,
   };
 };

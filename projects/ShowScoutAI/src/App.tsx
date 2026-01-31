@@ -348,8 +348,18 @@ const App: React.FC = () => {
       
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
-      if (settings.lastAutoCheckDate === todayStr) return;
+      
+      // Check if enough days have passed since last auto-check
+      if (settings.lastAutoCheckDate) {
+        const lastCheckDate = new Date(settings.lastAutoCheckDate);
+        const daysSinceLastCheck = Math.floor((now.getTime() - lastCheckDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSinceLastCheck < (settings.autoCheckDays || 7)) {
+          return; // Not enough days have passed
+        }
+      }
 
+      // Check if current time matches the auto-check time
       const [h, m] = settings.autoCheckTime.split(':').map(Number);
       if (now.getHours() === h && now.getMinutes() === m) {
         checkForUpdates(true);
@@ -358,7 +368,7 @@ const App: React.FC = () => {
 
     const interval = setInterval(checkSchedule, 30000); // Check every 30s
     return () => clearInterval(interval);
-  }, [settings.autoCheckTime, settings.lastAutoCheckDate, checkForUpdates]);
+  }, [settings.autoCheckTime, settings.autoCheckDays, settings.lastAutoCheckDate, checkForUpdates]);
 
   // Group News Logic - FILTER OUT DELETED ITEMS HERE
   const activeNews = news.filter(n => !n.isArchived && !n.isDeleted);

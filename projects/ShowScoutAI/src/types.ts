@@ -23,6 +23,7 @@ export interface AppSettings {
   language: 'EN' | 'IT'; // Added Language
   temperature: number;
   autoCheckTime: string; // Format "HH:mm" e.g. "09:00"
+  autoCheckDays: number; // Number of days between auto checks
   lastAutoCheckDate: string | null; // "YYYY-MM-DD"
 }
 

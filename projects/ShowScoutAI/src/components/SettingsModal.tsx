@@ -105,7 +105,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
               </div>
             </div>
 
-            {/* Auto Check */}
+            {/* Auto Check Days */}
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">{t.autoCheckDaysLabel}</label>
+              <input 
+                type="number" 
+                min="1"
+                max="60"
+                value={localSettings.autoCheckDays || 1}
+                onChange={(e) => handleChange('autoCheckDays', parseInt(e.target.value) || 1)}
+                className="w-full bg-dark-950 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">{t.autoCheckDaysDesc}</p>
+            </div>
+            {/* Auto Check Time */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">{t.autoCheckLabel}</label>
               <div className="flex gap-2 items-center">
