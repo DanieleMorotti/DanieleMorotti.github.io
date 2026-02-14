@@ -5,7 +5,7 @@
 const availableLocales = ['en', 'it'];
 const defaultLanguage = 'en';
 let activeLanguage = defaultLanguage;
-let refreshProjectExpandLabel = null;
+let refreshProjectsUI = null;
 
 // Function to get user's preferred language
 function getPreferredLanguage() {
@@ -124,6 +124,8 @@ const translations = {
 			personal: 'Personal projects',
             showMore: 'Show more projects',
             showLess: 'Show fewer projects',
+            previous: 'Previous projects',
+            next: 'Next projects',
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: 'A <strong>webapp</strong> to be always updated on the latest <strong>news from the movies and tv shows</strong> you are waiting for. Create a list of titles and the <strong>AI</strong> will find news for you.'
@@ -139,7 +141,7 @@ const translations = {
 			}
 		},
 		contact: {
-			title: 'Contact me'
+			title: 'Get in touch'
 		}
 	},
 	it: {
@@ -245,6 +247,8 @@ const translations = {
 			personal: 'Progetti personali',
 			showMore: 'Mostra altri progetti',
 			showLess: 'Mostra meno progetti',
+			previous: 'Progetti precedenti',
+			next: 'Progetti successivi',
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: "La <strong>webapp</strong> per essere sempre aggiornati sulle ultime <strong>novità dei film e serie tv</strong> che stai aspettando. Crea una lista di titoli e l'<strong>IA</strong> cercherà le ultime novità per te."
@@ -297,8 +301,8 @@ function changeLanguage(lang) {
     });
 
     updateResumeButton(lang);
-    if (typeof refreshProjectExpandLabel === 'function') {
-        refreshProjectExpandLabel();
+    if (typeof refreshProjectsUI === 'function') {
+        refreshProjectsUI();
     }
     localStorage.setItem('preferredLanguage', lang);
 }
@@ -441,19 +445,20 @@ function setupNavScrollState() {
     window.addEventListener('scroll', toggleScrolledState, { passive: true });
 }
 
-function setupProjectFilters() {
-    const filterButtons = document.querySelectorAll('[data-project-filter]');
-    const cards = document.querySelectorAll('[data-project-group]');
-    const expandButton = document.getElementById('projects-expand');
-    const expandWrap = expandButton ? expandButton.parentElement : null;
-    const maxVisible = 4;
-    const expandedState = {
-        university: false,
-        personal: false
-    };
-    let activeGroup = 'university';
+function setupProjectsCarousel() {
+    const filterButtons = Array.from(document.querySelectorAll('[data-project-filter]'));
+    const cards = Array.from(document.querySelectorAll('[data-project-group]'));
+    const viewport = document.querySelector('.projects-viewport');
+    const track = document.getElementById('projects-track');
+    const prevButton = document.getElementById('projects-prev');
+    const nextButton = document.getElementById('projects-next');
+    const pagination = document.getElementById('projects-pagination');
+    let currentIndex = 0;
+    let slidesPerView = 1;
+    let visibleCards = [];
+    let touchStartX = 0;
 
-    if (!filterButtons.length || !cards.length) {
+    if (!filterButtons.length || !cards.length || !viewport || !track || !prevButton || !nextButton || !pagination) {
         return;
     }
 
@@ -462,65 +467,141 @@ function setupProjectFilters() {
         return getNestedTranslation(localeObject, translationKey) || translationKey;
     };
 
-    const updateExpandButtonLabel = () => {
-        if (!expandButton || !expandWrap) {
-            return;
+    const getSlidesPerView = () => {
+        if (window.innerWidth <= 560) {
+            return 1;
         }
-
-        const cardsInGroup = Array.from(cards).filter((card) => card.getAttribute('data-project-group') === activeGroup);
-        if (cardsInGroup.length <= maxVisible) {
-            expandWrap.hidden = true;
-            return;
+        if (window.innerWidth <= 980) {
+            return 2;
         }
-
-        expandWrap.hidden = false;
-        const key = expandedState[activeGroup] ? 'projects.showLess' : 'projects.showMore';
-        expandButton.setAttribute('data-translate', key);
-        expandButton.innerHTML = localize(key);
+        return 3;
     };
 
-    refreshProjectExpandLabel = updateExpandButtonLabel;
+    const getTrackGap = () => {
+        const styles = window.getComputedStyle(track);
+        const rawGap = styles.columnGap !== 'normal' ? styles.columnGap : styles.gap;
+        const parsedGap = parseFloat(rawGap);
+        return Number.isFinite(parsedGap) ? parsedGap : 0;
+    };
 
-    const applyFilter = (group) => {
-        activeGroup = group;
-        const isExpanded = expandedState[group];
-        let indexInGroup = 0;
+    const getMaxIndex = () => Math.max(visibleCards.length - slidesPerView, 0);
 
-        cards.forEach((card) => {
-            const belongsToGroup = card.getAttribute('data-project-group') === group;
-            if (!belongsToGroup) {
-                card.hidden = true;
-                return;
-            }
+    const updateButtons = () => {
+        const maxIndex = getMaxIndex();
+        prevButton.disabled = currentIndex <= 0;
+        nextButton.disabled = currentIndex >= maxIndex;
+    };
 
-            card.hidden = !isExpanded && indexInGroup >= maxVisible;
-            indexInGroup += 1;
+    const buildPagination = () => {
+        const maxIndex = getMaxIndex();
+        const totalPages = maxIndex + 1;
+        pagination.hidden = totalPages <= 1;
+        pagination.innerHTML = '';
+
+        for (let i = 0; i < totalPages; i += 1) {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'projects-dot';
+            dot.setAttribute('aria-label', `${localize('projects.title')} ${i + 1}`);
+            dot.classList.toggle('is-active', i === currentIndex);
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                updateLayout();
+            });
+            pagination.appendChild(dot);
+        }
+    };
+
+    const updateLayout = () => {
+        slidesPerView = getSlidesPerView();
+        visibleCards = cards.filter((card) => !card.hidden);
+        const maxIndex = getMaxIndex();
+        currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+        prevButton.setAttribute('aria-label', localize('projects.previous'));
+        nextButton.setAttribute('aria-label', localize('projects.next'));
+
+        const viewportWidth = viewport.clientWidth;
+        const gap = getTrackGap();
+        const cardWidth = (viewportWidth - gap * (slidesPerView - 1)) / slidesPerView;
+
+        visibleCards.forEach((card) => {
+            card.style.flex = cardWidth > 0 ? `0 0 ${cardWidth}px` : '';
         });
 
-        updateExpandButtonLabel();
+        const offset = (cardWidth + gap) * currentIndex;
+        track.style.transform = `translateX(-${Math.max(0, offset)}px)`;
+
+        updateButtons();
+        buildPagination();
+    };
+
+    const applyFilter = (group) => {
+        currentIndex = 0;
+
+        cards.forEach((card) => {
+            card.hidden = card.getAttribute('data-project-group') !== group;
+        });
+
+        filterButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.getAttribute('data-project-filter') === group);
+        });
+
+        requestAnimationFrame(updateLayout);
+    };
+
+    const move = (direction) => {
+        const maxIndex = getMaxIndex();
+        if (direction === 'prev' && currentIndex > 0) {
+            currentIndex -= 1;
+        } else if (direction === 'next' && currentIndex < maxIndex) {
+            currentIndex += 1;
+        } else {
+            return;
+        }
+        updateLayout();
     };
 
     filterButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            filterButtons.forEach((item) => item.classList.remove('is-active'));
-            button.classList.add('is-active');
             applyFilter(button.getAttribute('data-project-filter'));
         });
     });
 
-    if (expandButton) {
-        expandButton.addEventListener('click', () => {
-            expandedState[activeGroup] = !expandedState[activeGroup];
-            applyFilter(activeGroup);
-        });
-    }
+    prevButton.addEventListener('click', () => move('prev'));
+    nextButton.addEventListener('click', () => move('next'));
+
+    viewport.setAttribute('tabindex', '0');
+    viewport.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            move('prev');
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            move('next');
+        }
+    });
+
+    viewport.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', (event) => {
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(deltaX) < 35) {
+            return;
+        }
+        move(deltaX > 0 ? 'prev' : 'next');
+    }, { passive: true });
+
+    window.addEventListener('resize', updateLayout);
+    refreshProjectsUI = updateLayout;
 
     const initiallyActive = document.querySelector('.project-filter.is-active');
-    applyFilter(
-        initiallyActive
-            ? initiallyActive.getAttribute('data-project-filter')
-            : filterButtons[0].getAttribute('data-project-filter')
-    );
+    const initialGroup = initiallyActive
+        ? initiallyActive.getAttribute('data-project-filter')
+        : filterButtons[0].getAttribute('data-project-filter');
+
+    applyFilter(initialGroup);
 }
 
 function setupRevealAnimations() {
@@ -596,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLanguageDropdown();
     setupMobileNavigation();
     setupNavScrollState();
-    setupProjectFilters();
+    setupProjectsCarousel();
     setupResponsiveHeroFocus();
     setupRevealAnimations();
 

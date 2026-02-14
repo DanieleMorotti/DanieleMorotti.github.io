@@ -150,7 +150,7 @@ main section {
     padding: 6px 12px;
     border-radius: 20px;
     border: 1px solid var(--line);
-    background: rgba(228, 236, 228, 0.9);
+    background: rgba(228, 236, 228, 0.8);
     backdrop-filter: blur(14px);
     box-shadow: var(--shadow-soft);
     display: grid;
@@ -648,8 +648,9 @@ main section {
 }
 
 .projects-controls {
-    margin-top: 18px;
-    display: inline-flex;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
 }
@@ -673,11 +674,53 @@ main section {
     background: linear-gradient(125deg, var(--teal), var(--teal-deep));
 }
 
-.projects-grid {
+.projects-carousel {
     margin-top: 18px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 12px;
+    align-items: center;
+}
+
+.projects-viewport {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.projects-track {
+    display: flex;
+    gap: 12px;
+    transition: transform 0.32s ease;
+    will-change: transform;
+}
+
+.projects-nav {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(42, 111, 130, 0.45);
+    border-radius: 999px;
+    background: rgba(237, 244, 236, 0.86);
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.projects-nav:hover,
+.projects-nav:focus-visible {
+    color: #f7fbfc;
+    background: linear-gradient(125deg, var(--teal), var(--teal-deep));
+}
+
+.projects-nav[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    color: var(--ink);
+    background: rgba(237, 244, 236, 0.86);
 }
 
 .project-card {
@@ -723,32 +766,33 @@ main section {
     gap: 8px;
 }
 
-.projects-expand-wrap {
+.projects-pagination {
     margin-top: 16px;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.projects-expand-btn {
-    border: 1px solid rgba(42, 111, 130, 0.45);
+.projects-dot {
+    width: 10px;
+    height: 10px;
+    border: none;
     border-radius: 999px;
-    background: rgba(237, 244, 236, 0.86);
-    color: var(--ink);
-    font: inherit;
-    font-weight: 700;
-    padding: 10px 16px;
+    background: rgba(42, 111, 130, 0.25);
+    padding: 0;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: transform 0.18s ease, background-color 0.18s ease;
 }
 
-.projects-expand-btn:hover,
-.projects-expand-btn:focus-visible {
-    color: #f7fbfc;
-    background: linear-gradient(125deg, var(--teal), var(--teal-deep));
+.projects-dot:hover,
+.projects-dot:focus-visible {
+    transform: scale(1.08);
+    background: rgba(42, 111, 130, 0.46);
 }
 
-.projects-expand-wrap[hidden] {
-    display: none;
+.projects-dot.is-active {
+    background: var(--teal-deep);
 }
 
 .section-contact {
@@ -764,7 +808,7 @@ main section {
 }
 
 .contact-links {
-    margin-top: 24px;
+    margin-top: 3rem;
     display: flex;
     justify-content: center;
     gap: 16px;
@@ -810,6 +854,18 @@ main section {
     transform: translateY(0);
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 @media (max-width: 1080px) {
     .hero {
         display: flex;
@@ -822,9 +878,6 @@ main section {
         column-gap: 8px;
     }
 
-    .projects-grid {
-        grid-template-columns: 1fr 1fr;
-    }
 }
 
 @media (max-width: 860px) {
@@ -958,8 +1011,7 @@ main section {
         text-align: center;
     }
 
-    .about-layout,
-    .projects-grid {
+    .about-layout {
         grid-template-columns: 1fr;
     }
 
@@ -975,6 +1027,37 @@ main section {
 }
 
 @media (max-width: 560px) {
+    .projects-carousel {
+        grid-template-columns: auto auto;
+        grid-template-areas:
+            "viewport viewport"
+            "prev next";
+        justify-content: center;
+        row-gap: 10px;
+        column-gap: 12px;
+    }
+
+    .projects-nav {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+    }
+
+    .projects-nav-prev {
+        grid-area: prev;
+        justify-self: end;
+    }
+
+    .projects-nav-next {
+        grid-area: next;
+        justify-self: start;
+    }
+
+    .projects-viewport {
+        grid-area: viewport;
+        width: 100%;
+    }
+
     .hero-actions .btn {
         width: 100%;
         justify-content: center;

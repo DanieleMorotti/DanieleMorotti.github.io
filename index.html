@@ -171,7 +171,14 @@
                     <button class="project-filter" data-project-filter="personal" type="button" data-translate="projects.personal">Personal projects</button>
                 </div>
 
-                <div class="projects-grid">
+                <div class="projects-carousel" data-projects-carousel>
+                    <button class="projects-nav projects-nav-prev" id="projects-prev" type="button" aria-controls="projects-track">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                        <span class="sr-only" data-translate="projects.previous">Previous projects</span>
+                    </button>
+
+                    <div class="projects-viewport">
+                        <div class="projects-track" id="projects-track">
                     <article class="project-card reveal" data-project-group="university">
                         <img src="ref/images/counterf_expl.png" alt="counterfactual explanation with OMLT and DiCE">
                         <h3 data-translate="projects.aiii.title">Counterfactual explanations</h3>
@@ -292,19 +299,22 @@
                             <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/telegram_messages_checker" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
                         </div>
                     </article>
-                </div>
+                        </div>
+                    </div>
 
-                <div class="projects-expand-wrap">
-                    <button id="projects-expand" class="projects-expand-btn" type="button" data-translate="projects.showMore">
-                        Show more projects
+                    <button class="projects-nav projects-nav-next" id="projects-next" type="button" aria-controls="projects-track">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                        <span class="sr-only" data-translate="projects.next">Next projects</span>
                     </button>
                 </div>
+
+                <div class="projects-pagination" id="projects-pagination" aria-label="Project pages"></div>
             </div>
         </section>
 
         <section class="section section-contact" id="contact">
             <div class="container contact-wrap reveal">
-                <h2 class="section-title"><span data-translate="contact.title">Contact me</span> <i class="fas fa-user" aria-hidden="true"></i></h2>
+                <h2 class="section-title"><span data-translate="contact.title">Get in touch</span> <i class="fas fa-user" aria-hidden="true"></i></h2>
                 <div class="contact-links">
                     <a href="mailto:daniele.morotti.99@gmail.com" target="_blank" rel="noopener" aria-label="Email">
                         <i class="fas fa-envelope"></i>
