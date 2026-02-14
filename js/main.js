@@ -457,6 +457,10 @@ function setupProjectsCarousel() {
     let slidesPerView = 1;
     let visibleCards = [];
     let touchStartX = 0;
+    let touchStartY = 0;
+    let touchLastX = 0;
+    let isTrackingTouch = false;
+    let isHorizontalSwipe = false;
 
     if (!filterButtons.length || !cards.length || !viewport || !track || !prevButton || !nextButton || !pagination) {
         return;
@@ -465,6 +469,25 @@ function setupProjectsCarousel() {
     const localize = (translationKey) => {
         const localeObject = translations[activeLanguage] || translations[defaultLanguage];
         return getNestedTranslation(localeObject, translationKey) || translationKey;
+    };
+
+    const bindPress = (element, callback) => {
+        let ignoreClickUntil = 0;
+
+        element.addEventListener('touchend', (event) => {
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+            ignoreClickUntil = event.timeStamp + 450;
+            callback(event);
+        }, { passive: false });
+
+        element.addEventListener('click', (event) => {
+            if (event.timeStamp < ignoreClickUntil) {
+                return;
+            }
+            callback(event);
+        });
     };
 
     const getSlidesPerView = () => {
@@ -504,7 +527,7 @@ function setupProjectsCarousel() {
             dot.className = 'projects-dot';
             dot.setAttribute('aria-label', `${localize('projects.title')} ${i + 1}`);
             dot.classList.toggle('is-active', i === currentIndex);
-            dot.addEventListener('click', () => {
+            bindPress(dot, () => {
                 currentIndex = i;
                 updateLayout();
             });
@@ -562,13 +585,13 @@ function setupProjectsCarousel() {
     };
 
     filterButtons.forEach((button) => {
-        button.addEventListener('click', () => {
+        bindPress(button, () => {
             applyFilter(button.getAttribute('data-project-filter'));
         });
     });
 
-    prevButton.addEventListener('click', () => move('prev'));
-    nextButton.addEventListener('click', () => move('next'));
+    bindPress(prevButton, () => move('prev'));
+    bindPress(nextButton, () => move('next'));
 
     viewport.setAttribute('tabindex', '0');
     viewport.addEventListener('keydown', (event) => {
@@ -581,17 +604,59 @@ function setupProjectsCarousel() {
         }
     });
 
-    viewport.addEventListener('touchstart', (event) => {
-        touchStartX = event.changedTouches[0].clientX;
-    }, { passive: true });
+    const resetTouchState = () => {
+        isTrackingTouch = false;
+        isHorizontalSwipe = false;
+    };
 
-    viewport.addEventListener('touchend', (event) => {
-        const deltaX = event.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(deltaX) < 35) {
+    viewport.addEventListener('touchstart', (event) => {
+        if (event.touches.length !== 1) {
+            resetTouchState();
             return;
         }
-        move(deltaX > 0 ? 'prev' : 'next');
+
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchLastX = touch.clientX;
+        isTrackingTouch = true;
+        isHorizontalSwipe = false;
     }, { passive: true });
+
+    viewport.addEventListener('touchmove', (event) => {
+        if (!isTrackingTouch || event.touches.length !== 1) {
+            return;
+        }
+
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        touchLastX = touch.clientX;
+
+        if (!isHorizontalSwipe && Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY)) {
+            isHorizontalSwipe = true;
+        }
+
+        if (isHorizontalSwipe && event.cancelable) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    viewport.addEventListener('touchend', () => {
+        if (!isTrackingTouch) {
+            return;
+        }
+
+        const deltaX = touchLastX - touchStartX;
+        const shouldMove = isHorizontalSwipe && Math.abs(deltaX) >= 35;
+        resetTouchState();
+
+        if (shouldMove) {
+            move(deltaX > 0 ? 'prev' : 'next');
+        }
+    }, { passive: true });
+
+    viewport.addEventListener('touchcancel', resetTouchState, { passive: true });
 
     window.addEventListener('resize', updateLayout);
     refreshProjectsUI = updateLayout;
