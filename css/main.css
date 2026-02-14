@@ -338,17 +338,17 @@ main section {
 
 .hero-text {
     min-width: 0;
-    width: min(980px, 100%);
+    width: min(870px, 100%);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(170px, 248px);
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 232px);
     grid-template-areas:
         "eyebrow media"
         "title media"
         "subtitle media"
         "focus media"
         "actions media";
-    column-gap: 16px;
+    column-gap: 10px;
     row-gap: 10px;
     align-items: start;
 }
@@ -474,7 +474,7 @@ main section {
 }
 
 .section {
-    padding: 72px 0;
+    padding: 58px 0;
     border-top: 1px solid var(--line-soft);
 }
 
@@ -507,7 +507,7 @@ main section {
 
 .about-media {
     margin: 0;
-    width: min(260px, 100%);
+    width: min(236px, 100%);
     justify-self: center;
     border-radius: 24px;
     overflow: hidden;
@@ -698,8 +698,10 @@ main section {
 
 .project-card img {
     width: 100%;
-    aspect-ratio: 16 / 6;
-    object-fit: cover;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    object-position: center;
+    background: rgba(235, 242, 233, 0.9);
     border-radius: 10px;
     border: 1px solid var(--line-soft);
 }
@@ -745,7 +747,7 @@ main section {
 }
 
 .section-contact {
-    padding-top: 68px;
+    padding-top: 58px;
 }
 
 .contact-wrap {
@@ -753,22 +755,22 @@ main section {
 }
 
 .contact-links {
-    margin-top: 14px;
+    margin-top: 24px;
     display: flex;
     justify-content: center;
     gap: 16px;
 }
 
 .contact-links a {
-    width: 54px;
-    height: 54px;
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
     border: 1px solid var(--line);
     background: rgba(239, 245, 237, 0.84);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 1.56rem;
     transition: 0.2s ease;
 }
 
@@ -806,9 +808,9 @@ main section {
     }
 
     .hero-text {
-        width: min(900px, 100%);
-        grid-template-columns: minmax(0, 1fr) minmax(170px, 230px);
-        column-gap: 18px;
+        width: min(820px, 100%);
+        grid-template-columns: minmax(0, 1fr) minmax(165px, 214px);
+        column-gap: 8px;
     }
 
     .projects-grid {
@@ -953,8 +955,8 @@ main section {
     }
 
     .about-media {
-        justify-self: start;
-        width: min(220px, 100%);
+        justify-self: center;
+        width: min(204px, 100%);
     }
 
     .timeline-item h3 {
@@ -976,10 +978,10 @@ main section {
     }
 
     .section {
-        padding: 56px 0;
+        padding: 48px 0;
     }
 
     .project-card img {
-        aspect-ratio: 16 / 5;
+        aspect-ratio: 16 / 9;
     }
 }

@@ -34,15 +34,15 @@ const translations = {
 			about: 'About &nbsp;<i class="fas fa-info-circle"></i>',
 			experience: 'Experience &nbsp;<i class="fas fa-briefcase"></i>',
 			education: 'Education &nbsp;<i class="fas fa-graduation-cap"></i>',
-			projects: 'Projects &nbsp;<i class="far fa-clipboard"></i>',
+			projects: 'Projects &nbsp;<i class="fas fa-clipboard"></i>',
 			contact: 'Contact &nbsp;<i class="fas fa-user"></i>'
 		},
 		nav: {
-			contact: 'Contact',
+			contact: 'Contact &nbsp;<i class="fas fa-user"></i>',
 			projects: 'Projects',
 			education: 'Education',
 			about: 'About me',
-			home: 'Home'
+			home: 'Home&nbsp;<i class="fas fa-home"></i>'
 		},
 		home: {
 			title: "Graduate with a master's degree in AI",
@@ -79,7 +79,7 @@ const translations = {
 			highschoolDescription: 'In the last 2 years of High School I became passionate about Computer Science and I decide to go on studying this topic.'
 		},
 		projects: {
-			title: 'Projects <i class="far fa-clipboard"></i>',
+			title: 'Projects <i class="fas fa-clipboard"></i>',
 			university: 'University projects',
 			aiii: {
 				title: 'Counterfactual explanations',
@@ -140,7 +140,7 @@ const translations = {
 			}
 		},
 		contact: {
-			title: 'Contact me'
+			title: 'Contact me <i class="fas fa-user"></i>'
 		}
 	},
 	it: {
@@ -156,15 +156,15 @@ const translations = {
 			about: 'Chi sono &nbsp;<i class="fas fa-info-circle"></i>',
 			experience: 'Esperienze &nbsp;<i class="fas fa-briefcase"></i>',
 			education: 'Formazione &nbsp;<i class="fas fa-graduation-cap"></i>',
-			projects: 'Progetti &nbsp;<i class="far fa-clipboard"></i>',
+			projects: 'Progetti &nbsp;<i class="fas fa-clipboard"></i>',
 			contact: 'Contatti &nbsp;<i class="fas fa-user"></i>'
 		},
 		nav: {
-			contact: 'Contatti',
+			contact: 'Contatti &nbsp;<i class="fas fa-user"></i>',
 			projects: 'Progetti',
 			education: 'Formazione',
 			about: 'Chi sono',
-			home: 'Home'
+			home: 'Home &nbsp;<i class="fas fa-home"></i>'
 		},
 		home: {
 			title: "Laureato in Artificial Intelligence",
@@ -201,7 +201,7 @@ const translations = {
 			highschoolDescription: "Negli ultimi anni delle scuole superiori mi sono appassionato all'informatica e per questo ho deciso di continuare gli studi proprio in questo campo."
 		},
 		projects: {
-			title: 'Progetti <i class="far fa-clipboard"></i>',
+			title: 'Progetti <i class="fas fa-clipboard"></i>',
 			university: 'Progetti universitari',
 			aiii: {
 				title: 'Counterfactual explanations',
@@ -262,7 +262,7 @@ const translations = {
 			}
 		},
 		contact: {
-			title: 'Contattami'
+			title: 'Contattami <i class="fas fa-user"></i>'
 		}
 	}
 };
