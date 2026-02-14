@@ -47,12 +47,12 @@
             </div>
 
             <nav id="site-nav" class="site-nav" aria-label="Main">
-                <a href="#home" data-translate="nav.home"> <i class="fas fa-home"></i></a>
-                <a href="#about" data-translate="overlay.about">About <i class="fas fa-info-circle"></i></a>
-                <a href="#experience" data-translate="overlay.experience">Experience <i class="fas fa-briefcase"></i></a>
-                <a href="#education" data-translate="overlay.education">Education <i class="fas fa-graduation-cap"></i></a>
-                <a href="#projects" data-translate="overlay.projects">Projects <i class="fas fa-clipboard"></i></a>
-                <a href="#contact" data-translate="nav.contact">Contact <i class="fas fa-user"></i></a>
+                <a href="#home"><span data-translate="nav.home">Home</span> <i class="fas fa-home" aria-hidden="true"></i></a>
+                <a href="#about"><span data-translate="nav.about">About me</span> <i class="fas fa-info-circle" aria-hidden="true"></i></a>
+                <a href="#experience"><span data-translate="nav.experience">Experience</span> <i class="fas fa-briefcase" aria-hidden="true"></i></a>
+                <a href="#education"><span data-translate="nav.education">Education</span> <i class="fas fa-graduation-cap" aria-hidden="true"></i></a>
+                <a href="#projects"><span data-translate="nav.projects">Projects</span> <i class="fas fa-clipboard" aria-hidden="true"></i></a>
+                <a href="#contact"><span data-translate="nav.contact">Contact</span> <i class="fas fa-user" aria-hidden="true"></i></a>
             </nav>
 
             <button type="button" id="menu-icon" class="menu-icon" aria-label="Toggle menu" aria-expanded="false" aria-controls="site-nav">
@@ -78,9 +78,9 @@
                 <p class="subtitle" data-translate="home.title">Graduate with a master's degree in AI</p>
 
                 <ul class="hero-focus">
-                    <li>Applied AI in production environments</li>
-                    <li>NLP and LLM-based architectures</li>
-                    <li>Reliable software systems for data products</li>
+                    <li data-translate="home.focus.applied">Applied AI in production environments</li>
+                    <li data-translate="home.focus.nlp">NLP and LLM-based architectures</li>
+                    <li data-translate="home.focus.reliable">Reliable software systems for data products</li>
                 </ul>
 
                 <div class="hero-actions">
@@ -101,7 +101,7 @@
         <section class="section section-about" id="about">
             <div class="container about-layout">
                 <div class="about-copy reveal">
-                    <h2 data-translate="about.title">About Me <i class="fas fa-info-circle"></i></h2>
+                    <h2><span data-translate="about.title">About Me</span> <i class="fas fa-info-circle" aria-hidden="true"></i></h2>
                     <p data-translate="about.description">
                         Hey there, I'm Daniele! I'm currently diving deep into the world of Artificial Intelligence as a Master's degree student.
                     </p>
@@ -114,7 +114,7 @@
 
         <section class="section section-experience" id="experience">
             <div class="container">
-                <h2 class="section-title" data-translate="experience.title">Professional experience <i class="fas fa-briefcase"></i></h2>
+                <h2 class="section-title"><span data-translate="experience.title">Professional experience</span> <i class="fas fa-briefcase" aria-hidden="true"></i></h2>
                 <div class="timeline">
                     <article class="timeline-item reveal">
                         <h3>
@@ -138,7 +138,7 @@
 
         <section class="section section-education" id="education">
             <div class="container">
-                <h2 class="section-title" data-translate="education.title">Education <i class="fas fa-graduation-cap"></i></h2>
+                <h2 class="section-title"><span data-translate="education.title">Education</span> <i class="fas fa-graduation-cap" aria-hidden="true"></i></h2>
                 <div class="education-grid">
                     <article class="education-block reveal">
                         <h3 data-translate="education.mastersDegree">Master's Degree in Artificial Intelligence</h3>
@@ -164,7 +164,7 @@
 
         <section class="section section-projects" id="projects">
             <div class="container">
-                <h2 class="section-title" data-translate="projects.title">Projects <i class="fas fa-clipboard"></i></h2>
+                <h2 class="section-title"><span data-translate="projects.title">Projects</span> <i class="fas fa-clipboard" aria-hidden="true"></i></h2>
 
                 <div class="projects-controls" role="tablist" aria-label="Project categories">
                     <button class="project-filter is-active" data-project-filter="university" type="button" data-translate="projects.university">University projects</button>
@@ -304,7 +304,7 @@
 
         <section class="section section-contact" id="contact">
             <div class="container contact-wrap reveal">
-                <h2 class="section-title" data-translate="contact.title">Contact me &nbsp;<i class="fas fa-user"></i></h2>
+                <h2 class="section-title"><span data-translate="contact.title">Contact me</span> <i class="fas fa-user" aria-hidden="true"></i></h2>
                 <div class="contact-links">
                     <a href="mailto:daniele.morotti.99@gmail.com" target="_blank" rel="noopener" aria-label="Email">
                         <i class="fas fa-envelope"></i>

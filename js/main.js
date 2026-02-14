@@ -30,30 +30,29 @@ const translations = {
 		buttons: {
 			source: "Source"
 		},
-		overlay: {
-			about: 'About &nbsp;<i class="fas fa-info-circle"></i>',
-			experience: 'Experience &nbsp;<i class="fas fa-briefcase"></i>',
-			education: 'Education &nbsp;<i class="fas fa-graduation-cap"></i>',
-			projects: 'Projects &nbsp;<i class="fas fa-clipboard"></i>',
-			contact: 'Contact &nbsp;<i class="fas fa-user"></i>'
-		},
 		nav: {
-			contact: 'Contact &nbsp;<i class="fas fa-user"></i>',
+			contact: 'Contact',
 			projects: 'Projects',
 			education: 'Education',
+			experience: 'Experience',
 			about: 'About me',
-			home: 'Home&nbsp;<i class="fas fa-home"></i>'
+			home: 'Home'
 		},
 		home: {
 			title: "Graduate with a master's degree in AI",
-			resume: "Download my resume"
+			resume: "Download my resume",
+			focus: {
+				applied: 'Applied AI in production environments',
+				nlp: 'NLP and LLM-based architectures',
+				reliable: 'Reliable software systems for data products'
+			}
 		},
 		about: {
-			title: 'About Me <i class="fas fa-info-circle"></i>',
+			title: 'About Me',
 			description: "Hey there, I'm Daniele! I'm currently diving deep into the world of Artificial Intelligence as a Master's degree student. I love learning about new software technologies and apply them to solve problems and create new projects. I'm currently interested in NLP, Deep Learning and anything related to AI. In my free time, I like to engage in sports 🏃, read books 📖 and play the guitar 🎸."
 		},
 		experience: {
-			title: 'Professional experience <i class="fas fa-briefcase"></i>',
+			title: 'Professional experience',
 			dienneaCompany: 'Diennea - Faenza',
 			dienneaPeriod: 'Dec 2023 - Present',
 			dienneaRole: 'AI Engineer',
@@ -64,7 +63,7 @@ const translations = {
 			datareplyDescription: '- Development of my thesis project, which aimed to process custom data of various types (textual and tabular data) to make them usable by LLMs.<br>- Throughout this period, I used the OpenAI API and extensively tested numerous open-source language models.<br>- Conducted fine-tuning experiments and compared their effectiveness with a retrieval augmented generation approach.'
 		},
 		education: {
-			title: 'Education <i class="fas fa-graduation-cap"></i>',
+			title: 'Education',
 			mastersDegree: "Master's Degree in Artificial Intelligence",
 			mastersPeriod: 'Sept 2021 - Oct 2023',
 			mastersSchool: 'Alma Mater Studiorum - University of Bologna',
@@ -79,7 +78,7 @@ const translations = {
 			highschoolDescription: 'In the last 2 years of High School I became passionate about Computer Science and I decide to go on studying this topic.'
 		},
 		projects: {
-			title: 'Projects <i class="fas fa-clipboard"></i>',
+			title: 'Projects',
 			university: 'University projects',
 			aiii: {
 				title: 'Counterfactual explanations',
@@ -140,7 +139,7 @@ const translations = {
 			}
 		},
 		contact: {
-			title: 'Contact me <i class="fas fa-user"></i>'
+			title: 'Contact me'
 		}
 	},
 	it: {
@@ -152,30 +151,29 @@ const translations = {
 		buttons: {
 			source: "Codice"
 		},
-		overlay: {
-			about: 'Chi sono &nbsp;<i class="fas fa-info-circle"></i>',
-			experience: 'Esperienze &nbsp;<i class="fas fa-briefcase"></i>',
-			education: 'Formazione &nbsp;<i class="fas fa-graduation-cap"></i>',
-			projects: 'Progetti &nbsp;<i class="fas fa-clipboard"></i>',
-			contact: 'Contatti &nbsp;<i class="fas fa-user"></i>'
-		},
 		nav: {
-			contact: 'Contatti &nbsp;<i class="fas fa-user"></i>',
+			contact: 'Contatti',
 			projects: 'Progetti',
 			education: 'Formazione',
+			experience: 'Esperienze',
 			about: 'Chi sono',
-			home: 'Home &nbsp;<i class="fas fa-home"></i>'
+			home: 'Home'
 		},
 		home: {
 			title: "Laureato in Artificial Intelligence",
-			resume: "Download del mio CV"
+			resume: "Download del mio CV",
+			focus: {
+				applied: 'AI applicata in contesti di produzione',
+				nlp: 'Architetture NLP e basate su LLM',
+				reliable: 'Sistemi software affidabili per prodotti data-driven'
+			}
 		},
 		about: {
-			title: 'Chi sono <i class="fas fa-info-circle"></i>',
+			title: 'Chi sono',
 			description: "Ciao, sono Daniele! Mi sono laureato nel corso di Laurea Magistrale in Artificial Intelligence. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato a NLP, Deep Learning e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero mi piace fare sport 🏃‍♂️, leggere libri 📖 e suonare la chitarra 🎸."
 		},
 		experience: {
-			title: 'Esperienze lavorative <i class="fas fa-briefcase"></i>',
+			title: 'Esperienze lavorative',
 			dienneaCompany: 'Diennea - Faenza',
 			dienneaPeriod: 'Dic 2023 - Presente',
 			dienneaRole: 'AI Engineer',
@@ -186,7 +184,7 @@ const translations = {
 			datareplyDescription: '- Sviluppo del mio progetto di tesi, il cui scopo era quello di processare dati personalizzati di diversi tipi (dati testuali e tabulari), per renderli utilizzabili da Large Language Models.<br>- Durante questo periodo, ho utilizzato le API di OpenAI e testato ampiamente numerosi modelli di linguaggio open-source.<br>- Condotti esperimenti di fine-tuning e confrontata la loro efficacia con un approccio RAG.'
 		},
 		education: {
-			title: 'Istruzione e formazione <i class="fas fa-graduation-cap"></i>',
+			title: 'Istruzione e formazione',
 			mastersDegree: "Laurea magistrale in Artificial Intelligence",
 			mastersPeriod: 'Sett 2021 - Ott 2023',
 			mastersSchool: 'Alma Mater Studiorum - Università di Bologna',
@@ -201,7 +199,7 @@ const translations = {
 			highschoolDescription: "Negli ultimi anni delle scuole superiori mi sono appassionato all'informatica e per questo ho deciso di continuare gli studi proprio in questo campo."
 		},
 		projects: {
-			title: 'Progetti <i class="fas fa-clipboard"></i>',
+			title: 'Progetti',
 			university: 'Progetti universitari',
 			aiii: {
 				title: 'Counterfactual explanations',
@@ -262,7 +260,7 @@ const translations = {
 			}
 		},
 		contact: {
-			title: 'Contattami <i class="fas fa-user"></i>'
+			title: 'Contattami'
 		}
 	}
 };
