@@ -42,25 +42,25 @@ const translations = {
 			title: "Graduate with a master's degree in AI",
 			resume: "Download my resume",
 			focus: {
-				applied: 'Applied AI in production environments',
-				nlp: 'NLP and LLM-based architectures',
-				reliable: 'Reliable software systems for data products'
+				first: 'Interested in <strong>AI</strong> broadly, and recently working on <strong>agent-based systems</strong>',
+				second: 'Always <strong>learning</strong> and exploring new technologies',
+				third: 'Passionate about <strong>contributing</strong> to open-source projects'
 			}
 		},
 		about: {
 			title: 'About Me',
-			description: "Hey there, I'm Daniele! I'm currently diving deep into the world of Artificial Intelligence as a Master's degree student. I love learning about new software technologies and apply them to solve problems and create new projects. I'm currently interested in NLP, Deep Learning and anything related to AI. In my free time, I like to engage in sports 🏃, read books 📖 and play the guitar 🎸."
+			description: "Hi, I'm <b>Daniele</b>! I graduated with a Master's degree in <b>Artificial Intelligence</b>. I enjoy learning new technologies and applying them to solve problems and build new projects.<br>Currently, I'm interested in <i>Agents</i>, <i>NLP</i>, <i>Deep Learning</i>, and everything related to Artificial Intelligence. In my free time, I play tennis 🎾, play the guitar 🎸, and code 👨‍💻.<br>Happy to be a <strong>contributor</strong> in the <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a> package."
 		},
 		experience: {
 			title: 'Professional experience',
 			dienneaCompany: 'Diennea - Faenza',
 			dienneaPeriod: 'Dec 2023 - Present',
 			dienneaRole: 'AI Engineer',
-			dienneaDescription: '- Design, implementation, and maintenance of Artificial Intelligence applications for internal and external clients. Integration of AI functionalities into existing software by collaborating with the respective corporate development teams.<br>- Preparation, management, and manipulation of data necessary for training and running AI systems in collaboration with the areas/clients that produce them.',
+			dienneaDescription: "- Design, implementation, and maintenance of Artificial Intelligence applications. <strong>Integration</strong> of AI capabilities into existing software, collaborating with the relevant internal development teams.<br>- Definition and drafting of <strong>functional and technical specifications</strong> for AI features, coordinating with stakeholders and product/development teams.<br>- <strong>Design</strong> and management of the implementation of an <strong>agent system</strong> integrated into the company software to identify and analyze data and perform operational actions.<br>- Implementation of an <strong>MCP (Model Context Protocol)</strong> server for the integration and orchestration of tools and data sources.<br>- Implementation and production deployment of a <strong>FastAPI server</strong> to handle requests from AI tools integrated into the software.<br>- Development of a <strong>recommendation algorithm</strong> to suggest products to purchase, using sparse matrices to optimize efficiency and ensure scalability.<br>- Experimentation and validation of additional <strong>machine learning</strong> tasks to extract value from customer data.",
 			datareplyCompany: 'Data Reply - Bologna',
 			datareplyPeriod: 'Apr 2023 - Aug 2023',
 			datareplyPosition: 'Data Scientist Intern',
-			datareplyDescription: '- Development of my thesis project, which aimed to process custom data of various types (textual and tabular data) to make them usable by LLMs.<br>- Throughout this period, I used the OpenAI API and extensively tested numerous open-source language models.<br>- Conducted fine-tuning experiments and compared their effectiveness with a retrieval augmented generation approach.'
+			datareplyDescription: '- Development of my <strong>thesis project</strong>, which aimed to process custom data of various types (textual and tabular data) to make them usable by LLMs.<br>- Throughout this period, I used the OpenAI API and extensively tested numerous open-source language models.<br>- Conducted <strong>fine-tuning</strong> experiments and compared their effectiveness with a <strong>retrieval augmented generation</strong> approach.'
 		},
 		education: {
 			title: 'Education',
@@ -82,60 +82,60 @@ const translations = {
 			university: 'University projects',
 			aiii: {
 				title: 'Counterfactual explanations',
-				description: 'The work concerns the development of a model combining Machine Learning and Optimization for Counterfactual Explanations using OMLT and DiCE Python packages. We generated counterfactuals considering the GSM Arena dataset.'
+				description: 'The work concerns the development of a model <strong>combining Machine Learning and Optimization</strong> for Counterfactual Explanations using OMLT and DiCE Python packages. We generated counterfactuals considering the GSM Arena dataset.'
 			},
 			songsRec: {
 				title: 'Songs recommendation based on lyrics',
-				description: 'I first performed an analysis of the lyrics using LSA and other techniques in R. Then I implemented different GNNs, on a narrow subset of songs, that are able to recommend the most similar songs to a given one.'
+				description: 'I first performed an analysis of the lyrics using <strong>LSA</strong> and other techniques in R. Then I <strong>implemented different GNNs</strong>, on a narrow subset of songs, that are able to recommend the most similar songs to a given one.'
 			},
 			argRetrieval: {
 				title: 'Argument retrieval for comparative questions',
-				description: 'We implemented different pipelines in order to retrieve the most relevant documents, from a subset of ClueWeb12, given some comparative questions. In another task we performed stance classification on these documents.'
+				description: 'We implemented different pipelines in order to retrieve the <strong>most relevant documents</strong>, from a subset of ClueWeb12, given some comparative questions. In another task we performed <strong>stance classification</strong> on these documents.'
 			},
 			posQA: {
 				title: 'POS tagging &amp; QA',
-				description: 'In one assignment we implemented different models for POS tagging, in the other one some models for abstractive QA on CoQA.'
+				description: 'In one assignment we implemented different models for <strong>POS tagging</strong>, in the other one some models for abstractive QA on CoQA.'
 			},
 			vlsi: {
 				title: 'VLSI Design',
-				description: "We implemented 3 different models for the 'Combinatorial and Decision Making Optimization' exam using CP, SMT and MIP techniques to solve the VLSI design problem."
+				description: "We implemented 3 different models for the 'Combinatorial and Decision Making Optimization' exam using <strong>CP, SMT and MIP</strong> techniques to solve the <strong>VLSI design</strong> problem."
 			},
 			bis: {
 				title: 'Blind Image Separation',
-				description: "I implemented a deep learning model, for the 'Deep Learning' exam, that allows to separate 2 mixed images taken from MNIST and FASHION MNIST datasets."
+				description: "I implemented a <strong>convolutional network</strong>, for the 'Deep Learning' exam, that allows to <strong>separate</strong> 2 mixed images taken from MNIST and FASHION MNIST datasets."
 			},
 			bachelorDissert: {
 				title: 'Blockchain-based anti-counterfeiting system',
-				description: "The system has been developed as my graduation project. The aim of the project is to fight and avoid clothing's counterfeit thanks to the use of blockchain technology.",
+				description: "The system has been developed as my <strong>graduation project</strong>. The aim of the project is to fight and avoid clothing's <strong>counterfeit</strong> thanks to the use of <strong>blockchain</strong> technology.",
 				src: 'Dissertation'
 			},
 			mm: {
 				title: 'M&amp;M - Mistery at the museum',
-				description: 'The aim of the project was to <a href="https://en.wikipedia.org/wiki/Gamification" target="_blank"><u>gamify</u></a> the visit to a museum to entertain children. The project is composed by 3 web applications: Player, Editor and Evaluator.'
+				description: 'The aim of the project was to <a href="https://en.wikipedia.org/wiki/Gamification" target="_blank"><u>gamify</u></a> the visit to a museum to entertain children. The project is composed by 3 <strong>web applications</strong>: Player, Editor and Evaluator.'
 			},
 			twitterTracker: {
 				title: 'Twitter-Tracker',
-				description: 'Twitter-tracker is a web app created for collecting published tweets from around the world and viewing them in various representations. The application was developed using <a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>Agile</u></a> methodologies.'
+				description: 'Twitter-tracker is a web app created for collecting published <strong>tweets</strong> from around the world and viewing them in various representations. The application was developed using <a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>Agile</u></a> methodologies.'
 			},
 			bikaya: {
 				title: 'BiKaya OS',
-				description: 'BiKaya is an educational-purpose, cross-architecture operating system compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.'
+				description: 'BiKaya is an educational-purpose, cross-architecture <strong>operating system</strong> compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.'
 			},
 			personal: 'Personal projects',
             showMore: 'Show more projects',
             showLess: 'Show fewer projects',
 			showscoutai: {
 				title: 'ShowScout AI',
-				description: 'A webapp to be always updated on the latest news from the movies and tv shows you are waiting for. Create a list of titles and the AI will find news for you.'
+				description: 'A <strong>webapp</strong> to be always updated on the latest <strong>news from the movies and tv shows</strong> you are waiting for. Create a list of titles and the <strong>AI</strong> will find news for you.'
 			},
 			scoreboard: {
 				title: 'Generic scoreboard',
-				description: 'This is a generic scoreboard that you can use for any game you are playing with your friends. You can choose how many points to reach and whether who has more or who has less wins',
+				description: 'This is a <strong>generic scoreboard</strong> that you can use for any game you are playing with your friends. You can choose how many points to reach and whether who has more or who has less wins',
 				analysis: "Game analysis"
 			},
 			telegram: {
 				title: 'Telegram messages checker',
-				description: "A simple script to check if messages containing certain words arrive on your telegram account. A song is played to alert you or to wake you up in case you are waiting for an important message during the night."
+				description: "A simple script to check if messages containing <strong>certain words</strong> arrive on your <strong>Telegram</strong> account. A song is played to alert you or to wake you up in case you are waiting for an important message during the night."
 			}
 		},
 		contact: {
@@ -163,25 +163,25 @@ const translations = {
 			title: "Laureato in Artificial Intelligence",
 			resume: "Download del mio CV",
 			focus: {
-				applied: 'AI applicata in contesti di produzione',
-				nlp: 'Architetture NLP e basate su LLM',
-				reliable: 'Sistemi software affidabili per prodotti data-driven'
+				first: "Interessato all'<strong>AI</strong> in generale, ultimamente lavoro a <strong>sistemi di agenti</strong>",
+				second: "<strong>Imparo</strong> cose nuove ed esploro tecnologie emergenti",
+				third: 'Felice di <strong>contribuire</strong> a progetti open-source.'
 			}
 		},
 		about: {
 			title: 'Chi sono',
-			description: "Ciao, sono Daniele! Mi sono laureato nel corso di Laurea Magistrale in Artificial Intelligence. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato a NLP, Deep Learning e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero mi piace fare sport 🏃‍♂️, leggere libri 📖 e suonare la chitarra 🎸."
+			description: "Ciao, sono <b>Daniele</b>! Mi sono laureato nel corso di Laurea Magistrale in <b>Artificial Intelligence</b>. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato agli <i>agenti</i>, <i>NLP</i>, <i>Deep Learning</i> e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero gioco a tennis 🎾, suono la chitarra 🎸 e programmo 👨‍💻.<br>Felice di aver <strong>contribuito</strong> alla libreria python <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a>."
 		},
 		experience: {
 			title: 'Esperienze lavorative',
 			dienneaCompany: 'Diennea - Faenza',
 			dienneaPeriod: 'Dic 2023 - Presente',
 			dienneaRole: 'AI Engineer',
-			dienneaDescription: "- Progettazione, implementazione e mantenimento di applicazioni di Intelligenza Artificiale per clienti interni ed esterni. Integrazione di funzionalità AI nel software esistente, collaborando con i relativi team di sviluppo aziendale.<br>- Preparazione, gestione e manipolazione dei dati necessari all'addestramento e all'esecuzione dei sistemi AI in collaborazione con le aree/clienti che li producono.",
+			dienneaDescription:"- Progettazione, implementazione e mantenimento di applicazioni di Intelligenza Artificiale. <strong>Integrazione</strong> di funzionalità AI nel software esistente, collaborando con i relativi team di sviluppo aziendale.<br>- Definizione e stesura delle <strong>specifiche funzionali e tecniche</strong> delle feature AI, coordinandosi con stakeholder e team di prodotto/sviluppo.<br>- <strong>Progettazione</strong> e gestione dell'implementazione di un <strong>sistema di agenti</strong> integrato nel software aziendale per individuare e analizzare dati e svolgere azioni operative.<br>- Implementazione di un server <strong>MCP (Model Context Protocol)</strong> per l'integrazione e l'orchestrazione di tool e sorgenti dati.<br>- Implementazione e rilascio in produzione di un <strong>server FastAPI</strong> per gestire le richieste dei tool AI integrati nel software.<br>- Sviluppo di un <strong>algoritmo di recommendation</strong> per suggerire prodotti da acquistare, utilizzando matrici sparse per ottimizzare l'efficienza e garantire scalabilità.<br>- Sperimentazione e validazione di ulteriori task di <strong>machine learning</strong> per valorizzare i dati dei clienti.",
 			datareplyCompany: 'Data Reply - Bologna',
 			datareplyPeriod: 'Apr 2023 - Ago 2023',
 			datareplyPosition: 'Data Scientist Intern',
-			datareplyDescription: '- Sviluppo del mio progetto di tesi, il cui scopo era quello di processare dati personalizzati di diversi tipi (dati testuali e tabulari), per renderli utilizzabili da Large Language Models.<br>- Durante questo periodo, ho utilizzato le API di OpenAI e testato ampiamente numerosi modelli di linguaggio open-source.<br>- Condotti esperimenti di fine-tuning e confrontata la loro efficacia con un approccio RAG.'
+			datareplyDescription: '- Sviluppo del mio <strong>progetto di tesi</strong>, il cui scopo era quello di processare dati personalizzati di diversi tipi (dati testuali e tabulari), per renderli utilizzabili da Large Language Models.<br>- Durante questo periodo, ho utilizzato le API di OpenAI e testato ampiamente numerosi modelli di linguaggio open-source.<br>- Condotti esperimenti di <strong>fine-tuning</strong> e confrontata la loro efficacia con un approccio <strong>RAG</strong>.'
 		},
 		education: {
 			title: 'Istruzione e formazione',
@@ -203,60 +203,60 @@ const translations = {
 			university: 'Progetti universitari',
 			aiii: {
 				title: 'Counterfactual explanations',
-				description: 'Il lavoro riguarda lo sviluppo di un modello che combina ML e ottimizzazione per spiegazioni controfattuali utilizzando le librerie Python OMLT e DiCE. Abbiamo generato spiegazioni considerando il dataset GSM Arena.'
+				description: 'Il lavoro riguarda lo sviluppo di un modello che <strong>combina ML e ottimizzazione</strong> per spiegazioni controfattuali utilizzando le librerie Python OMLT e DiCE. Abbiamo generato spiegazioni considerando il dataset GSM Arena.'
 			},
 			songsRec: {
 				title: 'Songs recommendation based on lyrics',
-				description: "Ho prima eseguito un'analisi dei testi delle canzoni utilizzando LSA e altre tecniche in R. In seguito ho implementato diverse GNN, utilizzando un insieme ristretto di canzoni, che raccomandano le canzoni più simili ad una data in input."
+				description: "Ho prima eseguito un'analisi dei testi delle canzoni utilizzando <strong>LSA</strong> e altre tecniche in R. In seguito ho <strong>implementato diverse GNN</strong>, utilizzando un insieme ristretto di canzoni, che raccomandano le canzoni più simili ad una data in input."
 			},
 			argRetrieval: {
 				title: 'Argument retrieval for comparative questions',
-				description: "Abbiamo implementato vari sistemi per ottenere i documenti più rilevanti, presi da un sottoinsieme di ClueWeb12, date delle domande comparative. In un'altra task abbiamo eseguito stance detection sui documenti."
+				description: "Abbiamo implementato vari sistemi per ottenere i <strong>documenti più rilevanti</strong>, presi da un sottoinsieme di ClueWeb12, date delle domande comparative. In un'altra task abbiamo eseguito <strong>stance detection</strong> sui documenti."
 			},
 			posQA: {
 				title: 'POS tagging &amp; QA',
-				description: "In un assignment abbiamo implementato diversi modelli per eseguire POS tagging, nell'altro invece abbiamo usato dei modelli per rispondere alle domande del dataset CoQA."
+				description: "In un assignment abbiamo implementato diversi modelli per eseguire <strong>POS tagging</strong>, nell'altro invece abbiamo usato dei modelli per rispondere alle domande del dataset CoQA."
 			},
 			vlsi: {
 				title: 'VLSI Design',
-				description: "Abbiamo implementato 3 diversi modelli per l'esame di 'Combinatorial and Decision Making Optimization' utilizzando CP, SMT e MIP per risolvere il problema di VLSI design."
+				description: "Abbiamo implementato 3 diversi modelli per l'esame di 'Combinatorial and Decision Making Optimization' utilizzando <strong>CP, SMT e MIP</strong> per risolvere il problema di <strong>VLSI design</strong>."
 			},
 			bis: {
 				title: 'Blind Image Separation',
-				description: "Ho implementato una rete convoluzionale, per l'esame di 'Deep Learning', che permette di separare 2 immagini sovrapposte prese dai dataset MNIST e FASHION MNIST."
+				description: "Ho implementato una <strong>rete convoluzionale</strong>, per l'esame di 'Deep Learning', che permette di <strong>separare</strong> 2 immagini sovrapposte prese dai dataset MNIST e FASHION MNIST."
 			},
 			bachelorDissert: {
 				title: 'Sistema anticontraffazione basato su blockchain',
-				description: "Il sistema è stato sviluppato come mio progetto di laurea. L'obiettivo del progetto è di combattere ed evitare la contraffazione nel mondo della moda utilizzando la tecnologia blockchain.",
+				description: "Il sistema è stato sviluppato come mio <strong>progetto di laurea</strong>. L'obiettivo del progetto è di combattere ed evitare la <strong>contraffazione</strong> nel mondo della moda utilizzando la tecnologia <strong>blockchain</strong>.",
 				src: "Tesi"
 			},
 			mm: {
 				title: 'M&amp;M - Mistero al museo',
-				description: 'Lo scopo del progetto era quello di <a href="https://it.wikipedia.org/wiki/Gamification" target="_blank"><u>gamificare</u></a> le visite al museo per intrattenere i ragazzi. Il progetto è composto da 3 applicazioni web: Player, Editor e Valutatore.'
+				description: 'Lo scopo del progetto era quello di <a href="https://it.wikipedia.org/wiki/Gamification" target="_blank"><u>gamificare</u></a> le visite al museo per intrattenere i ragazzi. Il progetto è composto da 3 <strong>applicazioni web</strong>: Player, Editor e Valutatore.'
 			},
 			twitterTracker: {
 				title: 'Twitter-Tracker',
-				description: `Twitter-tracker è un'applicazione web creata per collezionare i tweet pubblicati in tutto il mondo e mostrarli in diverse modalità. L'applicazione è stata sviluppata utilizzando metodologie <a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>agili</u></a>.`
+				description: `Twitter-tracker è un'applicazione web creata per collezionare i <strong>tweet</strong> pubblicati in tutto il mondo e mostrarli in diverse modalità. L'applicazione è stata sviluppata utilizzando metodologie <a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>agili</u></a>.`
 			},
 			bikaya: {
 				title: 'Sistema operativo Bikaya',
-				description: 'BiKaya è un sistema operativo progettato a scopo educativo e compatibile con 2 architetture, <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> e <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, due micro ISA derivate rispettivamente da ARM e MIPS.'
+				description: 'BiKaya è un <strong>sistema operativo</strong> progettato a scopo educativo e compatibile con 2 architetture, <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> e <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, due micro ISA derivate rispettivamente da ARM e MIPS.'
 			},
 			personal: 'Progetti personali',
-            showMore: 'Mostra altri progetti',
-            showLess: 'Mostra meno progetti',
+			showMore: 'Mostra altri progetti',
+			showLess: 'Mostra meno progetti',
 			showscoutai: {
 				title: 'ShowScout AI',
-				description: "La webapp per essere sempre aggiornati sulle ultime novità dei film e serie tv che stai aspettando. Crea una lista di titoli e l'IA cercherà le ultime novità per te."
+				description: "La <strong>webapp</strong> per essere sempre aggiornati sulle ultime <strong>novità dei film e serie tv</strong> che stai aspettando. Crea una lista di titoli e l'<strong>IA</strong> cercherà le ultime novità per te."
 			},
 			scoreboard: {
 				title: 'Segnapunti generico',
-				description: 'Ho creato un segnapunti generico utilizzabile per ogni gioco. Si può inserire il titolo del gioco, il numero di giocatori, il punteggio massimo e se vince chi ha più punti oppure chi ne ha meno.',
+				description: 'Ho creato un <strong>segnapunti generico</strong> utilizzabile per ogni gioco. Si può inserire il titolo del gioco, il numero di giocatori, il punteggio massimo e se vince chi ha più punti oppure chi ne ha meno.',
 				analysis: "Analisi partita"
 			},
 			telegram: {
 				title: 'Sveglia per messaggi Telegram',
-				description: "Composto da alcuni semplici script che controllano se i messaggi ricevuti su Telegram contengono le parole scelte dall'utente. Nel caso in cui siano presenti, verrà riprodotta una canzone per avvisare o svegliare l'utente."
+				description: "Composto da alcuni semplici script che controllano se i messaggi ricevuti su <strong>Telegram</strong> contengono le <strong>parole scelte</strong> dall'utente. Nel caso in cui siano presenti, verrà riprodotta una canzone per avvisare o svegliare l'utente."
 			}
 		},
 		contact: {
