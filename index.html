@@ -1,460 +1,329 @@
-<!-- 
-    Credits to the template I started from:
-    https://github.com/jennifertran/jennifertran.github.io
--->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>Daniele Morotti</title>
-		<meta charset="utf-8">
-		<meta name="author" content="Daniele Morotti">
-		<meta name="description" content="Daniele Morotti's portfolio to introduce himself and show some of his projects">
-		<link rel="shortcut icon" href="ref/images/website.ico">
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" href="css/main.css"/>
+<head>
+    <title>Daniele Morotti</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Daniele Morotti">
+    <meta name="description" content="Daniele Morotti's portfolio to introduce himself and show some of his projects">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#aeb9b3">
+    <link rel="shortcut icon" href="ref/images/website.ico">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+        integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 
-		<!-- Bootstrap and Font-awesome CDN's -->
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
-			integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-		<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" 
-			integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-		
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y74252N5R0"></script>
-		<script>
-		   window.dataLayer = window.dataLayer || [];
-		   function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'G-Y74252N5R0');
-		</script>
-	</head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y74252N5R0"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} // eslint-disable-line no-unused-vars
+        gtag('js', new Date());
+        gtag('config', 'G-Y74252N5R0');
+    </script>
+</head>
+<body>
+    <noscript>JS is not enabled in your browser</noscript>
 
-	<body>
-		<noscript>JS is not enabled in your browser</noscript>
-		<!-- The overlay -->
-		<div id="myNav" class="overlay">
-			<div class="overlay-content">
-				<a href="#about" onclick="closer()" data-translate="overlay.about">About &nbsp;<i class="fas fa-info-circle"></i></a>
-				<a href="#experience" onclick="closer()" data-translate="overlay.experience">Experience &nbsp;<i class="fas fa-briefcase"></i></a>
-				<a href="#education" onclick="closer()" data-translate="overlay.education">Education &nbsp;<i class="fas fa-graduation-cap"></i></a>
-				<a href="#projects" onclick="closer()" data-translate="overlay.projects">Projects &nbsp;<i class="far fa-clipboard"></i></a>
-				<a href="#contact" onclick="closer()" data-translate="overlay.contact">Contact &nbsp;<i class="fas fa-user"></i></a>
-			</div>
-		</div>
-		<!-- Homepage -->
-		<div class="header vertical-center">
-			<div class="container-fluid">
-				<div id="particles-js" class="">
-					<!-- Fixed collapse navbar -->
-					<nav class="navbar navbar-default navbar-fixed-top">
-						<div class="container-fluid">
-							<div class="navbar-header">
-								<button type="button" id="menu-icon" class="navbar-toggle collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="navbar">
-									<i id="open-icon" class="fas fa-bars fa-2x"></i>
-								</button>
-								<!-- Language switcher -->
-								<div class="navbar-brand">
-									<div class="dropdown">
-										<div class="dropdown-toggle btn btn-default" id="language-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<img id="current-flag" class="img-navbar" alt="current language flag" src="ref/images/en.png">
-											<span id="current-language" data-translate="language.current">English</span>
-											<span class="caret"></span>
-										</div>
-										<div class="dropdown-menu">
-											<div class="btn language-option" id="en-btn" role="button" data-lang="en">
-												<img class="img-navbar" alt="english flag" src="ref/images/en.png">
-												<span data-translate="language.english">English</span>
-											</div>
-											<div class="btn language-option" id="it-btn" role="button" data-lang="it">
-												<img class="img-navbar" alt="italian flag" src="ref/images/it.png">
-												<span data-translate="language.italian">Italian</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<center>
-							<div id="navbar" class="navbar-collapse collapse">
-								<ul class="nav navbar-nav">
-									<li><a href="#contact" data-translate="nav.contact">Contact</a></li>
-									<li><a href="#projects" data-translate="nav.projects">Projects</a></li>
-									<li><a href="#education" data-translate="nav.education">Education</a></li>
-									<li><a href="#about" data-translate="nav.about">About me</a></li>
-									<li><a href="#particles-js" data-translate="nav.home">Home</a></li>
-								</ul>
-							</div>
-							</center>
-						</div>
-					</nav>
-					<div id="lead-content">
-						<strong><h1>Daniele Morotti</h1></strong>
-						<h2 data-translate="home.title">Graduate with a master's degree in AI</h2>
-						<center>
-							<h4>
-								<a href="ref/docs/resume_en.pdf" download="Daniele-Morotti-resume.pdf" class="btn btn-primary">
-									<i class="fa fa-download" aria-hidden="true"></i> <span data-translate="home.resume">Download my resume</span>
-								</a>
-							</h4>
-						</center>
-					</div>
-				</div>
-			</div>
-			<!-- Arrow to go up and down-->
-			<div id="arrow">
-				<span>
-					<i class="fas fa-angle-down" aria-hidden="true"></i>
-				</span>
-			</div>
-		</div>
+    <div class="ambient ambient--one"></div>
+    <div class="ambient ambient--two"></div>
 
-		<!-- About section -->
-		<div class="about padding" id="about">
-			<div class="row">
-				<div class="container-fluid">
-					<div class="col-md-3">
-						<div class="profile">
-							<center>
-								<img src="ref/images/profile.jpg" id="portPic" alt="Daniele Morotti" class="img-circle">
-							</center>
-						</div>
-					</div>
-					<div class="col-md-8">
-						<div class="about-description">
-							<b><h3 data-translate="about.title">About Me <i class="fas fa-info-circle"></i></h3></b>
-							<hr>
-							<p data-translate="about.description">Hey there, I'm Daniele! I'm currently diving deep into the world of Artificial Intelligence as a Master's degree student. I love learning about new software technologies and apply them to solve problems and create new projects.
-							I'm currently interested in NLP, Deep Learning and anything related to AI. In my free time, I like to engage in sports 🏃, read books 📖 and play the guitar 🎸.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+    <div class="top-nav-wrap">
+        <div class="container nav-shell">
+            <div class="dropdown language-picker">
+                <button class="dropdown-toggle" id="language-dropdown" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu">
+                    <img id="current-flag" class="img-navbar" alt="current language flag" src="ref/images/en.png">
+                    <span id="current-language" data-translate="language.current">English</span>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-menu" id="language-menu">
+                    <button class="language-option" id="en-btn" data-lang="en" type="button">
+                        <img class="img-navbar" alt="english flag" src="ref/images/en.png">
+                        <span data-translate="language.english">English</span>
+                    </button>
+                    <button class="language-option" id="it-btn" data-lang="it" type="button">
+                        <img class="img-navbar" alt="italian flag" src="ref/images/it.png">
+                        <span data-translate="language.italian">Italian</span>
+                    </button>
+                </div>
+            </div>
 
-		<!-- Experience section -->
-		<div class="experience padding" id="experience">
-			<div class="container" style="font-family: 'Open Sans'">
-				<b><h3 data-translate="experience.title">Professional experience <i class="fas fa-briefcase"></i></h3></b>
-				<div class="row">
-					<strong><h4><b data-translate="experience.dienneaCompany">Diennea - Faenza</b>, <i data-translate="experience.dienneaPeriod">Dec 2023 - Present</i></h4></strong>
-					<h5><b><i data-translate="experience.dienneaRole">AI Engineer</i></b></h5>
-					<p style="font-size: medium;" data-translate="experience.dienneaDescription">
-					- Design, implementation, and maintenance of Artificial Intelligence applications for internal and external clients. Integration of AI functionalities into existing software by collaborating with the respective corporate development teams.
-					<br>- Preparation, management, and manipulation of data necessary for training and running AI systems in collaboration with the areas/clients that produce them.</p>
-					<br>
-				</div>
-				<div class="row">
-					<strong><h4><b data-translate="experience.datareplyCompany">Data Reply - Bologna</b>, <i data-translate="experience.datareplyPeriod">Apr 2023 - Aug 2023</i></h4></strong>
-					<h5><b><i data-translate="experience.datareplyPosition">Data Scientist Intern</i></b></h5>
-					<p style="font-size: medium;" data-translate="experience.datareplyDescription">
-					- Development of my thesis project, which aimed to process custom data of various types (textual and tabular data) to make them usable by LLMs.
-					<br>- Throughout this period, I used the OpenAI API and extensively tested numerous open-source language models.
-					<br>- Conducted fine-tuning experiments and compared their effectiveness with a retrieval augmented generation approach.</p>
-					<br>
-				</div>
-			</div>
-		</div>
+            <nav id="site-nav" class="site-nav" aria-label="Main">
+                <a href="#home" data-translate="nav.home">Home</a>
+                <a href="#about" data-translate="nav.about">About me</a>
+                <a href="#experience" data-translate="overlay.experience">Experience <i class="fas fa-briefcase"></i></a>
+                <a href="#education" data-translate="nav.education">Education</a>
+                <a href="#projects" data-translate="nav.projects">Projects</a>
+                <a href="#contact" data-translate="nav.contact">Contact</a>
+            </nav>
 
-		<!-- Education section -->
-		<div class="education padding" id="education">
-			<div class="container" style="font-family: 'Open Sans'">
-				<b><h3 data-translate="education.title">Education <i class="fas fa-graduation-cap"></i></h3></b>
-				<div class="row">
-					<strong><h4>- <span data-translate="education.mastersDegree">Master's Degree in Artificial Intelligence</span>, <i data-translate="education.mastersPeriod">Sept 2021 - Oct 2023</i></h4></strong>
-					<h5 data-translate="education.mastersSchool">Alma Mater Studiorum - University of Bologna</h5>
-					<p data-translate="education.mastersDescription">
-					It's a two-year Master in Artificial Intelligence which provides solid competence and expertise in the founding areas and innovative applications 
-					of Artificial Intelligence. Graduated with a final score of <b>110/110 with honors</b>.
-					</p>
-					<br>
-				</div>
-				<div class="row">
-					<strong><h4>- <span data-translate="education.bachelorDegree">BSc in Computer Science</span>, <i data-translate="education.bachelorPeriod">Oct 2018 - Jul 2021</i></h4></strong>
-					<h5 data-translate="education.bachelorSchool">Alma Mater Studiorum - University of Bologna</h5>
-					<p data-translate="education.bachelorDescription">
-					I made a lot of projects during the degree course and I learnt to work in a team to achieve a common goal and by comparing my ideas with others.
-					Graduated with a final score of <b>108/110</b>.
-					</p>
-					<br>
-				</div>
-				<div class="row">
-					<strong><h4>- <span data-translate="education.highschoolDegree">High School Diploma</span>, <i data-translate="education.highschoolPeriod">Sept 2013 - Jul 2018</i></h4></strong>
-					<h5 data-translate="education.highschoolSchool">Liceo Scientifico F. Alberghetti</h5>
-					<p data-translate="education.highschoolDescription">
-					In the last 2 years of High School I became passionate about Computer Science and I decide to go on studying this topic.
-					</p>
-					<br>
-				</div>
-			</div>
-		</div>
+            <button type="button" id="menu-icon" class="menu-icon" aria-label="Toggle menu" aria-expanded="false" aria-controls="site-nav">
+                <span class="menu-bar" aria-hidden="true"></span>
+                <span class="menu-bar" aria-hidden="true"></span>
+                <span class="menu-bar" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
 
-		<!-- Projects section-->
-		<div class="projects" id="projects">
-			<div class="container">
-			<b><h3 data-translate="projects.title">Projects <i class="far fa-clipboard"></i></h3></b>
-			<hr>
-			<!-- University projects-->
-			<details open>
-				<summary id='univ_summ' class="btn btn-primary"><span data-translate="projects.university">University projects</span> &nbsp;<i class="fas fa-caret-up"></i></summary>
-				<!-- AI in Industry project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/counterf_expl.png" alt="counterfactual explanation with OMLT and DiCE" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.aiii.title">Counterfactual explanations</h3></b>
-							<hr>
-							<p data-translate="projects.aiii.description">The work concerns the development of a model combining Machine Learning and Optimization for Counterfactual Explanations using OMLT and DiCE Python packages. We generated counterfactuals considering the GSM Arena dataset. 
-							</p>
-							<p>
-								<a class="btn btn-default btn-lg btnMargin" href="https://github.com/DanieleMorotti/counterfactual-explanations" target="_blank" data-translate="buttons.source">Source</a>
-								<a class="btn btn-default btn-lg btnMargin" href="https://github.com/Valendrew/counterfactual-demo" target="_blank">Demo</a>
-							</p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- Text Mining project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/songs_recom.png" alt="songs recommendation based on lyrics" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.songsRec.title">Songs recommendation based on lyrics</h3></b>
-							<hr>
-							<p data-translate="projects.songsRec.description">I first performed an analysis of the lyrics using LSA and other techniques in R. Then I implemented different GNNs, on a narrow subset of songs, that are able to recommend the most similar songs to a given one. 
-							</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/Songs-recommendation-from-lyrics" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- NLP project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/argument_retrieval.png" alt="argument retrieval for comparative questions" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.argRetrieval.title">Argument retrieval for comparative questions</h3></b>
-							<hr>
-							<p data-translate="projects.argRetrieval.description">We implemented different pipelines in order to retrieve the most relevant documents, from a subset of ClueWeb12, given some comparative questions. In another task we performed stance classification on these documents. 
-							</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/Argument-retrieval-for-comparative-questions" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- NLP assignments -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/pos_qa.png" alt="pos tagging and qa on CoQA" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.posQA.title">POS tagging &amp; QA</h3></b>
-							<hr>
-							<p data-translate="projects.posQA.description">In one assignment we implemented different models for POS tagging, in the other one some models for abstractive QA on CoQA.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/pos-tagging-abstractive-qa" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- CDMO Project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/vlsi_design.png" alt="vlsi design implementation with different techniques" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.vlsi.title">VLSI Design</h3></b>
-							<hr>
-							<p data-translate="projects.vlsi.description">We implemented 3 different models for the 'Combinatorial and Decision Making Optimization' exam using CP, SMT and MIP techniques to solve the VLSI design problem.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/vlsi-design" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- Deep Learning Project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/BIS_model.png" alt="blind source signal image separation with deep learning model" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.bis.title">Blind Image Separation</h3></b>
-							<hr>
-							<p data-translate="projects.bis.description">I implemented a deep learning model, for the 'Deep Learning' exam, that allows to separate 2 mixed images taken from MNIST and FASHION MNIST datasets.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/Blind-Image-Separation" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- Graduation project -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/anticount.png" alt="Blockchain-based anti-counterfeiting system" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.bachelorDissert.title">Blockchain-based anti-counterfeiting system</h3></b>
-							<hr>
-							<p data-translate="projects.bachelorDissert.description">The system has been developed as my graduation project. The aim of the project is to fight and avoid clothing's counterfeit thanks to the use of blockchain technology.</p>
-							<p><a class="btn btn-default btn-lg" href="https://amslaurea.unibo.it/23518/" target="_blank" data-translate="projects.bachelorDissert.src">Dissertation</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- M - M -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/M-M.png" alt="M&M Mistery at the museum" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.mm.title">M&amp;M - Mistery at the museum</h3></b>
-							<hr>
-							<p data-translate="projects.mm.description">The aim of the project was to <a href="https://en.wikipedia.org/wiki/Gamification" target="_blank"><u>gamify</u></a> the visit to a museum to entertain children. The project is composed by 3 web applications: Player, Editor and Evaluator.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/M-M" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- TwitterTracker -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/twitter_tracker.png" alt="Twitter-tracker" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.twitterTracker.title">Twitter-Tracker</h3></b>
-							<hr>
-							<p data-translate="projects.twitterTracker.description">Twitter-tracker is a web app created for collecting published tweets from around the world and viewing them in various representations. The application was developed using 
-								<a href="https://en.wikipedia.org/wiki/Agile_software_development" target="_blank"><u>Agile</u></a> methodologies.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/TwitterTracker" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- BiKaya OS-->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/bikaya.png" alt="BiKaya OS" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.bikaya.title">BiKaya OS</h3></b>
-							<hr>
-							<p data-translate="projects.bikaya.description">BiKaya is an educational-purpose, cross-architecture operating system compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> 
-								and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/acsor/BiKaya" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-			</details>
-			<details>
-				<summary id='pers_summ' class="btn btn-primary"><span data-translate="projects.personal">Personal projects</span> &nbsp;<i class="fas fa-caret-down"></i></summary>
-				<!-- ShowScout AI -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/showscout_icon.png" alt="ShowScout webapp" class="img-responsive" style="max-width: 280px;"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.showscoutai.title">ShowScout AI</h3></b>
-							<hr>
-							<p data-translate="projects.showscoutai.description">A webapp to be always updated on the latest news of the shows you're waiting for.</p>
-							<p>
-								<a class="btn btn-default btn-lg btnMargin" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/tree/main/projects/ShowScoutAI" target="_blank" data-translate="buttons.source">Source</a>
-								<a class="btn btn-default btn-lg btnMargin" href="projects/ShowScoutAI/dist/index.html" target="_blank">APP</a>
-							</p>
-						</div>
-					</div>
-				</div>
-				<!-- Generic scoreboard -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/gen_score.png" alt="Generic scoreboard" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.scoreboard.title">Generic scoreboard</h3></b>
-							<hr>
-							<p data-translate="projects.scoreboard.description">This is a generic scoreboard that you can use for any game you are playing with your friends. You can choose how many points to reach and 
-								whether who has more or who has less wins</p>
-							<p>
-								<a class="btn btn-default btn-lg btnMargin" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/tree/main/projects/SegnapuntiGenerico" target="_blank" data-translate="buttons.source">Source</a>
-								<a class="btn btn-default btn-lg btnMargin" href="projects/SegnapuntiGenerico/index.html" target="_blank">APP</a>
-								<a class="btn btn-default btn-lg btnMargin" href="projects/Segnapunti-analyzer/index.html" target="_blank" data-translate="projects.scoreboard.analysis">Game analysis</a>
-							</p>
-						</div>
-					</div>
-				</div>
-				<br>
-				<!-- Telegram messages checker -->
-				<div class="row">
-					<div>
-						<div class="col-md-4">
-							<center><img src="ref/images/telegram_checker.png" alt="Telegram messages checker" class="img-responsive"></center>
-						</div>
-						<div class="col-md-7">
-							<b><h3 data-translate="projects.telegram.title">Telegram messages checker</h3></b>
-							<hr>
-							<p data-translate="projects.telegram.description">A simple script to check if messages containing certain words arrive on your telegram account. A song is played to alert you or to wake you up in case you are waiting for an important message during the night.</p>
-							<p><a class="btn btn-default btn-lg" href="https://github.com/DanieleMorotti/telegram_messages_checker" target="_blank" data-translate="buttons.source">Source</a></p>
-						</div>
-					</div>
-				</div>
-				<br>
-			</details>
-		</div>
+    <header class="site-header" id="home">
+        <div class="container hero">
+            <div class="hero-text reveal">
+                <p class="eyebrow">AI Engineer</p>
+                <h1>Daniele Morotti</h1>
 
-		<!-- Contact section-->
-		<div class="contact padding" id="contact">
-			<div class="container">
-				<b><h3 data-translate="contact.title">Contact Me</h3></b>
-				<hr>
-				<div class="row">
-					<center>
-						<div class="col-md-4 col-sm-4 col-xs-4">
-							<a href="mailto:daniele.morotti.99@gmail.com" target="blank">
-								<i class="fas fa-envelope fa-5x"></i>
-							</a>
-							<br>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-4">
-							<a href="https://github.com/DanieleMorotti" target="blank">
-								<i class="fab fa-github fa-5x"></i>
-							</a>
-							<br>
-						</div>
-						<div class="col-md-3 col-sm-4 col-xs-4">
-							<a href="https://www.linkedin.com/in/dmorotti99" target="blank">
-								<i class="fab fa-linkedin fa-5x"></i>
-							</a>
-							<br>
-						</div>
-					</center>
-				</div>
-			</div>
-		</div>
+                <div class="hero-media">
+                    <div class="hero-photo-ring">
+                        <img src="ref/images/profile.jpg" id="homePic" alt="Daniele Morotti portrait">
+                    </div>
+                </div>
 
-		<!--Footer-->
-		<div class="footer header">
-			<div class="container">
-				<footer><p id="copyrightFooter">© 2026 by Daniele Morotti</p></footer>
-			</div>
-		</div>
+                <p class="subtitle" data-translate="home.title">Graduate with a master's degree in AI</p>
 
-		<!-- Imports jquery,bootstrap, and javascript -->
-		<script	src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-			crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-		<script src="js/main.js" defer></script>
-	</body>
+                <ul class="hero-focus">
+                    <li>Applied AI in production environments</li>
+                    <li>NLP and LLM-based architectures</li>
+                    <li>Reliable software systems for data products</li>
+                </ul>
+
+                <div class="hero-actions">
+                    <a id="resume-button" href="ref/docs/resume_en.pdf" download="Daniele-Morotti-resume.pdf" class="btn btn-primary">
+                        <i class="fa fa-download" aria-hidden="true"></i>
+                        <span data-translate="home.resume">Download my resume</span>
+                    </a>
+                    <a href="#projects" class="btn btn-secondary">
+                        <i class="far fa-clipboard" aria-hidden="true"></i>
+                        <span data-translate="nav.projects">Projects</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section section-about" id="about">
+            <div class="container about-layout">
+                <div class="about-copy reveal">
+                    <h2 data-translate="about.title">About Me <i class="fas fa-info-circle"></i></h2>
+                    <p data-translate="about.description">
+                        Hey there, I'm Daniele! I'm currently diving deep into the world of Artificial Intelligence as a Master's degree student.
+                    </p>
+                </div>
+                <figure class="about-media reveal">
+                    <img src="ref/images/profile.jpg" id="aboutPic" alt="Daniele Morotti portrait for about section">
+                </figure>
+            </div>
+        </section>
+
+        <section class="section section-experience" id="experience">
+            <div class="container">
+                <h2 class="section-title" data-translate="experience.title">Professional experience <i class="fas fa-briefcase"></i></h2>
+                <div class="timeline">
+                    <article class="timeline-item reveal">
+                        <h3>
+                            <span data-translate="experience.dienneaCompany">Diennea - Faenza</span>
+                            <span class="period" data-translate="experience.dienneaPeriod">Dec 2023 - Present</span>
+                        </h3>
+                        <p class="role" data-translate="experience.dienneaRole">AI Engineer</p>
+                        <p data-translate="experience.dienneaDescription"></p>
+                    </article>
+                    <article class="timeline-item reveal">
+                        <h3>
+                            <span data-translate="experience.datareplyCompany">Data Reply - Bologna</span>
+                            <span class="period" data-translate="experience.datareplyPeriod">Apr 2023 - Aug 2023</span>
+                        </h3>
+                        <p class="role" data-translate="experience.datareplyPosition">Data Scientist Intern</p>
+                        <p data-translate="experience.datareplyDescription"></p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-education" id="education">
+            <div class="container">
+                <h2 class="section-title" data-translate="education.title">Education <i class="fas fa-graduation-cap"></i></h2>
+                <div class="education-grid">
+                    <article class="education-block reveal">
+                        <h3 data-translate="education.mastersDegree">Master's Degree in Artificial Intelligence</h3>
+                        <p class="period" data-translate="education.mastersPeriod">Sept 2021 - Oct 2023</p>
+                        <h4 data-translate="education.mastersSchool">Alma Mater Studiorum - University of Bologna</h4>
+                        <p data-translate="education.mastersDescription"></p>
+                    </article>
+                    <article class="education-block reveal">
+                        <h3 data-translate="education.bachelorDegree">BSc in Computer Science</h3>
+                        <p class="period" data-translate="education.bachelorPeriod">Oct 2018 - Jul 2021</p>
+                        <h4 data-translate="education.bachelorSchool">Alma Mater Studiorum - University of Bologna</h4>
+                        <p data-translate="education.bachelorDescription"></p>
+                    </article>
+                    <article class="education-block reveal">
+                        <h3 data-translate="education.highschoolDegree">High School Diploma</h3>
+                        <p class="period" data-translate="education.highschoolPeriod">Sept 2013 - Jul 2018</p>
+                        <h4 data-translate="education.highschoolSchool">Liceo Scientifico F. Alberghetti</h4>
+                        <p data-translate="education.highschoolDescription"></p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-projects" id="projects">
+            <div class="container">
+                <h2 class="section-title" data-translate="projects.title">Projects <i class="far fa-clipboard"></i></h2>
+
+                <div class="projects-controls" role="tablist" aria-label="Project categories">
+                    <button class="project-filter is-active" data-project-filter="university" type="button" data-translate="projects.university">University projects</button>
+                    <button class="project-filter" data-project-filter="personal" type="button" data-translate="projects.personal">Personal projects</button>
+                </div>
+
+                <div class="projects-grid">
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/counterf_expl.png" alt="counterfactual explanation with OMLT and DiCE">
+                        <h3 data-translate="projects.aiii.title">Counterfactual explanations</h3>
+                        <p data-translate="projects.aiii.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/counterfactual-explanations" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                            <a class="btn btn-secondary" href="https://github.com/Valendrew/counterfactual-demo" target="_blank" rel="noopener">Demo</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/songs_recom.png" alt="songs recommendation based on lyrics">
+                        <h3 data-translate="projects.songsRec.title">Songs recommendation based on lyrics</h3>
+                        <p data-translate="projects.songsRec.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/Songs-recommendation-from-lyrics" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/argument_retrieval.png" alt="argument retrieval for comparative questions">
+                        <h3 data-translate="projects.argRetrieval.title">Argument retrieval for comparative questions</h3>
+                        <p data-translate="projects.argRetrieval.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/Argument-retrieval-for-comparative-questions" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/pos_qa.png" alt="pos tagging and qa on CoQA">
+                        <h3 data-translate="projects.posQA.title">POS tagging &amp; QA</h3>
+                        <p data-translate="projects.posQA.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/pos-tagging-abstractive-qa" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/vlsi_design.png" alt="vlsi design implementation with different techniques">
+                        <h3 data-translate="projects.vlsi.title">VLSI Design</h3>
+                        <p data-translate="projects.vlsi.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/vlsi-design" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/BIS_model.png" alt="blind source signal image separation with deep learning model">
+                        <h3 data-translate="projects.bis.title">Blind Image Separation</h3>
+                        <p data-translate="projects.bis.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/Blind-Image-Separation" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/anticount.png" alt="Blockchain-based anti-counterfeiting system">
+                        <h3 data-translate="projects.bachelorDissert.title">Blockchain-based anti-counterfeiting system</h3>
+                        <p data-translate="projects.bachelorDissert.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://amslaurea.unibo.it/23518/" target="_blank" rel="noopener" data-translate="projects.bachelorDissert.src">Dissertation</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/M-M.png" alt="M and M Mystery at the museum">
+                        <h3 data-translate="projects.mm.title">M&amp;M - Mistery at the museum</h3>
+                        <p data-translate="projects.mm.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/M-M" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/twitter_tracker.png" alt="Twitter tracker">
+                        <h3 data-translate="projects.twitterTracker.title">Twitter-Tracker</h3>
+                        <p data-translate="projects.twitterTracker.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/TwitterTracker" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="university">
+                        <img src="ref/images/bikaya.png" alt="BiKaya OS">
+                        <h3 data-translate="projects.bikaya.title">BiKaya OS</h3>
+                        <p data-translate="projects.bikaya.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/acsor/BiKaya" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="personal">
+                        <img src="ref/images/showscout_icon.png" alt="ShowScout webapp">
+                        <h3 data-translate="projects.showscoutai.title">ShowScout AI</h3>
+                        <p data-translate="projects.showscoutai.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/tree/main/projects/ShowScoutAI" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                            <a class="btn btn-secondary" href="projects/ShowScoutAI/dist/index.html" target="_blank" rel="noopener">App</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="personal">
+                        <img src="ref/images/gen_score.png" alt="Generic scoreboard">
+                        <h3 data-translate="projects.scoreboard.title">Generic scoreboard</h3>
+                        <p data-translate="projects.scoreboard.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/DanieleMorotti.github.io/tree/main/projects/SegnapuntiGenerico" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                            <a class="btn btn-secondary" href="projects/SegnapuntiGenerico/index.html" target="_blank" rel="noopener">App</a>
+                            <a class="btn btn-secondary" href="projects/Segnapunti-analyzer/index.html" target="_blank" rel="noopener" data-translate="projects.scoreboard.analysis">Game analysis</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal" data-project-group="personal">
+                        <img src="ref/images/telegram_checker.png" alt="Telegram messages checker">
+                        <h3 data-translate="projects.telegram.title">Telegram messages checker</h3>
+                        <p data-translate="projects.telegram.description"></p>
+                        <div class="project-links">
+                            <a class="btn btn-secondary" href="https://github.com/DanieleMorotti/telegram_messages_checker" target="_blank" rel="noopener" data-translate="buttons.source">Source</a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="projects-expand-wrap">
+                    <button id="projects-expand" class="projects-expand-btn" type="button" data-translate="projects.showMore">
+                        Show more projects
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-contact" id="contact">
+            <div class="container contact-wrap reveal">
+                <h2 class="section-title" data-translate="contact.title">Contact me</h2>
+                <div class="contact-links">
+                    <a href="mailto:daniele.morotti.99@gmail.com" target="_blank" rel="noopener" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://github.com/DanieleMorotti" target="_blank" rel="noopener" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/dmorotti99" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p id="copyrightFooter">© 2026 by Daniele Morotti</p>
+    </footer>
+
+    <script src="js/main.js" defer></script>
+</body>
 </html>

@@ -1,14 +1,11 @@
-/* LOAD PARTICLE JS */
-particlesJS.load("particles-js", "js/particles.json", function() {
-  console.log("callback - particles.js config loaded");
-});
-
 /*
 	LANGUAGE HANDLING AND DETECTION
 */
 
 const availableLocales = ['en', 'it'];
 const defaultLanguage = 'en';
+let activeLanguage = defaultLanguage;
+let refreshProjectExpandLabel = null;
 
 // Function to get user's preferred language
 function getPreferredLanguage() {
@@ -126,6 +123,8 @@ const translations = {
 				description: 'BiKaya is an educational-purpose, cross-architecture operating system compatible with <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> and <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, two micro ISAs derived from ARM and MIPS, respectively.'
 			},
 			personal: 'Personal projects',
+            showMore: 'Show more projects',
+            showLess: 'Show fewer projects',
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: 'A webapp to be always updated on the latest news from the movies and tv shows you are waiting for. Create a list of titles and the AI will find news for you.'
@@ -246,6 +245,8 @@ const translations = {
 				description: 'BiKaya è un sistema operativo progettato a scopo educativo e compatibile con 2 architetture, <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uARM-Informal-Specifications.pdf" target="_blank"><u>uARM</u></a> e <a href="https://github.com/acsor/BiKaya/blob/master/contrib/uMPS2-Principles-of-Operation.pdf" target="_blank"><u>uMPS2</u></a>, due micro ISA derivate rispettivamente da ARM e MIPS.'
 			},
 			personal: 'Progetti personali',
+            showMore: 'Mostra altri progetti',
+            showLess: 'Mostra meno progetti',
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: "La webapp per essere sempre aggiornati sulle ultime novità dei film e serie tv che stai aspettando. Crea una lista di titoli e l'IA cercherà le ultime novità per te."
@@ -268,186 +269,341 @@ const translations = {
 
 // Function to change the language
 function changeLanguage(lang) {
-	// Set document language
+    if (!translations[lang]) {
+        return;
+    }
+
+    activeLanguage = lang;
     document.documentElement.lang = lang;
-	// Iterate over all elements that need translation
-    document.querySelectorAll('[data-translate]').forEach(element => {
+
+    document.querySelectorAll('[data-translate]').forEach((element) => {
         const key = element.getAttribute('data-translate');
         const translation = getNestedTranslation(translations[lang], key);
         if (translation) {
             element.innerHTML = translation;
-        }else {
+        } else {
             console.warn(`No translation found for key: ${key} in language: ${lang}`);
         }
     });
 
-    // Update language switcher UI
     const currentFlag = document.getElementById('current-flag');
     const currentLanguage = document.getElementById('current-language');
-    currentFlag.src = `ref/images/${lang}.png`;
-    currentFlag.alt = `${lang} flag`;
-    currentLanguage.textContent = translations[lang].language.current;
+    if (currentFlag && currentLanguage) {
+        currentFlag.src = `ref/images/${lang}.png`;
+        currentFlag.alt = `${lang} flag`;
+        currentLanguage.textContent = translations[lang].language.current;
+    }
 
-    // Update dropdown options
-    const dropdownOptions = document.querySelectorAll('.language-option');
-    dropdownOptions.forEach(option => {
-        const optionLang = option.getAttribute('data-lang');
-        if (optionLang !== lang) {
-            option.style.display = 'block';
-        } else {
-            option.style.display = 'none';
-        }
+    document.querySelectorAll('.language-option').forEach((option) => {
+        option.style.display = option.getAttribute('data-lang') === lang ? 'none' : 'flex';
     });
 
-    // Store the selected language
+    updateResumeButton(lang);
+    if (typeof refreshProjectExpandLabel === 'function') {
+        refreshProjectExpandLabel();
+    }
     localStorage.setItem('preferredLanguage', lang);
+}
+
+function updateResumeButton(lang) {
+    const resumeBtn = document.getElementById('resume-button');
+    if (!resumeBtn) {
+        return;
+    }
+
+    const isItalian = lang === 'it';
+    resumeBtn.href = isItalian ? 'ref/docs/resume_it.pdf' : 'ref/docs/resume_en.pdf';
+    resumeBtn.setAttribute('download', isItalian ? 'Daniele-Morotti-cv.pdf' : 'Daniele-Morotti-resume.pdf');
 }
 
 function getNestedTranslation(obj, path) {
     return path.split('.').reduce((p, c) => p && p[c] || null, obj);
 }
 
-// Function to initialize the page language
 function initializeLanguage() {
     const storedLang = localStorage.getItem('preferredLanguage');
-    const preferredLang = storedLang || getPreferredLanguage();
+    const preferredLang = storedLang || getPreferredLanguage() || defaultLanguage;
     changeLanguage(preferredLang);
 }
 
-// Event listeners for language options
-document.querySelectorAll('.language-option').forEach(option => {
-    option.addEventListener('click', (e) => {
-        const lang = e.currentTarget.getAttribute('data-lang');
-        changeLanguage(lang);
+function setupLanguageDropdown() {
+    const dropdownToggle = document.getElementById('language-dropdown');
+    const dropdownMenu = document.getElementById('language-menu');
+    const nav = document.getElementById('site-nav');
+    const menuButton = document.getElementById('menu-icon');
+    const body = document.body;
+    if (!dropdownToggle || !dropdownMenu) {
+        return;
+    }
+
+    dropdownToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (window.innerWidth <= 860 && nav && nav.classList.contains('is-open')) {
+            nav.classList.remove('is-open');
+            if (menuButton) {
+                menuButton.setAttribute('aria-expanded', 'false');
+                menuButton.classList.remove('is-open');
+            }
+            body.classList.remove('no-scroll');
+        }
+        const isOpen = dropdownMenu.classList.toggle('is-open');
+        dropdownToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
-});
 
-// Initialize language when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.language-picker')) {
+            dropdownMenu.classList.remove('is-open');
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    document.querySelectorAll('.language-option').forEach((option) => {
+        option.addEventListener('click', (e) => {
+            const lang = e.currentTarget.getAttribute('data-lang');
+            changeLanguage(lang);
+            dropdownMenu.classList.remove('is-open');
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
+
+function setupMobileNavigation() {
+    const menuButton = document.getElementById('menu-icon');
+    const nav = document.getElementById('site-nav');
+    const languageMenu = document.getElementById('language-menu');
+    const languageToggle = document.getElementById('language-dropdown');
+    const body = document.body;
+
+    if (!menuButton || !nav) {
+        return;
+    }
+
+    const closeMenu = () => {
+        nav.classList.remove('is-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.classList.remove('is-open');
+        body.classList.remove('no-scroll');
+    };
+
+    menuButton.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('is-open');
+        menuButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        menuButton.classList.toggle('is-open', isOpen);
+        body.classList.toggle('no-scroll', isOpen && window.innerWidth <= 860);
+        if (isOpen && languageMenu && languageToggle) {
+            languageMenu.classList.remove('is-open');
+            languageToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    nav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    nav.addEventListener('click', (event) => {
+        if (event.target === nav) {
+            closeMenu();
+        }
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.nav-shell')) {
+            closeMenu();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeMenu();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 860) {
+            closeMenu();
+        } else if (nav.classList.contains('is-open')) {
+            body.classList.add('no-scroll');
+        }
+    });
+
+    closeMenu();
+}
+
+function setupNavScrollState() {
+    const navWrap = document.querySelector('.top-nav-wrap');
+    if (!navWrap) {
+        return;
+    }
+
+    const toggleScrolledState = () => {
+        navWrap.classList.toggle('is-scrolled', window.scrollY > 16);
+    };
+
+    toggleScrolledState();
+    window.addEventListener('scroll', toggleScrolledState, { passive: true });
+}
+
+function setupProjectFilters() {
+    const filterButtons = document.querySelectorAll('[data-project-filter]');
+    const cards = document.querySelectorAll('[data-project-group]');
+    const expandButton = document.getElementById('projects-expand');
+    const expandWrap = expandButton ? expandButton.parentElement : null;
+    const maxVisible = 4;
+    const expandedState = {
+        university: false,
+        personal: false
+    };
+    let activeGroup = 'university';
+
+    if (!filterButtons.length || !cards.length) {
+        return;
+    }
+
+    const localize = (translationKey) => {
+        const localeObject = translations[activeLanguage] || translations[defaultLanguage];
+        return getNestedTranslation(localeObject, translationKey) || translationKey;
+    };
+
+    const updateExpandButtonLabel = () => {
+        if (!expandButton || !expandWrap) {
+            return;
+        }
+
+        const cardsInGroup = Array.from(cards).filter((card) => card.getAttribute('data-project-group') === activeGroup);
+        if (cardsInGroup.length <= maxVisible) {
+            expandWrap.hidden = true;
+            return;
+        }
+
+        expandWrap.hidden = false;
+        const key = expandedState[activeGroup] ? 'projects.showLess' : 'projects.showMore';
+        expandButton.setAttribute('data-translate', key);
+        expandButton.innerHTML = localize(key);
+    };
+
+    refreshProjectExpandLabel = updateExpandButtonLabel;
+
+    const applyFilter = (group) => {
+        activeGroup = group;
+        const isExpanded = expandedState[group];
+        let indexInGroup = 0;
+
+        cards.forEach((card) => {
+            const belongsToGroup = card.getAttribute('data-project-group') === group;
+            if (!belongsToGroup) {
+                card.hidden = true;
+                return;
+            }
+
+            card.hidden = !isExpanded && indexInGroup >= maxVisible;
+            indexInGroup += 1;
+        });
+
+        updateExpandButtonLabel();
+    };
+
+    filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach((item) => item.classList.remove('is-active'));
+            button.classList.add('is-active');
+            applyFilter(button.getAttribute('data-project-filter'));
+        });
+    });
+
+    if (expandButton) {
+        expandButton.addEventListener('click', () => {
+            expandedState[activeGroup] = !expandedState[activeGroup];
+            applyFilter(activeGroup);
+        });
+    }
+
+    const initiallyActive = document.querySelector('.project-filter.is-active');
+    applyFilter(
+        initiallyActive
+            ? initiallyActive.getAttribute('data-project-filter')
+            : filterButtons[0].getAttribute('data-project-filter')
+    );
+}
+
+function setupRevealAnimations() {
+    const revealItems = document.querySelectorAll('.reveal');
+    if (!revealItems.length) {
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries, obs) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+}
+
+function setupResponsiveHeroFocus() {
+    const heroText = document.querySelector('.hero-text');
+    const siteHeader = document.querySelector('.site-header');
+    const mobileBreakpoint = 860;
+    const safetyGap = 8;
+    let rafId = null;
+
+    if (!heroText || !siteHeader) {
+        return;
+    }
+
+    const evaluate = () => {
+        rafId = null;
+
+        if (window.innerWidth > mobileBreakpoint) {
+            heroText.classList.remove('show-mobile-focus');
+            return;
+        }
+
+        heroText.classList.add('show-mobile-focus');
+
+        const headerStyle = window.getComputedStyle(siteHeader);
+        const paddingTop = parseFloat(headerStyle.paddingTop) || 0;
+        const paddingBottom = parseFloat(headerStyle.paddingBottom) || 0;
+        const availableHeight = window.innerHeight - paddingTop - paddingBottom - safetyGap;
+
+        if (heroText.scrollHeight > availableHeight) {
+            heroText.classList.remove('show-mobile-focus');
+        }
+    };
+
+    const scheduleEvaluate = () => {
+        if (rafId !== null) {
+            window.cancelAnimationFrame(rafId);
+        }
+        rafId = window.requestAnimationFrame(evaluate);
+    };
+
+    scheduleEvaluate();
+    window.addEventListener('resize', scheduleEvaluate);
+    window.addEventListener('orientationchange', scheduleEvaluate);
+    window.addEventListener('load', scheduleEvaluate);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(scheduleEvaluate).catch(() => {});
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
     initializeLanguage();
-    // Set the current year in the footer
-    document.getElementById('copyrightFooter').innerHTML = `© ${new Date().getFullYear()} by Daniele Morotti`;
+    setupLanguageDropdown();
+    setupMobileNavigation();
+    setupNavScrollState();
+    setupProjectFilters();
+    setupResponsiveHeroFocus();
+    setupRevealAnimations();
+
+    const footer = document.getElementById('copyrightFooter');
+    if (footer) {
+        footer.textContent = `\u00A9 ${new Date().getFullYear()} by Daniele Morotti`;
+    }
 });
-
-/* 
-  	Openable menu management 
-*/
-let menu_icon = $('#menu-icon');
-let icon_change = $('#open-icon');
-let nav = $('#myNav');
-let is_on = true;
-//fontawsome link
-let lines = "fas fa-bars fa-2x";
-let cross = "fas fa-times fa-2x";
-
-menu_icon.click(()=>{
-	openNav();
-	return false;
-});
-
-// Called if one item of the list is clicked 
-function closer() {
-	openNav();
-	toggle_icon("lines");
-}
-
-// Open when someone clicks on the span element
-function openNav() {
-	if (is_on) {
-		document.getElementById("myNav").style.height = "100%";
-		is_on = false;
-		toggle_icon("cross");
-	} else {
-		document.getElementById("myNav").style.height = "0%";
-		is_on = true;
-		toggle_icon("lines");
-	}
-}
-// Change between lines and cross menu icon
-function toggle_icon(type){
-	if(type == "cross"){
-		icon_change.removeClass(lines);
-		icon_change.addClass(cross);
-	}
-	else{
-		icon_change.removeClass(cross);
-		icon_change.addClass(lines);
-	}
-}
-
-/*
-	Scrolling with arrow management
-*/
-
-let home_height = $("#particles-js").outerHeight();
-let arrow = $("#arrow i");
-let up_arr = "fas fa-angle-up";
-let down_arr = "fas fa-angle-down";
-//change the arrow direction
-$(document).on( 'scroll', function(){
-	let curr_pos = document.documentElement.scrollTop || document.body.scrollTop;
-	if(curr_pos >= home_height){
-		arrow.removeClass(down_arr);
-		arrow.addClass(up_arr);
-	}
-	else{
-		arrow.removeClass(up_arr);
-		arrow.addClass(down_arr);
-	}
- });
-
-// Scroll the page when the user clicks on the arrow
-$("#arrow span").click(() => {
-	let curr_pos = document.documentElement.scrollTop || document.body.scrollTop;
-	//if the user is after the homepage it returns to the homepage
-	if(curr_pos >= home_height){
-		let scrollDistance = $("#particles-js").offset().top;
-		$("html, body").animate(
-			{
-			scrollTop: scrollDistance + "px"
-			},
-			500
-		); 
-	}
-	//if the user is in the homepage, it scrolls down to the about section
-	else{
-		let scrollDistance = $("#about").offset().top;
-		$("html, body").animate(
-			{
-			scrollTop: scrollDistance + "px"
-			},
-			500
-		); 
-	}
-});
-
-
-/*
-	Opening projects list management
-*/
-let univ_summ = $('#univ_summ');
-let pers_summ = $('#pers_summ');
-
-//fontawsome link
-let open = "fas fa-caret-down";
-let close = "fas fa-caret-up";
-
-univ_summ.click(()=>{
-	toggle_projects("#univ_summ ");
-});
-
-pers_summ.click(()=>{
-	toggle_projects('#pers_summ ');
-});
-
-// Change the icon of the clicked menu
-function toggle_projects(which){
-	if($(which + ' > i').attr('class') == open){
-		$(which + '> i').removeClass();
-		$(which + '> i').addClass(close);
-	}
-	else{
-		$(which + '> i').removeClass();
-		$(which + '> i').addClass(open);
-	}
-}
