@@ -141,8 +141,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
                 className="w-full bg-dark-950 border border-gray-700 rounded-lg p-3 text-white"
               >
                 <option value={DEFAULT_MODEL}>{DEFAULT_MODEL}</option>
+                <option value="gemini-3.1-flash-lite-preview">gemini-3.1-flash-lite-preview</option>
                 <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
               </select>
             </div>
           </div>
