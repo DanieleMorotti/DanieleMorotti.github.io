@@ -126,6 +126,10 @@ const translations = {
             showLess: 'Show fewer projects',
             previous: 'Previous projects',
             next: 'Next projects',
+            becaccino: {
+				title: 'Becaccino PWA',
+				description: 'A <strong>PWA</strong> to play with friends "Becaccino" card game. Create a room, share the code with your friends, and play!'
+			},
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: 'A <strong>webapp</strong> to be always updated on the latest <strong>news from the movies and tv shows</strong> you are waiting for. Create a list of titles and the <strong>AI</strong> will find news for you.'
@@ -249,6 +253,10 @@ const translations = {
 			showLess: 'Mostra meno progetti',
 			previous: 'Progetti precedenti',
 			next: 'Progetti successivi',
+            becaccino: {
+				title: 'Becaccino PWA',
+				description: 'Una <strong>PWA</strong> per giocare con gli amici a "Becaccino". Crea una stanza, condividi il codice con i tuoi amici e sfidali!'
+			},
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: "La <strong>webapp</strong> per essere sempre aggiornati sulle ultime <strong>novità dei film e serie tv</strong> che stai aspettando. Crea una lista di titoli e l'<strong>IA</strong> cercherà le ultime novità per te."
