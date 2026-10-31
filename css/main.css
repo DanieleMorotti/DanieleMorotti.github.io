@@ -516,6 +516,31 @@ main section {
     font-size: 1.05rem;
 }
 
+.about-copy .about-highlight {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-left: 3px solid var(--teal);
+    border-radius: 0 12px 12px 0;
+    background: rgba(42, 111, 130, 0.08);
+}
+
+.about-badge {
+    display: inline-block;
+    margin-bottom: 5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+}
+
+.about-highlight [data-translate="about.guitab"] {
+    display: block;
+}
+
 .about-media {
     margin: 0;
     width: min(236px, 100%);

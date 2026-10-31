@@ -49,7 +49,9 @@ const translations = {
 		},
 		about: {
 			title: 'About Me',
-			description: "Hi, I'm <b>Daniele</b>! I graduated with a Master's degree in <b>Artificial Intelligence</b>. I enjoy learning new technologies and applying them to solve problems and build new projects.<br>Currently, I'm interested in <i>Agents</i>, <i>NLP</i>, <i>Deep Learning</i>, and everything related to Artificial Intelligence. In my free time, I play tennis 🎾, play the guitar 🎸, and code 👨‍💻.<br>Happy to be a <strong>contributor</strong> in the <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a> package."
+			description: "Hi, I'm <b>Daniele</b>! I graduated with a Master's degree in <b>Artificial Intelligence</b>. I enjoy learning new technologies and applying them to solve problems and build new projects.<br>Currently, I'm interested in <i>Agents</i>, <i>NLP</i>, <i>Deep Learning</i>, and everything related to Artificial Intelligence. In my free time, I play tennis 🎾, play the guitar 🎸, and code 👨‍💻.<br>Happy to be a <strong>contributor</strong> in the <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a> package.",
+			newBadge: 'NEW',
+			guitab: 'I trained the custom deep learning model behind Guitab, my guitar transcription app.'
 		},
 		experience: {
 			title: 'Professional experience',
@@ -134,6 +136,10 @@ const translations = {
 				title: 'ShowScout AI',
 				description: 'A <strong>webapp</strong> to be always updated on the latest <strong>news from the movies and tv shows</strong> you are waiting for. Create a list of titles and the <strong>AI</strong> will find news for you.'
 			},
+			guitab: {
+				title: 'Guitab',
+				description: 'I trained a <strong>custom deep learning model</strong> to transcribe guitar recordings into playable Guitar Pro tabs. Use the browser app to load a song or record audio, then listen back and download the tab.'
+			},
 			scoreboard: {
 				title: 'Generic scoreboard',
 				description: 'This is a <strong>generic scoreboard</strong> that you can use for any game you are playing with your friends. You can choose how many points to reach and whether who has more or who has less wins',
@@ -176,7 +182,9 @@ const translations = {
 		},
 		about: {
 			title: 'Chi sono',
-			description: "Ciao, sono <b>Daniele</b>! Mi sono laureato nel corso di Laurea Magistrale in <b>Artificial Intelligence</b>. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato agli <i>agenti</i>, <i>NLP</i>, <i>Deep Learning</i> e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero gioco a tennis 🎾, suono la chitarra 🎸 e programmo 👨‍💻.<br>Felice di aver <strong>contribuito</strong> alla libreria python <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a>."
+			description: "Ciao, sono <b>Daniele</b>! Mi sono laureato nel corso di Laurea Magistrale in <b>Artificial Intelligence</b>. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato agli <i>agenti</i>, <i>NLP</i>, <i>Deep Learning</i> e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero gioco a tennis 🎾, suono la chitarra 🎸 e programmo 👨‍💻.<br>Felice di aver <strong>contribuito</strong> alla libreria python <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a>.",
+			newBadge: 'NOVITÀ',
+			guitab: 'Ho addestrato il modello di deep learning alla base di Guitab, la mia app per trascrivere le canzoni suonate da una chitarra.'
 		},
 		experience: {
 			title: 'Esperienze lavorative',
@@ -260,6 +268,10 @@ const translations = {
 			showscoutai: {
 				title: 'ShowScout AI',
 				description: "La <strong>webapp</strong> per essere sempre aggiornati sulle ultime <strong>novità dei film e serie tv</strong> che stai aspettando. Crea una lista di titoli e l'<strong>IA</strong> cercherà le ultime novità per te."
+			},
+			guitab: {
+				title: 'Guitab',
+				description: "Ho addestrato un <strong>modello di deep learning</strong> per trascrivere registrazioni di chitarra in tablature Guitar Pro da riprodurre. Usa la web app per caricare un brano o registrare l'audio, ascoltare il risultato e scaricare la tablatura."
 			},
 			scoreboard: {
 				title: 'Segnapunti generico',
