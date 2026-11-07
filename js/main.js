@@ -51,7 +51,8 @@ const translations = {
 			title: 'About Me',
 			description: "Hi, I'm <b>Daniele</b>! I graduated with a Master's degree in <b>Artificial Intelligence</b>. I enjoy learning new technologies and applying them to solve problems and build new projects.<br>Currently, I'm interested in <i>Agents</i>, <i>NLP</i>, <i>Deep Learning</i>, and everything related to Artificial Intelligence. In my free time, I play tennis 🎾, play the guitar 🎸, and code 👨‍💻.<br>Happy to be a <strong>contributor</strong> in the <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a> package.",
 			newBadge: 'NEW',
-			guitab: 'I trained the custom deep learning model behind Guitab, my guitar transcription app.'
+			guitab: 'I trained the custom deep learning model behind <a href="https://github.com/DanieleMorotti/guitab" target="_blank" rel="noopener"><strong>Guitab</strong></a>, my guitar transcription app.',
+			songshift: 'I built <a href="https://github.com/DanieleMorotti/songshift" target="_blank" rel="noopener"><strong>SongShift</strong></a> to change a song’s key and tempo while keeping vocals natural, without the chipmunk effect. Vocals, drums and instruments each get processing suited to their sound.'
 		},
 		experience: {
 			title: 'Professional experience',
@@ -140,6 +141,10 @@ const translations = {
 				title: 'Guitab',
 				description: 'I trained a <strong>custom deep learning model</strong> to transcribe guitar recordings into playable Guitar Pro tabs. Use the browser app to load a song or record audio, then listen back and download the tab.'
 			},
+			songshift: {
+				title: 'SongShift',
+				description: 'A local web app and <strong>command-line tool</strong> for changing a song’s key and tempo while keeping vocals natural, without the chipmunk effect. Vocals, drums and instruments each get processing suited to their sound.'
+			},
 			scoreboard: {
 				title: 'Generic scoreboard',
 				description: 'This is a <strong>generic scoreboard</strong> that you can use for any game you are playing with your friends. You can choose how many points to reach and whether who has more or who has less wins',
@@ -184,7 +189,8 @@ const translations = {
 			title: 'Chi sono',
 			description: "Ciao, sono <b>Daniele</b>! Mi sono laureato nel corso di Laurea Magistrale in <b>Artificial Intelligence</b>. Mi piace imparare nuove tecnologie e applicarle per risolvere dei problemi e creare nuovi progetti.<br>Attualmente sono interessato agli <i>agenti</i>, <i>NLP</i>, <i>Deep Learning</i> e tutto ciò che riguarda l'Intelligenza Artificiale. Nel tempo libero gioco a tennis 🎾, suono la chitarra 🎸 e programmo 👨‍💻.<br>Felice di aver <strong>contribuito</strong> alla libreria python <a href='https://github.com/openai/openai-agents-python' target='_blank'><u>openai-agents</u></a>.",
 			newBadge: 'NOVITÀ',
-			guitab: 'Ho addestrato il modello di deep learning alla base di Guitab, la mia app per trascrivere le canzoni suonate da una chitarra.'
+			guitab: 'Ho addestrato il modello di deep learning personalizzato alla base di <a href="https://github.com/DanieleMorotti/guitab" target="_blank" rel="noopener"><strong>Guitab</strong></a>, la mia app per trascrivere la chitarra.',
+			songshift: 'Ho realizzato <a href="https://github.com/DanieleMorotti/songshift" target="_blank" rel="noopener"><strong>SongShift</strong></a> per cambiare tonalità e tempo a un brano mantenendo la voce naturale, senza il tipico effetto “voce da chipmunk”. Voce, batteria e strumenti ricevono ciascuno un trattamento adatto al proprio suono.'
 		},
 		experience: {
 			title: 'Esperienze lavorative',
@@ -272,6 +278,10 @@ const translations = {
 			guitab: {
 				title: 'Guitab',
 				description: "Ho addestrato un <strong>modello di deep learning</strong> per trascrivere registrazioni di chitarra in tablature Guitar Pro da riprodurre. Usa la web app per caricare un brano o registrare l'audio, ascoltare il risultato e scaricare la tablatura."
+			},
+			songshift: {
+				title: 'SongShift',
+				description: 'Una web app locale e uno <strong>strumento da riga di comando</strong> per cambiare tonalità e tempo a un brano mantenendo la voce naturale, senza il tipico effetto “voce da chipmunk”. Voce, batteria e strumenti ricevono ciascuno un trattamento adatto al proprio suono.'
 			},
 			scoreboard: {
 				title: 'Segnapunti generico',

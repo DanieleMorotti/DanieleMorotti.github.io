@@ -524,6 +524,15 @@ main section {
     background: rgba(42, 111, 130, 0.08);
 }
 
+.about-project-list {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.about-project-list li + li {
+    margin-top: 7px;
+}
+
 .about-badge {
     display: inline-block;
     margin-bottom: 5px;
@@ -535,10 +544,6 @@ main section {
     font-weight: 800;
     letter-spacing: 0.08em;
     line-height: 1.5;
-}
-
-.about-highlight [data-translate="about.guitab"] {
-    display: block;
 }
 
 .about-media {
